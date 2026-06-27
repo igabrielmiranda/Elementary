@@ -20,8 +20,8 @@ OptionPanel
 
   OptionCheckBox
     id: wsadWalking
-    !text: tr('Enable WSAD walking')
-    !tooltip: tr('Disable chat and allow walk using WSAD keys')
+    !text: tr('Enable WASD walking')
+    !tooltip: tr('Disable chat and allow walk using WASD keys')
     $mobile:
       visible: false
 

@@ -70,7 +70,7 @@ ConsolePanel < Panel
 
   CheckBox
     id: toggleChat
-    !tooltip: tr('Disable chat mode, allow to walk using ASDW')
+    !tooltip: tr('Disable chat mode, allow to walk using WASD')
     anchors.left: parent.left
     anchors.top: parent.top
     margin-left: 13
@@ -184,3 +184,30 @@ ConsolePanel < Panel
     shift-navigation: true
     max-length: 255
     text-auto-submit: true
+
+  Panel
+    id: consoleTextEditHint
+    anchors.left: sayModeButton.right
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-right: 6
+    margin-left: 6
+    margin-bottom: 6
+    height: 20
+    image-source: /images/ui/panel_flat
+    image-border: 1
+    image-color: #6a6a6a
+    background-color: #11111166
+    visible: false
+    focusable: true
+    phantom: false
+    @onClick: activateChat()
+
+    Label
+      anchors.fill: parent
+      margin-left: 6
+      margin-right: 6
+      text: Pressione Enter ou clique para conversar
+      color: #9f9f9f
+      text-align: left
+      phantom: true

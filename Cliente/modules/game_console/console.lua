@@ -67,6 +67,7 @@ consolePanel = nil
 consoleContentPanel = nil
 consoleTabBar = nil
 consoleTextEdit = nil
+consoleTextEditHint = nil
 consoleToggleChat = nil
 channels = nil
 channelsWindow = nil
@@ -84,6 +85,9 @@ ignoredChannels = {}
 filters = {}
 
 floatingMode = false
+local ignoreToggleChatChange = false
+local tryActivateChat = nil
+local tryActivateChatAtPosition = nil
 
 local communicationSettings = {
   useIgnoreList = true,
@@ -114,6 +118,7 @@ function init()
 
   consolePanel = g_ui.loadUI('console', modules.game_interface.getBottomPanel())
   consoleTextEdit = consolePanel:getChildById('consoleTextEdit')
+  consoleTextEditHint = consolePanel:getChildById('consoleTextEditHint')
   consoleContentPanel = consolePanel:getChildById('consoleContentPanel')
   consoleTabBar = consolePanel:getChildById('consoleTabBar')
   consoleTabBar:setContentWidget(consoleContentPanel)
@@ -139,6 +144,12 @@ function init()
     return true
   end
 
+  consolePanel.onMousePress = function(self, mousePos, mouseButton)
+    return tryActivateChatAtPosition(mousePos, mouseButton)
+  end
+
+  consolePanel.onMouseRelease = consolePanel.onMousePress
+
   g_keyboard.bindKeyPress('Shift+Up', function() navigateMessageHistory(1) end, consolePanel)
   g_keyboard.bindKeyPress('Shift+Down', function() navigateMessageHistory(-1) end, consolePanel)
   g_keyboard.bindKeyPress('Tab', function() consoleTabBar:selectNextTab() end, consolePanel)
@@ -159,9 +170,76 @@ function init()
   consoleToggleChat = consolePanel:getChildById('toggleChat')
   load()
 
+  if consoleTextEditHint then
+    consoleTextEditHint.onMousePress = function(widget, mousePos, mouseButton)
+      return tryActivateChat(mouseButton)
+    end
+    consoleTextEditHint.onMouseRelease = consoleTextEditHint.onMousePress
+    consoleTextEditHint.onTouchRelease = consoleTextEditHint.onMousePress
+  end
+
   if g_game.isOnline() then
     online()
   end
+end
+
+local function setChatInputMode(chatEnabled)
+  if consoleTextEdit then
+    consoleTextEdit:setVisible(chatEnabled)
+    consoleTextEdit:setText("")
+  end
+
+  if consoleTextEditHint then
+    consoleTextEditHint:setVisible(not chatEnabled)
+  end
+end
+
+local function setToggleChatChecked(checked)
+  if not consoleToggleChat or consoleToggleChat:isChecked() == checked then
+    return
+  end
+
+  ignoreToggleChatChange = true
+  consoleToggleChat:setChecked(checked)
+  ignoreToggleChatChange = false
+end
+
+tryActivateChat = function(mouseButton)
+  if mouseButton ~= MouseLeftButton and mouseButton ~= MouseTouch then
+    return false
+  end
+
+  if isChatEnabled() then
+    return false
+  end
+
+  activateChat()
+  return true
+end
+
+tryActivateChatAtPosition = function(mousePos, mouseButton)
+  if isChatEnabled() then
+    return false
+  end
+
+  if consoleTextEditHint and consoleTextEditHint:isVisible() and consoleTextEditHint:containsPoint(mousePos) then
+    return tryActivateChat(mouseButton)
+  end
+
+  if consoleTextEdit and consoleTextEdit:containsPoint(mousePos) then
+    return tryActivateChat(mouseButton)
+  end
+
+  return false
+end
+
+function activateChat()
+  if isChatEnabled() then
+    consoleTextEdit:focus()
+    return
+  end
+
+  enableChat(true)
 end
 
 function clearSelection(consoleBuffer)
@@ -186,6 +264,10 @@ function selectAll(consoleBuffer)
 end
 
 function toggleChat()
+  if ignoreToggleChatChange then
+    return
+  end
+
   if consoleToggleChat:isChecked() then
     disableChat()
   else
@@ -195,15 +277,12 @@ end
 
 function enableChat(temporarily)
   if g_app.isMobile() then return end
-  if consoleToggleChat:isChecked() then
-    return consoleToggleChat:setChecked(false)
-  end
   if not temporarily then
     modules.client_options.setOption("wsadWalking", false)
   end
+  setToggleChatChecked(false)
 
-  consoleTextEdit:setVisible(true)
-  consoleTextEdit:setText("")
+  setChatInputMode(true)
   consoleTextEdit:focus()
 
   local gameRootPanel = modules.game_interface.getRootPanel()
@@ -222,26 +301,20 @@ function enableChat(temporarily)
 
   modules.game_walking.disableWSAD()
 
-  consoleToggleChat:setTooltip(tr("Disable chat mode, allow to walk using ASDW"))
+  consoleToggleChat:setTooltip(tr("Disable chat mode, allow to walk using WASD"))
 end
 
 function disableChat(temporarily)
   if g_app.isMobile() then return end
-  if not consoleToggleChat:isChecked() then
-    return consoleToggleChat:setChecked(true)
-  end
   if not temporarily then
     modules.client_options.setOption("wsadWalking", true)
   end
+  setToggleChatChecked(true)
 
-  consoleTextEdit:setVisible(false)
-  consoleTextEdit:setText("")
+  setChatInputMode(false)
 
   local quickFunc = function()
     if not g_game.isOnline() then return end
-    if consoleToggleChat:isChecked() then
-      consoleToggleChat:setChecked(false)
-    end
     enableChat(true)
   end
   
@@ -300,6 +373,7 @@ function terminate()
   consoleContentPanel = nil
   consoleToggleChat = nil
   consoleTextEdit = nil
+  consoleTextEditHint = nil
 
   consolePanel:destroy()
   consolePanel = nil
@@ -697,9 +771,16 @@ function addTabText(text, speaktype, tab, creatureName)
 
   label.name = creatureName
   consoleBuffer.onMouseRelease = function(self, mousePos, mouseButton)
+    if tryActivateChat(mouseButton) then
+      return true
+    end
     processMessageMenu(mousePos, mouseButton, nil, nil, nil, tab)
   end
   label.onMouseRelease = function(self, mousePos, mouseButton)
+    if tryActivateChat(mouseButton) then
+      return true
+    end
+
     if mouseButton == MouseLeftButton then
       local position = label:getTextPos(mousePos)
       if position and label.highlightInfo[position] then
@@ -1557,11 +1638,26 @@ function online()
   end
   scheduleEvent(function() consoleTabBar:selectTab(defaultTab) end, 500)
   scheduleEvent(function() ignoredChannels = {} end, 3000)
+
+  if modules.client_options and modules.client_options.getOption and modules.client_options.getOption('wsadWalking') then
+    disableChat()
+  else
+    local gameRootPanel = modules.game_interface.getRootPanel()
+    g_keyboard.unbindKeyDown("Enter", gameRootPanel)
+    g_keyboard.unbindKeyDown("Escape", gameRootPanel)
+    setToggleChatChecked(false)
+    setChatInputMode(true)
+    modules.game_walking.disableWSAD()
+    consoleToggleChat:setTooltip(tr("Disable chat mode, allow to walk using WASD"))
+  end
 end
 
 function offline()
+  local gameRootPanel = modules.game_interface.getRootPanel()
+  g_keyboard.unbindKeyDown("Enter", gameRootPanel)
+  g_keyboard.unbindKeyDown("Escape", gameRootPanel)
+
   if g_game.getClientVersion() < 862 then
-    local gameRootPanel = modules.game_interface.getRootPanel()
     g_keyboard.unbindKeyDown('Ctrl+R', gameRootPanel)
   end
   clear()

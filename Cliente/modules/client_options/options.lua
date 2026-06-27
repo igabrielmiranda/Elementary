@@ -45,7 +45,7 @@ local defaultOptions = {
   turnDelay = 30,
   hotkeyDelay = 30,
     
-  wsadWalking = false,
+  wsadWalking = true,
   walkFirstStepDelay = 200,
   walkTurnDelay = 100,
   walkStairsDelay = 50,
@@ -90,6 +90,13 @@ function init()
     g_settings.setDefault(k, v)
     options[k] = v
   end
+
+  local wsadChatMigration = g_settings.getBoolean('wsadWalkingChatMigration', false)
+  if not wsadChatMigration then
+    g_settings.set('wsadWalking', true)
+    g_settings.set('wsadWalkingChatMigration', true)
+  end
+
   for _, v in ipairs(g_extras.getAll()) do
 	  extraOptions[v] = g_extras.get(v)
     g_settings.setDefault("extras_" .. v, extraOptions[v])

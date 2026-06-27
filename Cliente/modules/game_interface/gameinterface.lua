@@ -1257,6 +1257,11 @@ function setupLeftActions()
   gameLeftActions.chat.onClick = function()
     if gameBottomPanel:getHeight() <= 5 then
       gameBottomPanel:setHeight(90)
+      if modules.game_console and modules.game_console.activateChat then
+        modules.game_console.activateChat()
+      end
+    elseif modules.game_console and modules.game_console.isChatEnabled and not modules.game_console.isChatEnabled() then
+      modules.game_console.activateChat()
     else
       gameBottomPanel:setHeight(0)    
     end
