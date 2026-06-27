@@ -1,0 +1,54 @@
+# Visual Studio / VS Code
+.vs/
+.vscode/
+*.user
+*.suo
+*.pdb
+*.ilk
+*.obj
+*.exp
+*.iobj
+*.ipdb
+*.idb
+*.tlog
+*.lastbuildstate
+
+# Build folders
+Debug/
+Release/
+x64/
+x86/
+build/
+out/
+bin/
+obj/
+
+# Logs/cache
+logs/
+*.log
+cache/
+records/
+
+# Database backups
+*.sql.gz
+*.dump
+*.bak
+
+# Sensitive
+key.pem
+*.key
+
+# Huge media files
+www/layout/application/templates/default/images/description/
+www/outfits/outfits_anim.rar
+
+# Common huge media
+*.mp4
+*.gif
+*.rar
+*.zip
+*.7z
+
+# OS
+Thumbs.db
+.DS_Store

@@ -1,0 +1,70 @@
+DailyMonster < UIWidget
+  size: 128 144
+  image-source: /images/ui/special_miniwindow
+  image-border: 2
+  padding: 8
+
+  UICreature
+    id: creature
+    anchors.fill: parent
+    margin-bottom: 16
+    phantom: true
+    animate: true
+    outfit-center: true
+
+  Label
+    id: name
+    anchors.fill: parent
+    text-align: bottom
+    text-wrap: true
+
+IconWidget < UIWidget
+  id: icon
+  image-source: /images/icons
+  size: 19 19
+
+DailyMultiplierLabel < UIWidget
+  phantom: true
+  text-wrap: true
+  text-auto-resize: true
+  text-align: left
+  text-offset: 22 0
+  $!first:
+    margin-top: 5
+
+  IconWidget
+    id: icon
+    anchors.left: parent.left
+    anchors.verticalcenter: parent.verticalcenter
+
+UIWidget
+  id: background
+  anchors.fill: parent
+  focusable: false
+  image-source: /images/background
+  image-smooth: true
+  image-fixed-ratio: true
+  margin-top: 1
+
+  UILabel
+    id: clientVersionLabel
+    background-color: #00000099
+    anchors.right: parent.right
+    anchors.top: parent.top
+    text-align: center
+    text-auto-resize: false
+    width: 220
+    height: 90
+    padding: 2
+    color: #ffffff
+    font: terminus-14px-bold
+
+  Panel
+    id: dailyMonsters
+    anchors.bottom: parent.bottom
+    anchors.horizontalcenter: parent.horizontalcenter
+    margin-bottom: 40
+    height: 144
+    layout:
+      type: horizontalBox
+      spacing: 4
