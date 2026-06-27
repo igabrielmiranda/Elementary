@@ -7192,6 +7192,12 @@ int LuaScriptInterface::luaItemSetAttribute(lua_State* L)
 	}
 
 	if (ItemAttributes::isIntAttrType(attribute)) {
+		if (attribute == ITEM_ATTRIBUTE_RARITYLEVEL) {
+			item->setRarityLevel(static_cast<ItemRarity_t>(getNumber<int32_t>(L, 3)));
+			pushBoolean(L, true);
+			return 1;
+		}
+
 		if (attribute == ITEM_ATTRIBUTE_UNIQUEID) {
 			reportErrorFunc(L, "Attempt to set protected key \"uid\"");
 			pushBoolean(L, false);
@@ -7229,6 +7235,9 @@ int LuaScriptInterface::luaItemRemoveAttribute(lua_State* L)
 
 	bool ret = attribute != ITEM_ATTRIBUTE_UNIQUEID;
 	if (ret) {
+		if (attribute == ITEM_ATTRIBUTE_RARITYLEVEL) {
+			item->setRarityLevel(ITEM_RARITY_NONE);
+		}
 		item->removeAttribute(attribute);
 	} else {
 		reportErrorFunc(L, "Attempt to erase protected key \"uid\"");

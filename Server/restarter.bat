@@ -1,9 +1,7 @@
-@echo  Restarter
-
-
+@echo Restarter
 
 :DEMON
-@"Hellgrave_Exodus-x64.exe"
+@"vc17\x64\Release\Hellgrave_Exodus-x64.exe"
 
 @echo Restarting. . .
 goto DEMON

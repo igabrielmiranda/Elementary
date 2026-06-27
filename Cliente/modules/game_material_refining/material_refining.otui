@@ -1,0 +1,523 @@
+RefinePanel < Panel
+  text-offset: 0 2
+  text-align: top
+  image-source: /images/ui/miniwindow
+  image-border: 4
+  image-border-top: 23
+  image-border-bottom: 4
+  padding: 6
+  padding-top: 23
+
+RefineCard < Panel
+  image-source: /images/ui/panel_flat
+  image-border: 1
+  image-color: #6f6f6f
+  background-color: #20202077
+
+RefinePreviewItem < Item
+  virtual: true
+  size: 42 42
+
+  UIWidget
+    id: rarityId
+    anchors.fill: parent
+    image-source: /images/ui/rarity_frames
+    phantom: true
+    visible: false
+
+RefineInfoLabel < Label
+  color: #cfcfcf
+  text-align: left
+  text-auto-resize: true
+
+RefineInfoValue < Label
+  color: #ffffff
+  text-align: right
+  text-auto-resize: true
+
+RefineInfoRow < Panel
+  height: 22
+
+RefineBaseButton < UIButton
+  height: 44
+  image-source: /images/ui/panel_flat
+  image-border: 1
+  image-color: #6a6a6a
+  color: #dfdfdf
+  focusable: false
+  phantom: false
+  padding-left: 30
+
+  $hover !disabled:
+    image-color: #9f9f9f
+
+  $on:
+    image-color: #c2953e
+
+  $disabled:
+    image-color: #4c4c4c
+    color: #8a8a8a
+
+  Label
+    id: indicator
+    anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    margin-left: 10
+    text: o
+    color: #d8d8d8
+
+  Label
+    id: title
+    anchors.top: parent.top
+    anchors.left: prev.right
+    anchors.right: parent.right
+    margin-top: 6
+    margin-left: 6
+    margin-right: 84
+    text-align: left
+    color: #ffffff
+    text-auto-resize: true
+
+  Label
+    id: details
+    anchors.left: title.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-bottom: 6
+    margin-right: 84
+    text-align: left
+    color: #cfcfcf
+    text-auto-resize: true
+
+  Label
+    id: max
+    anchors.top: title.top
+    anchors.right: parent.right
+    margin-top: 1
+    margin-right: 10
+    text-align: right
+    color: #f0c674
+    text-auto-resize: true
+
+RefineCounterButton < UIButton
+  size: 36 32
+  image-source: /images/ui/button
+  image-color: #ababab
+  image-clip: 0 0 22 23
+  image-border: 3
+  color: #ffffff
+
+  $hover !disabled:
+    image-color: #dfdfdf
+
+  $pressed:
+    image-clip: 0 46 22 23
+
+  $disabled:
+    color: #888888
+    image-color: #727272
+
+MainWindow
+  id: materialRefiningWindow
+  text: Refino de Materiais
+  size: 760 560
+  @onEscape: modules.game_material_refining.hide()
+
+  RefinePanel
+    id: materialSection
+    anchors.top: parent.top
+    anchors.left: parent.left
+    width: 300
+    height: 252
+    text: Material
+
+    RefineCard
+      id: materialDropArea
+      anchors.top: parent.top
+      anchors.left: parent.left
+      margin-top: 10
+      margin-left: 10
+      size: 120 134
+
+      Label
+        id: dropTitle
+        anchors.top: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
+        margin-top: 8
+        text: Slot principal
+        text-align: center
+        phantom: true
+        color: #cfcfcf
+
+      RefinePreviewItem
+        id: materialPreview
+        anchors.centerIn: parent
+        margin-top: 6
+        phantom: true
+
+    Label
+      anchors.verticalCenter: materialDropArea.verticalCenter
+      anchors.left: materialDropArea.right
+      margin-left: 12
+      text: ">"
+      font: verdana-11px-antialised
+      color: #f0c674
+
+    RefineCard
+      id: resultArea
+      anchors.top: materialDropArea.top
+      anchors.left: prev.right
+      anchors.right: parent.right
+      margin-left: 12
+      margin-right: 10
+      height: 134
+
+      Label
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        margin-top: 8
+        margin-left: 6
+        margin-right: 6
+        text: Preview
+        text-align: center
+        text-auto-resize: true
+        phantom: true
+        color: #cfcfcf
+
+      RefinePreviewItem
+        id: resultPreview
+        anchors.centerIn: parent
+        margin-top: 4
+        phantom: true
+
+      Label
+        id: resultHint
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        margin-left: 8
+        margin-right: 8
+        margin-bottom: 8
+        text: ""
+        text-align: center
+        text-wrap: true
+        text-auto-resize: true
+        phantom: true
+        color: #9c9c9c
+        visible: false
+
+    Button
+      id: clearButton
+      anchors.bottom: parent.bottom
+      anchors.left: parent.left
+      margin-left: 10
+      text: Limpar
+      width: 90
+      @onClick: modules.game_material_refining.clearSelectionByUser()
+
+    Label
+      id: previewCurrent
+      anchors.top: materialDropArea.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-top: 10
+      margin-left: 10
+      margin-right: 10
+      text: Atual: -
+      text-wrap: true
+      text-auto-resize: true
+      color: #cfcfcf
+      text-align: left
+
+    Label
+      id: previewResult
+      anchors.top: previewCurrent.bottom
+      anchors.left: previewCurrent.left
+      anchors.right: previewCurrent.right
+      margin-top: 4
+      text: Resultado: -
+      text-wrap: true
+      text-auto-resize: true
+      color: #cfcfcf
+      text-align: left
+
+  RefinePanel
+    id: baseSection
+    anchors.top: parent.top
+    anchors.left: materialSection.right
+    anchors.right: parent.right
+    margin-left: 10
+    height: 252
+    text: Base do Refino
+
+    Label
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      text: Escolha a base do refinamento
+      text-align: center
+
+    RefineBaseButton
+      id: base2
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-top: 8
+      @onClick: modules.game_material_refining.selectBase(2)
+
+    RefineBaseButton
+      id: base3
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-top: 6
+      @onClick: modules.game_material_refining.selectBase(3)
+
+    RefineBaseButton
+      id: base4
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-top: 6
+      @onClick: modules.game_material_refining.selectBase(4)
+
+    RefineBaseButton
+      id: base5
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-top: 6
+      @onClick: modules.game_material_refining.selectBase(5)
+
+  RefinePanel
+    id: infoSection
+    anchors.top: materialSection.bottom
+    anchors.left: parent.left
+    width: 300
+    height: 190
+    margin-top: 10
+    text: Informacoes do Material
+
+    RefineInfoRow
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+
+      RefineInfoLabel
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+        text: Material selecionado
+
+      RefineInfoValue
+        id: materialNameValue
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        margin-left: 130
+        text: -
+
+    RefineInfoRow
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-top: 8
+
+      RefineInfoLabel
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+        text: Grau atual
+
+      RefineInfoValue
+        id: gradeValue
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        margin-left: 130
+        text: -
+
+    RefineInfoRow
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-top: 8
+
+      RefineInfoLabel
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+        text: Quantidade disponivel
+
+      RefineInfoValue
+        id: availableValue
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        margin-left: 130
+        text: -
+
+    RefineInfoRow
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-top: 8
+
+      RefineInfoLabel
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+        text: Proximo grau
+
+      RefineInfoValue
+        id: nextGradeValue
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        margin-left: 130
+        text: -
+
+    RefineInfoRow
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-top: 8
+
+      RefineInfoLabel
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+        text: Status
+
+      RefineInfoValue
+        id: statusValue
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        margin-left: 130
+        text: -
+
+  RefinePanel
+    id: attemptsSection
+    anchors.top: baseSection.bottom
+    anchors.left: infoSection.right
+    anchors.right: parent.right
+    height: 190
+    margin-top: 10
+    margin-left: 10
+    text: Tentativas
+
+    Label
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      text: Defina quantas tentativas deseja executar
+      text-align: center
+
+    RefineCounterButton
+      id: minusButton
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      margin-top: 10
+      margin-left: 20
+      text: "-"
+      @onClick: modules.game_material_refining.changeAttempts(-1)
+
+    RefineCard
+      id: attemptsBox
+      anchors.top: minusButton.top
+      anchors.left: minusButton.right
+      anchors.right: parent.right
+      margin-left: 10
+      margin-right: 66
+      height: 32
+
+      Label
+        id: attemptsValue
+        anchors.centerIn: parent
+        text: -
+        color: #ffffff
+        text-align: center
+        phantom: true
+
+    RefineCounterButton
+      id: plusButton
+      anchors.top: minusButton.top
+      anchors.right: parent.right
+      margin-right: 20
+      text: "+"
+      @onClick: modules.game_material_refining.changeAttempts(1)
+
+    RefineInfoLabel
+      anchors.top: minusButton.bottom
+      anchors.left: parent.left
+      margin-top: 14
+      text: Base selecionada
+
+    RefineInfoValue
+      id: selectedBaseValue
+      anchors.top: prev.top
+      anchors.right: parent.right
+      text: -
+
+    RefineInfoLabel
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      margin-top: 9
+      text: Chance de sucesso
+
+    RefineInfoValue
+      id: chanceValue
+      anchors.top: prev.top
+      anchors.right: parent.right
+      text: -
+
+    RefineInfoLabel
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      margin-top: 9
+      text: Consumo por tentativa
+
+    RefineInfoValue
+      id: consumeValue
+      anchors.top: prev.top
+      anchors.right: parent.right
+      text: -
+
+  HorizontalSeparator
+    id: actionSeparator
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-bottom: 46
+
+  Label
+    id: feedbackLabel
+    anchors.left: attemptsSection.left
+    anchors.right: attemptsSection.right
+    anchors.bottom: actionSeparator.top
+    margin-left: 12
+    margin-right: 12
+    margin-bottom: 10
+    height: 28
+    text-align: right
+    text-wrap: true
+    text-auto-resize: true
+    color: #d8d8d8
+    visible: false
+
+  Button
+    id: refineButton
+    anchors.bottom: parent.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-bottom: 8
+    margin-right: 80
+    width: 120
+    text: Refinar
+    @onClick: modules.game_material_refining.refine()
+
+  Button
+    id: closeButton
+    anchors.bottom: parent.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-bottom: 8
+    margin-left: 80
+    width: 120
+    text: Fechar
+    @onClick: modules.game_material_refining.hide()

@@ -717,6 +717,7 @@ class Item : virtual public Thing
 		bool canHoldRarityLevel(slots_t slotId) const;
 		void setRarityLevel(ItemRarity_t rarityLevel) {
 			setIntAttr(ITEM_ATTRIBUTE_RARITYLEVEL, static_cast<int32_t>(rarityLevel));
+			rarityId = rarityLevel;
 		}
 		ItemRarity_t getRarityLevel() {
 			if (!attributes) {

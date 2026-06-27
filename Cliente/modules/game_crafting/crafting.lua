@@ -1,6 +1,7 @@
 local CODE = 91
 
 local window = nil
+local craftingButton = nil
 local categories = nil
 local craftPanel = nil
 local itemsList = nil
@@ -45,8 +46,15 @@ function create()
     return
   end
 
+  craftingButton = modules.client_topmenu.addRightGameToggleButton('craftingButton', tr('Crafting'), '/images/topbuttons/professions', toggle, false, 9)
+  craftingButton:setOn(false)
   window = g_ui.displayUI("crafting")
   window:hide()
+  window.onVisibilityChange = function(widget, visible)
+    if craftingButton then
+      craftingButton:setOn(visible)
+    end
+  end
 
   categories = window:getChildById("categories")
   craftPanel = window:getChildById("craftPanel")
@@ -59,6 +67,11 @@ function create()
 end
 
 function destroy()
+  if craftingButton then
+    craftingButton:destroy()
+    craftingButton = nil
+  end
+
   if window then
     categories = nil
     craftPanel = nil
@@ -113,11 +126,20 @@ function onExtendedOpcode(protocol, code, buffer)
     money = data
     craftPanel:recursiveGetChildById("playerMoney"):setText(comma_value(money))
   elseif action == "show" then
-    selectItem(selectedCraftId)
+    if not selectedCategory then
+      selectCategory("herbalist")
+    end
+
+    if selectedCraftId then
+      selectItem(selectedCraftId)
+    elseif selectedCategory and #Crafts[selectedCategory] > 0 then
+      selectItem(1)
+    end
+
     show()
   elseif action == "crafted" then
     onItemCrafted()
-	
+		
   end
 end
 
@@ -276,6 +298,22 @@ function hide()
     return
   end
   window:hide()
+end
+
+function toggle()
+  if not window then
+    return
+  end
+
+  if window:isVisible() then
+    hide()
+    return
+  end
+
+  local protocolGame = g_game.getProtocolGame()
+  if protocolGame then
+    protocolGame:sendExtendedOpcode(CODE, json.encode({action = "show"}))
+  end
 end
 
 function comma_value(amount)

@@ -17,6 +17,7 @@ LookItemIconAttribute < UIWidget
   height: 14
   text-offset: 24 0
   text-horizontal-auto-resize: true
+  text-vertical-auto-resize: true
   text-align: left
   margin-top: 4
 
@@ -44,6 +45,13 @@ UIMiniWindow
     anchors.top: parent.top
     anchors.horizontalcenter: parent.horizontalcenter
     margin-top: 8
+
+    UIWidget
+      id: rarityId
+      anchors.fill: parent
+      image-source: /images/ui/rarity_frames
+      phantom: true
+      visible: false
 
   ScrollablePanel
     id: list

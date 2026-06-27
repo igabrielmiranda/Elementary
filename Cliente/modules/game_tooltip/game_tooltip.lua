@@ -219,6 +219,7 @@ end
 m_TooltipFunction.cancelEvent = function()
 	m_TooltipList.itemId = false
 	m_TooltipList.position = false
+	m_TooltipList.rarityId = false
 	
 	if m_TooltipFunction.event then
 		m_TooltipFunction.event:cancel()
@@ -230,6 +231,7 @@ m_TooltipFunction.create = function(position, item, virtual)
     m_TooltipFunction.cancelEvent()
     m_TooltipList.itemId = item:getId()
     m_TooltipList.position = position
+    m_TooltipList.rarityId = item.getRarityId and item:getRarityId() or 0
     if virtual then
         m_TooltipFunction.event = scheduleEvent(function()
             local msg = OutputMessage.create()
@@ -352,20 +354,32 @@ m_TooltipFunction.open = function(list)
 	
 	m_TooltipList.window:show()
 	g_effects.fadeIn(m_TooltipList.window, 400)
-	m_TooltipList.window:getChildById("item"):setItemId(m_TooltipList.itemId)
+	local itemWidget = m_TooltipList.window:getChildById("item")
+	itemWidget:setItemId(m_TooltipList.itemId)
 
 	local height = 48
 	local width = 40
 	local color = nil
+	local rarityId = m_TooltipList.rarityId or 0
 	local name = m_TooltipFunction.titleCase(m_TooltipFunction.getAttribute(list, m_TooltipFunction.TOOLTIP_ATTRIBUTE_NAME))
 	for _, attributeValues in pairs(list) do
 		if attributeValues.id == m_TooltipFunction.TOOLTIP_ATTRIBUTE_RARITY then
 			local v = m_TooltipFunction.descriptionByAttributeId[attributeValues.id][attributeValues.value]
 			name = v.name:format(attributeValues.value) .. " " .. name
 			color = v.color
+			rarityId = attributeValues.value or 0
 			break
 		end
 	end
+
+	if not color and rarityId > 0 then
+		local rarityInfo = m_TooltipFunction.descriptionByAttributeId[m_TooltipFunction.TOOLTIP_ATTRIBUTE_RARITY][rarityId]
+		if rarityInfo then
+			color = rarityInfo.color
+		end
+	end
+
+	g_game.updateRarityFrames(itemWidget, rarityId)
 
 	height, width, nameWidget = m_TooltipFunction.addLabel("LookItemName", height, width, name, nil, color)
 	height = m_TooltipFunction.addLabel("TooltipSeparator", height, width)

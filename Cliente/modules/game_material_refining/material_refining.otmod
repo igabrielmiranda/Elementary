@@ -1,0 +1,10 @@
+Module
+  name: game_material_refining
+  description: Material refining interface
+  author: Codex
+  sandboxed: true
+  autoload: true
+  dependencies: [ game_interface ]
+  scripts: [ material_refining ]
+  @onLoad: init()
+  @onUnload: terminate()

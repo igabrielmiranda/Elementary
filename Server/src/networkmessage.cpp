@@ -8,6 +8,44 @@
 #include "container.h"
 #include "creature.h"
 
+namespace {
+uint8_t getItemNetworkRarity(const Item* item)
+{
+	if (!item) {
+		return ITEM_RARITY_NONE;
+	}
+
+	uint8_t rarity = item->getRarity();
+	if (rarity != ITEM_RARITY_NONE) {
+		return rarity;
+	}
+
+	auto* mutableItem = const_cast<Item*>(item);
+	const auto* materialFlag = mutableItem->getCustomAttribute("material_refining");
+	if (!materialFlag || materialFlag->getInt() != 1) {
+		return ITEM_RARITY_NONE;
+	}
+
+	const auto* materialGrade = mutableItem->getCustomAttribute("material_grade");
+	if (!materialGrade) {
+		return ITEM_RARITY_NONE;
+	}
+
+	switch (materialGrade->getInt()) {
+		case 2:
+			return ITEM_RARITY_COMMON;
+		case 3:
+			return ITEM_RARITY_RARE;
+		case 4:
+			return ITEM_RARITY_EPIC;
+		case 5:
+			return ITEM_RARITY_LEGENDARY;
+		default:
+			return ITEM_RARITY_NONE;
+	}
+}
+}
+
 std::string NetworkMessage::getString(uint16_t stringLen/* = 0*/)
 {
 	if (stringLen == 0) {
@@ -115,7 +153,7 @@ void NetworkMessage::addItem(const Item* item)
 	if (it.isAnimation) {
 		addByte(0xFE); // random phase (0xFF for async)
 	}
-	addByte(item->getRarity()); // item rarity
+	addByte(getItemNetworkRarity(item)); // item rarity
 }
 
 void NetworkMessage::addItemId(uint16_t itemId)

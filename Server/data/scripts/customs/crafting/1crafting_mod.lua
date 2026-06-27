@@ -53,6 +53,8 @@ function ExtendedEvent.onExtendedOpcode(player, opcode, buffer)
       for _, category in ipairs(categories) do
         Crafting:sendCrafts(player, category)
       end
+    elseif action == "show" then
+      player:showCrafting()
     elseif action == "craft" then
       Crafting:craft(player, data.category, data.craftId)
     end
