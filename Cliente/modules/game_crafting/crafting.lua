@@ -284,6 +284,16 @@ function craftItem()
   end
 end
 
+function openRefine()
+  if modules.game_material_refining and modules.game_material_refining.show then
+    hide()
+    modules.game_material_refining.show()
+    return
+  end
+
+  g_logger.error("[Crafting] Modulo de refino nao esta disponivel.")
+end
+
 function show()
   if not window then
     return

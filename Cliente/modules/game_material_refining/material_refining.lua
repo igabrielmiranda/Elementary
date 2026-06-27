@@ -9,8 +9,7 @@ local emptyHint = nil
 local resultHint = nil
 local feedbackLabel = nil
 local refineButton = nil
-local minusButton = nil
-local plusButton = nil
+local refineAllButton = nil
 
 local previewCurrent = nil
 local previewResult = nil
@@ -19,7 +18,6 @@ local gradeValue = nil
 local availableValue = nil
 local nextGradeValue = nil
 local statusValue = nil
-local attemptsValue = nil
 local selectedBaseValue = nil
 local chanceValue = nil
 local consumeValue = nil
@@ -27,21 +25,21 @@ local maxAttemptsValue = nil
 local totalConsumeValue = nil
 
 local baseButtons = {}
+local BASE_ORDER = {5, 4, 3, 2}
 local state = {
 	baseTemplate = {},
 	selection = nil,
 	selectedBase = nil,
-	attempts = 0,
 }
 
 local function buildBaseTemplate()
 	local bases = {}
-	for i = 2, 5 do
+	for _, baseValue in ipairs(BASE_ORDER) do
 		bases[#bases + 1] = {
-			id = i,
-			base = i,
-			chance = i * 20,
-			consume = i,
+			id = baseValue,
+			base = baseValue,
+			chance = baseValue * 20,
+			consume = baseValue,
 			maxAttempts = 0,
 			enabled = false,
 		}
@@ -163,28 +161,6 @@ local function chooseBase(preferredBase)
 	return nil
 end
 
-local function clampAttempts()
-	local base = getSelectedBase()
-	if not state.selection or not state.selection.refinable or not base or not base.enabled then
-		state.attempts = 0
-		return
-	end
-
-	local maxAttempts = base.maxAttempts or 0
-	if maxAttempts < 1 then
-		state.attempts = 0
-		return
-	end
-
-	if state.attempts < 1 then
-		state.attempts = 1
-	end
-
-	if state.attempts > maxAttempts then
-		state.attempts = maxAttempts
-	end
-end
-
 local function updateBaseButtons()
 	for i = 1, #baseButtons do
 		local widget = baseButtons[i]
@@ -216,33 +192,18 @@ local function updateBaseButtons()
 	end
 end
 
-local function updateAttemptsPanel()
+local function updateSummaryPanel()
 	local base = getSelectedBase()
-	local attempts = state.attempts or 0
 
-	attemptsValue:setText(attempts > 0 and string.format("%d tentativa(s)", attempts) or "-")
 	selectedBaseValue:setText(base and string.format("Base %d", base.base) or "-")
 	chanceValue:setText(base and string.format("%d%%", base.chance) or "-")
 	consumeValue:setText(base and tostring(base.consume) or "-")
-	if maxAttemptsValue then
-		maxAttemptsValue:setText(base and tostring(base.maxAttempts or 0) or "-")
-	end
+	maxAttemptsValue:setText(base and tostring(base.maxAttempts or 0) or "-")
+	totalConsumeValue:setText(base and tostring(base.consume * (base.maxAttempts or 0)) or "-")
 
-	if totalConsumeValue then
-		if base and attempts > 0 then
-			totalConsumeValue:setText(tostring(base.consume * attempts))
-		else
-			totalConsumeValue:setText("-")
-		end
-	end
-
-	local canDecrease = attempts > 1
-	local canIncrease = base and base.enabled and attempts > 0 and attempts < (base.maxAttempts or 0)
-	minusButton:setEnabled(canDecrease)
-	plusButton:setEnabled(canIncrease)
-
-	local canRefine = state.selection and state.selection.refinable and base and base.enabled and attempts > 0
+	local canRefine = state.selection and state.selection.refinable and base and base.enabled and (base.maxAttempts or 0) > 0
 	refineButton:setEnabled(canRefine)
+	refineAllButton:setEnabled(canRefine)
 end
 
 local function updateSelectionInfo()
@@ -301,13 +262,12 @@ end
 local function refreshUI()
 	updateSelectionInfo()
 	updateBaseButtons()
-	updateAttemptsPanel()
+	updateSummaryPanel()
 end
 
 local function clearSelection(message, tone)
 	state.selection = nil
 	state.selectedBase = chooseBase(nil)
-	state.attempts = 0
 	materialDropArea:setBorderWidth(0)
 	refreshUI()
 	setFeedback(message or DEFAULT_MESSAGE, tone)
@@ -322,7 +282,6 @@ local function applySelection(selection)
 
 	state.selection = selection
 	state.selectedBase = chooseBase(state.selectedBase)
-	clampAttempts()
 	refreshUI()
 	setFeedback(selection.message or DEFAULT_MESSAGE, selection.statusType)
 end
@@ -440,8 +399,7 @@ function create()
 	resultHint = window:recursiveGetChildById("resultHint")
 	feedbackLabel = window:recursiveGetChildById("feedbackLabel")
 	refineButton = window:recursiveGetChildById("refineButton")
-	minusButton = window:recursiveGetChildById("minusButton")
-	plusButton = window:recursiveGetChildById("plusButton")
+	refineAllButton = window:recursiveGetChildById("refineAllButton")
 
 	previewCurrent = window:recursiveGetChildById("previewCurrent")
 	previewResult = window:recursiveGetChildById("previewResult")
@@ -450,7 +408,6 @@ function create()
 	availableValue = window:recursiveGetChildById("availableValue")
 	nextGradeValue = window:recursiveGetChildById("nextGradeValue")
 	statusValue = window:recursiveGetChildById("statusValue")
-	attemptsValue = window:recursiveGetChildById("attemptsValue")
 	selectedBaseValue = window:recursiveGetChildById("selectedBaseValue")
 	chanceValue = window:recursiveGetChildById("chanceValue")
 	consumeValue = window:recursiveGetChildById("consumeValue")
@@ -458,7 +415,7 @@ function create()
 	totalConsumeValue = window:recursiveGetChildById("totalConsumeValue")
 
 	baseButtons = {}
-	for _, baseValue in ipairs({2, 3, 4, 5}) do
+	for _, baseValue in ipairs(BASE_ORDER) do
 		baseButtons[#baseButtons + 1] = window:recursiveGetChildById("base" .. baseValue)
 	end
 
@@ -475,7 +432,6 @@ function destroy()
 	state.baseTemplate = buildBaseTemplate()
 	state.selection = nil
 	state.selectedBase = nil
-	state.attempts = 0
 
 	baseButtons = {}
 
@@ -491,8 +447,7 @@ function destroy()
 	resultHint = nil
 	feedbackLabel = nil
 	refineButton = nil
-	minusButton = nil
-	plusButton = nil
+	refineAllButton = nil
 	previewCurrent = nil
 	previewResult = nil
 	materialNameValue = nil
@@ -500,7 +455,6 @@ function destroy()
 	availableValue = nil
 	nextGradeValue = nil
 	statusValue = nil
-	attemptsValue = nil
 	selectedBaseValue = nil
 	chanceValue = nil
 	consumeValue = nil
@@ -543,50 +497,35 @@ function selectBase(baseValue)
 	end
 
 	state.selectedBase = base.base
-	if state.attempts < 1 then
-		state.attempts = 1
-	end
-	clampAttempts()
 	refreshUI()
 end
 
-function changeAttempts(delta)
-	delta = tonumber(delta) or 0
-	local base = getSelectedBase()
-	if not base or not base.enabled or not state.selection or not state.selection.refinable then
-		return
-	end
-
-	if state.attempts < 1 then
-		state.attempts = 1
-	end
-
-	state.attempts = state.attempts + delta
-	clampAttempts()
-	refreshUI()
-end
-
-function refine()
+local function getRefineRequestBase()
 	local selection = state.selection
 	local base = getSelectedBase()
-
 	if not selection then
-		setFeedback("Arraste um material refinavel para o slot antes de refinar.", "warning")
-		return
+		return nil, nil, "Arraste um material refinavel para o slot antes de refinar."
 	end
 
 	if not selection.refinable then
-		setFeedback("Esse material ja atingiu o grau maximo.", "warning")
-		return
+		return nil, nil, "Esse material ja atingiu o grau maximo."
 	end
 
 	if not base or not base.enabled then
-		setFeedback("Escolha uma base valida para continuar.", "warning")
-		return
+		return nil, nil, "Escolha uma base valida para continuar."
 	end
 
-	if state.attempts < 1 then
-		setFeedback("Defina pelo menos uma tentativa de refinamento.", "warning")
+	if (base.maxAttempts or 0) < 1 then
+		return nil, nil, "Voce nao possui materiais suficientes para essa base."
+	end
+
+	return selection, base, nil
+end
+
+local function sendRefineRequest(attempts, runningMessage)
+	local selection, base, err = getRefineRequestBase()
+	if err then
+		setFeedback(err, "warning")
 		return
 	end
 
@@ -597,12 +536,30 @@ function refine()
 				materialKey = selection.materialKey,
 				grade = selection.grade,
 				base = base.base,
-				attempts = state.attempts,
+				attempts = attempts,
 			},
 		}
 	)
 
-	setFeedback("Executando refinamento...", "info")
+	setFeedback(runningMessage, "info")
+end
+
+function refineSingle()
+	sendRefineRequest(1, "Executando refinamento individual...")
+end
+
+function refineAll()
+	local _, base, err = getRefineRequestBase()
+	if err then
+		setFeedback(err, "warning")
+		return
+	end
+
+	sendRefineRequest(base.maxAttempts or 0, "Executando refinamento total...")
+end
+
+function refine()
+	refineSingle()
 end
 
 function onExtendedOpcode(protocol, opcode, buffer)

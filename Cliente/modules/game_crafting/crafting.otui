@@ -208,6 +208,19 @@ MainWindow
       CategoryLabel
         text: Jewelsmith
 
+    CategoryButton
+      id: refineCat
+      width: 98
+      @onClick: modules.game_crafting.openRefine()
+      grid.column: 2
+      grid.row: 0
+
+      CategoryItem
+        item-id: 26401
+
+      CategoryLabel
+        text: Refine
+
   HorizontalSeparator
     anchors.top: prev.bottom
     anchors.left: parent.left

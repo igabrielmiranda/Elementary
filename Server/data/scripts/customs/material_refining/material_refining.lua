@@ -66,10 +66,10 @@ local MATERIALS = {
 }
 
 local BASE_OPTIONS = {
-	{base = 2, chance = 40},
-	{base = 3, chance = 60},
-	{base = 4, chance = 80},
 	{base = 5, chance = 100},
+	{base = 4, chance = 80},
+	{base = 3, chance = 60},
+	{base = 2, chance = 40},
 }
 
 local GRADE_RARITY = {

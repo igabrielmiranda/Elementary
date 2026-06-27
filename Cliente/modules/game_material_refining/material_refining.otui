@@ -259,20 +259,12 @@ MainWindow
       text-align: center
 
     RefineBaseButton
-      id: base2
+      id: base5
       anchors.top: prev.bottom
       anchors.left: parent.left
       anchors.right: parent.right
       margin-top: 8
-      @onClick: modules.game_material_refining.selectBase(2)
-
-    RefineBaseButton
-      id: base3
-      anchors.top: prev.bottom
-      anchors.left: parent.left
-      anchors.right: parent.right
-      margin-top: 6
-      @onClick: modules.game_material_refining.selectBase(3)
+      @onClick: modules.game_material_refining.selectBase(5)
 
     RefineBaseButton
       id: base4
@@ -283,12 +275,20 @@ MainWindow
       @onClick: modules.game_material_refining.selectBase(4)
 
     RefineBaseButton
-      id: base5
+      id: base3
       anchors.top: prev.bottom
       anchors.left: parent.left
       anchors.right: parent.right
       margin-top: 6
-      @onClick: modules.game_material_refining.selectBase(5)
+      @onClick: modules.game_material_refining.selectBase(3)
+
+    RefineBaseButton
+      id: base2
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-top: 6
+      @onClick: modules.game_material_refining.selectBase(2)
 
   RefinePanel
     id: infoSection
@@ -401,53 +401,11 @@ MainWindow
     height: 190
     margin-top: 10
     margin-left: 10
-    text: Tentativas
-
-    Label
-      anchors.top: parent.top
-      anchors.left: parent.left
-      anchors.right: parent.right
-      text: Defina quantas tentativas deseja executar
-      text-align: center
-
-    RefineCounterButton
-      id: minusButton
-      anchors.top: prev.bottom
-      anchors.left: parent.left
-      margin-top: 10
-      margin-left: 20
-      text: "-"
-      @onClick: modules.game_material_refining.changeAttempts(-1)
-
-    RefineCard
-      id: attemptsBox
-      anchors.top: minusButton.top
-      anchors.left: minusButton.right
-      anchors.right: parent.right
-      margin-left: 10
-      margin-right: 66
-      height: 32
-
-      Label
-        id: attemptsValue
-        anchors.centerIn: parent
-        text: -
-        color: #ffffff
-        text-align: center
-        phantom: true
-
-    RefineCounterButton
-      id: plusButton
-      anchors.top: minusButton.top
-      anchors.right: parent.right
-      margin-right: 20
-      text: "+"
-      @onClick: modules.game_material_refining.changeAttempts(1)
+    text: Resumo do Refino
 
     RefineInfoLabel
-      anchors.top: minusButton.bottom
+      anchors.top: parent.top
       anchors.left: parent.left
-      margin-top: 14
       text: Base selecionada
 
     RefineInfoValue
@@ -480,6 +438,30 @@ MainWindow
       anchors.right: parent.right
       text: -
 
+    RefineInfoLabel
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      margin-top: 9
+      text: Maximo possivel
+
+    RefineInfoValue
+      id: maxAttemptsValue
+      anchors.top: prev.top
+      anchors.right: parent.right
+      text: -
+
+    RefineInfoLabel
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      margin-top: 9
+      text: Consumo total
+
+    RefineInfoValue
+      id: totalConsumeValue
+      anchors.top: prev.top
+      anchors.right: parent.right
+      text: -
+
   HorizontalSeparator
     id: actionSeparator
     anchors.bottom: parent.bottom
@@ -494,7 +476,7 @@ MainWindow
     anchors.bottom: actionSeparator.top
     margin-left: 12
     margin-right: 12
-    margin-bottom: 10
+    margin-bottom: 14
     height: 28
     text-align: right
     text-wrap: true
@@ -510,14 +492,23 @@ MainWindow
     margin-right: 80
     width: 120
     text: Refinar
-    @onClick: modules.game_material_refining.refine()
+    @onClick: modules.game_material_refining.refineSingle()
 
   Button
-    id: closeButton
+    id: refineAllButton
     anchors.bottom: parent.bottom
     anchors.horizontalCenter: parent.horizontalCenter
     margin-bottom: 8
     margin-left: 80
     width: 120
-    text: Fechar
+    text: Refinar tudo
+    @onClick: modules.game_material_refining.refineAll()
+
+  Button
+    id: closeButton
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    margin-bottom: 8
+    width: 60
+    text: Close
     @onClick: modules.game_material_refining.hide()

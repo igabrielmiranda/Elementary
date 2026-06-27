@@ -5,6 +5,7 @@ Module
   website: None
   sandboxed: true
   autoload: true
+  dependencies: [ game_material_refining ]
   scripts: [ crafting ]
   @onLoad: init()
   @onUnload: terminate()
