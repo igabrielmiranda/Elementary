@@ -52,12 +52,14 @@ CategoryLabel < Label
 
 ItemListItem < Panel
   phantom: false
+  width: 188
   height: 36
   image-source: /images/ui/button
   image-color: #ababab
   image-clip: 0 0 22 23
   image-border: 3
   padding-left: 3
+  focusable: true
   @onClick: modules.game_crafting.selectItem(self:getId())
 
   $hover !disabled:
@@ -73,6 +75,7 @@ ItemListItem < Panel
     size: 34 34
     padding: 1
     virtual: true
+    phantom: true
   
   Label
     id: name
@@ -82,6 +85,7 @@ ItemListItem < Panel
     margin-top: 3
     margin-left: 5
     text-align: left
+    phantom: true
   
   Label
     id: level
@@ -92,6 +96,7 @@ ItemListItem < Panel
     margin-left: 5
     text-align: left
     color: #afafaf
+    phantom: true
 
 CountLabel < Label
   anchors.top: prev.top
@@ -100,22 +105,51 @@ CountLabel < Label
   text-auto-resize: true
   margin-top: 5
 
+CraftPreviewItem < UIItem
+  size: 34 34
+  padding: 1
+  virtual: true
+  phantom: true
+
+  UIWidget
+    id: rarityId
+    anchors.fill: parent
+    image-source: /images/ui/rarity_frames
+    phantom: true
+    visible: false
+
+CraftMaterialSlot < Panel
+  size: 34 34
+  image-source: /images/ui/panel_flat
+  image-border: 1
+  image-color: #5f5f5f
+  background-color: #1c1c1c88
+  focusable: false
+
+  CraftPreviewItem
+    id: item
+    anchors.centerIn: parent
+
+DismantleMaterialRow < Panel
+  height: 28
+  background-color: #1c1c1c22
+
 MainWindow
   text: Crafting System
-  size: 640 520
+  size: 640 620
 
   Panel
     id: categories
     anchors.top: parent.top
     anchors.horizontalCenter: parent.horizontalCenter
     width: 580
-    height: 68
+    height: 102
     layout:
       type: grid
       cell-size: 115 34
       flow: true
     grid-columns: 3
-    grid-rows: 2
+    grid-rows: 3
 
     CategoryButton
       id: herbalistCat
@@ -221,13 +255,28 @@ MainWindow
       CategoryLabel
         text: Refine
 
+    CategoryButton
+      id: dismantleCat
+      width: 108
+      @onClick: modules.game_crafting.selectCategory("dismantle")
+      grid.column: 0
+      grid.row: 2
+
+      CategoryItem
+        item-id: 2189
+
+      CategoryLabel
+        text: Desmontar
+
   HorizontalSeparator
+    id: categoriesSeparator
     anchors.top: prev.bottom
     anchors.left: parent.left
     anchors.right: parent.right
     margin-top: 10
 
   Panel
+    id: searchPanel
     anchors.top: prev.top
     anchors.left: parent.left
     anchors.right: parent.right
@@ -248,6 +297,7 @@ MainWindow
       @onKeyPress: modules.game_crafting.onSearch()
   
   HorizontalSeparator
+    id: searchSeparator
     anchors.top: prev.bottom
     anchors.left: parent.left
     anchors.right: parent.right
@@ -288,6 +338,7 @@ MainWindow
     pixels-scroll: true
 
   VerticalSeparator
+    id: listDivider
     anchors.top: itemsList.top
     anchors.bottom: itemsList.bottom
     anchors.left: itemsList.right
@@ -302,11 +353,10 @@ MainWindow
     margin-left: 10
     text: Crafting Process
 
-    Item
+    CraftPreviewItem
       id: craftOutcome
       anchors.centerIn: parent
       margin-bottom: 10
-      virtual: true
 
     Panel
       id: craftLine1
@@ -316,13 +366,12 @@ MainWindow
       margin-right: 5
       image-source: /images/crafting/craft_line1
 
-    Item
+    CraftMaterialSlot
       id: material1
       anchors.bottom: prev.bottom
       anchors.left: parent.left
       margin-left: 5
       margin-bottom: 16
-      virtual: true
 
     CountLabel
       id: count1
@@ -338,13 +387,12 @@ MainWindow
       margin-right: 5
       image-source: /images/crafting/craft_line5
 
-    Item
+    CraftMaterialSlot
       id: material2
       anchors.bottom: prev.bottom
       anchors.left: parent.left
       margin-left: 5
       margin-bottom: -15
-      virtual: true
 
     CountLabel
       id: count2
@@ -360,13 +408,12 @@ MainWindow
       margin-right: 5
       image-source: /images/crafting/craft_line3
 
-    Item
+    CraftMaterialSlot
       id: material3
       anchors.bottom: prev.bottom
       anchors.left: parent.left
       margin-left: 5
       margin-bottom: -15
-      virtual: true
 
     CountLabel
       id: count3
@@ -382,13 +429,12 @@ MainWindow
       margin-left: 5
       image-source: /images/crafting/craft_line4
 
-    Item
+    CraftMaterialSlot
       id: material4
       anchors.bottom: prev.bottom
       anchors.right: parent.right
       margin-right: 5
       margin-bottom: 16
-      virtual: true
 
     CountLabel
       id: count4
@@ -404,13 +450,12 @@ MainWindow
       margin-left: 5
       image-source: /images/crafting/craft_line5
 
-    Item
+    CraftMaterialSlot
       id: material5
       anchors.bottom: prev.bottom
       anchors.right: parent.right
       margin-right: 5
       margin-bottom: -15
-      virtual: true
 
     CountLabel
       id: count5
@@ -426,19 +471,42 @@ MainWindow
       margin-left: 5
       image-source: /images/crafting/craft_line6
 
-    Item
+    CraftMaterialSlot
       id: material6
       anchors.bottom: prev.bottom
       anchors.right: parent.right
       margin-right: 5
       margin-bottom: -15
-      virtual: true
 
     CountLabel
       id: count6
       anchors.right: prev.left
       text-align: right
       margin-right: 5
+
+    Label
+      id: qualityResult
+      anchors.top: craftOutcome.bottom
+      anchors.horizontalCenter: craftOutcome.horizontalCenter
+      margin-top: 12
+      width: 170
+      text-align: center
+      text-wrap: true
+      text-auto-resize: true
+      color: #d8d8d8
+      visible: false
+
+    Label
+      id: qualityStatus
+      anchors.top: qualityResult.bottom
+      anchors.horizontalCenter: qualityResult.horizontalCenter
+      margin-top: 8
+      width: 190
+      text-align: center
+      text-wrap: true
+      text-auto-resize: true
+      color: #afafaf
+      visible: false
 
     Label
       anchors.bottom: parent.bottom
@@ -521,6 +589,486 @@ MainWindow
       
       CategoryLabel
         text: Craft
+
+  MiniPanel
+    id: dismantlePanel
+    anchors.top: itemsList.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: separator.top
+    margin-bottom: 10
+    text: Desmontar Equipamento
+    visible: false
+
+    Label
+      id: dismantleHelp
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-top: 4
+      text: Arraste um item craftado para o slot de desmontagem.
+      text-align: center
+      color: #afafaf
+
+    Panel
+      id: dismantleSourceArea
+      anchors.top: dismantleHelp.bottom
+      anchors.left: parent.left
+      margin-top: 12
+      margin-left: 14
+      width: 220
+      height: 122
+
+      Label
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        margin-top: 4
+        text: Equipamento
+        text-align: center
+        color: #cfcfcf
+
+      CraftMaterialSlot
+        id: dismantleInputSlot
+        anchors.top: prev.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        margin-top: 10
+        size: 46 46
+
+      Label
+        id: dismantleInputLabel
+        anchors.top: dismantleInputSlot.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        margin-top: 8
+        margin-left: 18
+        margin-right: 18
+        height: 20
+        text: Slot de desmontagem
+        text-align: center
+        text-wrap: true
+        text-auto-resize: false
+        color: #cfcfcf
+
+      Button
+        id: dismantleClearButton
+        anchors.top: dismantleInputLabel.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        margin-top: 8
+        width: 100
+        text: Limpar
+        @onClick: modules.game_crafting.clearDismantleSelectionByUser()
+
+    VerticalSeparator
+      id: dismantleDivider
+      anchors.top: dismantleHelp.bottom
+      anchors.left: dismantleSourceArea.right
+      anchors.bottom: dismantleSourceArea.bottom
+      margin-top: 8
+      margin-left: 12
+
+    Panel
+      id: dismantleResultArea
+      anchors.top: dismantleHelp.bottom
+      anchors.left: dismantleDivider.right
+      anchors.right: parent.right
+      margin-top: 8
+      margin-left: 16
+      margin-right: 14
+      height: 122
+
+      Label
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        margin-top: 4
+        text: Preview
+        text-align: center
+        color: #cfcfcf
+
+      CraftPreviewItem
+        id: dismantlePreview
+        anchors.top: prev.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        margin-top: 10
+        size: 46 46
+
+      Label
+        id: dismantleSelectedName
+        anchors.top: dismantlePreview.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        margin-top: 12
+        margin-left: 12
+        margin-right: 12
+        height: 20
+        text-align: center
+        text-wrap: true
+        text-auto-resize: false
+        color: #d8d8d8
+        text: Nenhum equipamento selecionado.
+
+      Label
+        id: dismantleWarning
+        anchors.top: dismantleSelectedName.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        margin-left: 16
+        margin-right: 16
+        margin-top: 8
+        height: 18
+        text: Aviso: o item sera destruido.
+        text-align: center
+        text-wrap: false
+        text-auto-resize: false
+        color: #d8c173
+        visible: false
+
+    HorizontalSeparator
+      id: dismantleBodySeparator
+      anchors.top: dismantleSourceArea.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-left: 8
+      margin-right: 8
+      margin-top: 10
+
+    Panel
+      id: dismantleMaterialsArea
+      anchors.top: dismantleBodySeparator.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-top: 8
+      margin-left: 18
+      margin-right: 18
+      height: 144
+
+      Label
+        id: dismantleMaterialsTitle
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        margin-top: 2
+        text: Materiais recuperados
+        text-align: center
+        color: #cfcfcf
+
+      ScrollablePanel
+        id: dismantleMaterialsList
+        anchors.top: dismantleMaterialsTitle.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        margin-top: 12
+        margin-left: 10
+        margin-right: 18
+        margin-bottom: 10
+        image-source: /images/ui/panel_flat
+        image-border: 1
+        image-color: #505050
+        background-color: #11111155
+        vertical-scrollbar: dismantleMaterialsScrollbar
+        auto-focus: none
+        padding-top: 8
+        padding-bottom: 10
+        padding-left: 2
+        padding-right: 2
+
+        DismantleMaterialRow
+          id: dismantleRow1
+          anchors.top: parent.top
+          anchors.left: parent.left
+          anchors.right: parent.right
+          margin-top: 6
+          visible: false
+
+          CraftMaterialSlot
+            id: dismantleMaterial1
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            margin-left: 18
+            size: 22 22
+
+          Label
+            id: dismantleName1
+            anchors.left: dismantleMaterial1.right
+            anchors.right: dismantleQty1.left
+            anchors.verticalCenter: parent.verticalCenter
+            margin-left: 14
+            margin-right: 12
+            margin-top: -1
+            height: 18
+            text-align: left
+            text-wrap: false
+            text-auto-resize: false
+            color: #ffffff
+            visible: false
+
+          Label
+            id: dismantleQty1
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            margin-right: 22
+            width: 54
+            margin-top: -1
+            height: 18
+            text-align: right
+            color: #ffffff
+            visible: false
+
+        DismantleMaterialRow
+          id: dismantleRow2
+          anchors.top: dismantleRow1.bottom
+          anchors.left: parent.left
+          anchors.right: parent.right
+          margin-top: 2
+          visible: false
+
+          CraftMaterialSlot
+            id: dismantleMaterial2
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            margin-left: 18
+            size: 22 22
+
+          Label
+            id: dismantleName2
+            anchors.left: dismantleMaterial2.right
+            anchors.right: dismantleQty2.left
+            anchors.verticalCenter: parent.verticalCenter
+            margin-left: 14
+            margin-right: 12
+            margin-top: -1
+            height: 18
+            text-align: left
+            text-wrap: false
+            text-auto-resize: false
+            color: #ffffff
+            visible: false
+
+          Label
+            id: dismantleQty2
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            margin-right: 22
+            width: 54
+            margin-top: -1
+            height: 18
+            text-align: right
+            color: #ffffff
+            visible: false
+
+        DismantleMaterialRow
+          id: dismantleRow3
+          anchors.top: dismantleRow2.bottom
+          anchors.left: parent.left
+          anchors.right: parent.right
+          margin-top: 2
+          visible: false
+
+          CraftMaterialSlot
+            id: dismantleMaterial3
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            margin-left: 18
+            size: 22 22
+
+          Label
+            id: dismantleName3
+            anchors.left: dismantleMaterial3.right
+            anchors.right: dismantleQty3.left
+            anchors.verticalCenter: parent.verticalCenter
+            margin-left: 14
+            margin-right: 12
+            margin-top: -1
+            height: 18
+            text-align: left
+            text-wrap: false
+            text-auto-resize: false
+            color: #ffffff
+            visible: false
+
+          Label
+            id: dismantleQty3
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            margin-right: 22
+            width: 54
+            margin-top: -1
+            height: 18
+            text-align: right
+            color: #ffffff
+            visible: false
+
+        DismantleMaterialRow
+          id: dismantleRow4
+          anchors.top: dismantleRow3.bottom
+          anchors.left: parent.left
+          anchors.right: parent.right
+          margin-top: 2
+          visible: false
+
+          CraftMaterialSlot
+            id: dismantleMaterial4
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            margin-left: 18
+            size: 22 22
+
+          Label
+            id: dismantleName4
+            anchors.left: dismantleMaterial4.right
+            anchors.right: dismantleQty4.left
+            anchors.verticalCenter: parent.verticalCenter
+            margin-left: 14
+            margin-right: 12
+            margin-top: -1
+            height: 18
+            text-align: left
+            text-wrap: false
+            text-auto-resize: false
+            color: #ffffff
+            visible: false
+
+          Label
+            id: dismantleQty4
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            margin-right: 22
+            width: 54
+            margin-top: -1
+            height: 18
+            text-align: right
+            color: #ffffff
+            visible: false
+
+        DismantleMaterialRow
+          id: dismantleRow5
+          anchors.top: dismantleRow4.bottom
+          anchors.left: parent.left
+          anchors.right: parent.right
+          margin-top: 2
+          visible: false
+
+          CraftMaterialSlot
+            id: dismantleMaterial5
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            margin-left: 18
+            size: 22 22
+
+          Label
+            id: dismantleName5
+            anchors.left: dismantleMaterial5.right
+            anchors.right: dismantleQty5.left
+            anchors.verticalCenter: parent.verticalCenter
+            margin-left: 14
+            margin-right: 12
+            margin-top: -1
+            height: 18
+            text-align: left
+            text-wrap: false
+            text-auto-resize: false
+            color: #ffffff
+            visible: false
+
+          Label
+            id: dismantleQty5
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            margin-right: 22
+            width: 54
+            margin-top: -1
+            height: 18
+            text-align: right
+            color: #ffffff
+            visible: false
+
+        DismantleMaterialRow
+          id: dismantleRow6
+          anchors.top: dismantleRow5.bottom
+          anchors.left: parent.left
+          anchors.right: parent.right
+          margin-top: 2
+          visible: false
+
+          CraftMaterialSlot
+            id: dismantleMaterial6
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            margin-left: 18
+            size: 22 22
+
+          Label
+            id: dismantleName6
+            anchors.left: dismantleMaterial6.right
+            anchors.right: dismantleQty6.left
+            anchors.verticalCenter: parent.verticalCenter
+            margin-left: 14
+            margin-right: 12
+            margin-top: -1
+            height: 18
+            text-align: left
+            text-wrap: false
+            text-auto-resize: false
+            color: #ffffff
+            visible: false
+
+          Label
+            id: dismantleQty6
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            margin-right: 22
+            width: 54
+            margin-top: -1
+            height: 18
+            text-align: right
+            color: #ffffff
+            visible: false
+
+      VerticalScrollBar
+        id: dismantleMaterialsScrollbar
+        anchors.top: dismantleMaterialsList.top
+        anchors.bottom: dismantleMaterialsList.bottom
+        anchors.right: parent.right
+        margin-top: 4
+        margin-bottom: 4
+        margin-right: 2
+        step: 24
+        pixels-scroll: true
+
+    HorizontalSeparator
+      id: dismantleFooterSeparator
+      anchors.top: dismantleMaterialsArea.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-left: 6
+      margin-right: 6
+      margin-top: 4
+
+    Button
+      id: dismantleButton
+      anchors.top: dismantleFooterSeparator.bottom
+      anchors.horizontalCenter: parent.horizontalCenter
+      margin-top: 4
+      width: 160
+      text: Desmontar
+      @onClick: modules.game_crafting.dismantleSelectedItem()
+
+    Label
+      id: dismantleStatus
+      anchors.top: dismantleButton.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-left: 16
+      margin-right: 16
+      margin-top: 2
+      height: 16
+      text-align: center
+      text-wrap: false
+      text-auto-resize: false
+      color: #afafaf
+      visible: false
 
   HorizontalSeparator
     id: separator

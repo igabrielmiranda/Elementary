@@ -998,6 +998,8 @@ itemAttrTypes stringToItemAttribute(const std::string& str)
 		return ITEM_ATTRIBUTE_ATTACK_SPEED;
 	} else if (str == "lootcategory") {
 		return ITEM_ATTRIBUTE_LOOTCATEGORY;
+	} else if (str == "craftquality") {
+		return ITEM_ATTRIBUTE_CRAFTQUALITY;
 	}
 	return ITEM_ATTRIBUTE_NONE;
 }
@@ -1398,4 +1400,3 @@ std::string timeFromSeconds(uint64_t time)
 	}
 	return ss.str();
 }
-

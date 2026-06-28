@@ -97,7 +97,8 @@ enum AttrTypes_t {
 	ATTR_TIER = 41,
 	ATTR_LOOT_CATEGORY = 42,
 	ATTR_RARITY_ATTRIBUTES = 43,
-	ATTR_AUTOOPEN = 44
+	ATTR_AUTOOPEN = 44,
+	ATTR_CRAFT_QUALITY = 45
 };
 
 enum Attr_ReadValue {
@@ -517,7 +518,8 @@ class ItemAttributes
 			| ITEM_ATTRIBUTE_ARMOR | ITEM_ATTRIBUTE_HITCHANCE | ITEM_ATTRIBUTE_SHOOTRANGE | ITEM_ATTRIBUTE_OWNER
 			| ITEM_ATTRIBUTE_DURATION | ITEM_ATTRIBUTE_DECAYSTATE | ITEM_ATTRIBUTE_CORPSEOWNER | ITEM_ATTRIBUTE_CHARGES
 			| ITEM_ATTRIBUTE_FLUIDTYPE | ITEM_ATTRIBUTE_DOORID | ITEM_ATTRIBUTE_DECAYTO | ITEM_ATTRIBUTE_WRAPID | ITEM_ATTRIBUTE_STOREITEM
-			| ITEM_ATTRIBUTE_ATTACK_SPEED | ITEM_ATTRIBUTE_LOOTCATEGORY | ITEM_ATTRIBUTE_AUTOOPEN;
+			| ITEM_ATTRIBUTE_ATTACK_SPEED | ITEM_ATTRIBUTE_LOOTCATEGORY | ITEM_ATTRIBUTE_AUTOOPEN | ITEM_ATTRIBUTE_CRAFTQUALITY
+			| ITEM_ATTRIBUTE_RARITYLEVEL;
 		const static uint32_t stringAttributeTypes = ITEM_ATTRIBUTE_DESCRIPTION | ITEM_ATTRIBUTE_TEXT | ITEM_ATTRIBUTE_WRITER
 			| ITEM_ATTRIBUTE_NAME | ITEM_ATTRIBUTE_ARTICLE | ITEM_ATTRIBUTE_PLURALNAME;
 
@@ -826,8 +828,9 @@ class Item : virtual public Thing
 			return items[id].decayTo;
 		}
 
-        void getTooltipData(TooltipDataContainer& tooltipData);
+		void getTooltipData(TooltipDataContainer& tooltipData);
 		void getRarityLevel(TooltipDataContainer& tooltipData);
+		void addTooltipAttribute(ItemTooltipAttributes_t id, int32_t value, int32_t type = -1);
 		void addTooltipData(TooltipDataContainer& tooltipData, ItemTooltipAttributes_t id, int32_t value, int32_t type);
 		int32_t getAttributeValue(ItemTooltipAttributes_t id, int32_t type = -1);
 		static void getTooltipData(Item* item, uint16_t spriteId, uint16_t count, TooltipDataContainer& tooltipData);
@@ -946,6 +949,15 @@ class Item : virtual public Thing
 		uint16_t getLootCategory() const {
 			if (hasAttribute(ITEM_ATTRIBUTE_LOOTCATEGORY)) {
 				return getIntAttr(ITEM_ATTRIBUTE_LOOTCATEGORY);
+			}
+			return 0;
+		}
+
+		void resetCraftQualityGrade() { removeAttribute(ITEM_ATTRIBUTE_CRAFTQUALITY); }
+		void setCraftQualityGrade(uint8_t grade) { setIntAttr(ITEM_ATTRIBUTE_CRAFTQUALITY, grade); }
+		uint8_t getCraftQualityGrade() const {
+			if (hasAttribute(ITEM_ATTRIBUTE_CRAFTQUALITY)) {
+				return static_cast<uint8_t>(getIntAttr(ITEM_ATTRIBUTE_CRAFTQUALITY));
 			}
 			return 0;
 		}

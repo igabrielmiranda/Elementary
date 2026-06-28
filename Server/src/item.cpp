@@ -612,6 +612,16 @@ Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			break;
 		}
 
+		case ATTR_CRAFT_QUALITY: {
+			uint8_t craftQuality;
+			if (!propStream.read<uint8_t>(craftQuality)) {
+				return ATTR_READ_ERROR;
+			}
+
+			setIntAttr(ITEM_ATTRIBUTE_CRAFTQUALITY, craftQuality);
+			break;
+		}
+
 		case ATTR_STOREITEM: {
 			uint8_t storeItem;
 			if (!propStream.read<uint8_t>(storeItem)) {
@@ -915,6 +925,11 @@ void Item::serializeAttr(PropWriteStream& propWriteStream) const
 	if (hasAttribute(ITEM_ATTRIBUTE_AUTOOPEN)) {
 		propWriteStream.write<uint8_t>(ATTR_AUTOOPEN);
 		propWriteStream.write<int8_t>(getIntAttr(ITEM_ATTRIBUTE_AUTOOPEN));
+	}
+
+	if (hasAttribute(ITEM_ATTRIBUTE_CRAFTQUALITY)) {
+		propWriteStream.write<uint8_t>(ATTR_CRAFT_QUALITY);
+		propWriteStream.write<uint8_t>(getIntAttr(ITEM_ATTRIBUTE_CRAFTQUALITY));
 	}
 
 	if (hasAttribute(ITEM_ATTRIBUTE_STOREITEM)) {
@@ -2015,30 +2030,38 @@ void Item::getTooltipData(Item* item, uint16_t spriteId, uint16_t count, Tooltip
 	}
 	else if (it.weaponType != WEAPON_NONE) {
 		if (it.weaponType == WEAPON_DISTANCE && it.ammoType != AMMO_NONE) {
-			if (it.attack != 0) {
-				tooltipData.push_back(TooltipData(TOOLTIP_ATTRIBUTE_ATTACK, it.attack));
+			const int32_t attack = item ? item->getAttack() : it.attack;
+			if (attack != 0) {
+				tooltipData.push_back(TooltipData(TOOLTIP_ATTRIBUTE_ATTACK, attack));
 			}
-			if (it.shootRange != 0) {
-				tooltipData.push_back(TooltipData(TOOLTIP_ATTRIBUTE_SHOOTRANGE, it.shootRange));
+			const uint8_t shootRange = item ? item->getShootRange() : it.shootRange;
+			if (shootRange != 0) {
+				tooltipData.push_back(TooltipData(TOOLTIP_ATTRIBUTE_SHOOTRANGE, shootRange));
 			}
 		}
-		else if (it.weaponType != WEAPON_AMMO && it.weaponType != WEAPON_WAND && (it.attack != 0 || it.defense != 0)) {
-			if (it.attack != 0) {
-				tooltipData.push_back(TooltipData(TOOLTIP_ATTRIBUTE_ATTACK, it.attack));
+		else if (it.weaponType != WEAPON_AMMO && it.weaponType != WEAPON_WAND) {
+			const int32_t attack = item ? item->getAttack() : it.attack;
+			const uint32_t attackSpeed = item ? item->getAttackSpeed() : it.attackSpeed;
+			const int32_t defense = item ? item->getDefense() : it.defense;
+			const int32_t extraDefense = item ? item->getExtraDefense() : it.extraDefense;
+
+			if (attack != 0) {
+				tooltipData.push_back(TooltipData(TOOLTIP_ATTRIBUTE_ATTACK, attack));
 			}
-			if (it.attackSpeed != 0) {
-		        tooltipData.push_back(TooltipData(TOOLTIP_ATTRIBUTE_ATTACK_SPEED, it.attackSpeed));
-	        }
-			if (it.defense != 0) {
-				tooltipData.push_back(TooltipData(TOOLTIP_ATTRIBUTE_DEFENSE, it.defense));
+			if (attackSpeed != 0) {
+				tooltipData.push_back(TooltipData(TOOLTIP_ATTRIBUTE_ATTACK_SPEED, attackSpeed));
 			}
-			if (it.extraDefense != 0) {
-				tooltipData.push_back(TooltipData(TOOLTIP_ATTRIBUTE_EXTRADEFENSE, it.extraDefense));
+			if (defense != 0) {
+				tooltipData.push_back(TooltipData(TOOLTIP_ATTRIBUTE_DEFENSE, defense));
+			}
+			if (extraDefense != 0) {
+				tooltipData.push_back(TooltipData(TOOLTIP_ATTRIBUTE_EXTRADEFENSE, extraDefense));
 			}
 		}
 	}
-	else if (it.armor != 0) {
-		tooltipData.push_back(TooltipData(TOOLTIP_ATTRIBUTE_ARMOR, it.armor));
+	else if (it.armor != 0 || (item && item->getArmor() != 0)) {
+		const int32_t armor = item ? item->getArmor() : it.armor;
+		tooltipData.push_back(TooltipData(TOOLTIP_ATTRIBUTE_ARMOR, armor));
 	}
 	else if (it.isFluidContainer()) {
 		if (item && item->getFluidType() != 0) {
@@ -2128,7 +2151,20 @@ void Item::getTooltipData(Item* item, uint16_t spriteId, uint16_t count, Tooltip
 	}
 
 	if (item) {
-		item->getRarityLevel(tooltipData);
+		const uint8_t craftQualityGrade = item->getCraftQualityGrade();
+		if (craftQualityGrade == 0) {
+			item->getRarityLevel(tooltipData);
+		}
+		if (craftQualityGrade > 0) {
+			tooltipData.push_back(TooltipData(TOOLTIP_ATTRIBUTE_CRAFT_QUALITY, craftQualityGrade));
+
+			if (const auto* specialRarityAttr = item->getCustomAttribute("craft_special_rarity")) {
+				const int64_t specialRarity = specialRarityAttr->getInt();
+				if (specialRarity > 0) {
+					tooltipData.push_back(TooltipData(TOOLTIP_ATTRIBUTE_CRAFT_SPECIAL_RARITY, static_cast<int32_t>(specialRarity)));
+				}
+			}
+		}
 	}
 
 	getTooltipCombats(it, COMBAT_PHYSICALDAMAGE, tooltipData);
@@ -2151,6 +2187,39 @@ void Item::getTooltipData(Item* item, uint16_t spriteId, uint16_t count, Tooltip
 	if (item) {
 		item->getTooltipData(tooltipData);
 	}
+}
+
+void Item::addTooltipAttribute(ItemTooltipAttributes_t id, int32_t value, int32_t type/* = -1*/)
+{
+	if (value == 0) {
+		return;
+	}
+
+	for (auto it = rarityAttributes.begin(); it != rarityAttributes.end(); ++it) {
+		if (it->first != id) {
+			continue;
+		}
+
+		if (type == -1) {
+			if (it->second.second.empty()) {
+				it->second.first += value;
+				return;
+			}
+			continue;
+		}
+
+		if (std::find(it->second.second.begin(), it->second.second.end(), type) != it->second.second.end()) {
+			it->second.first += value;
+			return;
+		}
+	}
+
+	IntegerVector types;
+	if (type != -1) {
+		types.push_back(type);
+	}
+
+	rarityAttributes.emplace(id, std::make_pair(value, types));
 }
 
 void Item::addTooltipData(TooltipDataContainer& tooltipData, ItemTooltipAttributes_t id, int32_t value, int32_t type)

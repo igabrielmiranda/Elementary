@@ -1,5 +1,26 @@
+local rarityVisualColors = {
+  [0] = "#FFFFFFFF",
+  [1] = "#B9F0A8FF",
+  [2] = "#8FD4FFFF",
+  [3] = "#C8A1FFFF",
+  [4] = "#FFD977FF",
+  [5] = "#FF9A9AFF"
+}
+
 function g_game.updateRarityFrames(widget, id)
+  if not widget then
+    return false
+  end
+
   local rarityId = widget:getChildById("rarityId")
+  local color = rarityVisualColors[id or 0] or rarityVisualColors[0]
+
+  widget:setColor(color)
+
+  if not rarityId then
+    return true
+  end
+
   if id == 0 then
     rarityId:hide()
     return true

@@ -46,6 +46,8 @@ m_TooltipFunction.TOOLTIP_ATTRIBUTE_ICE_ATTACK = 38
 m_TooltipFunction.TOOLTIP_ATTRIBUTE_DEATH_ATTACK = 39
 m_TooltipFunction.TOOLTIP_ATTRIBUTE_EARTH_ATTACK = 40
 m_TooltipFunction.TOOLTIP_ATTRIBUTE_HOLY_ATTACK = 41
+m_TooltipFunction.TOOLTIP_ATTRIBUTE_CRAFT_QUALITY = 42
+m_TooltipFunction.TOOLTIP_ATTRIBUTE_CRAFT_SPECIAL_RARITY = 43
 
 m_TooltipFunction.descriptionByAttributeId = {
 	[m_TooltipFunction.TOOLTIP_ATTRIBUTE_ATTACK] = {name = "Attack: %s", icon = 1},
@@ -81,6 +83,13 @@ m_TooltipFunction.descriptionByAttributeId = {
 	[m_TooltipFunction.TOOLTIP_ATTRIBUTE_DEATH_ATTACK] = {name = "Element Death: %s", icon = 35, symbol = true},
 	[m_TooltipFunction.TOOLTIP_ATTRIBUTE_EARTH_ATTACK] = {name = "Element Earth: %s", icon = 34, symbol = true},
 	[m_TooltipFunction.TOOLTIP_ATTRIBUTE_HOLY_ATTACK] = {name = "Element Holy: %s", icon = 36, symbol = true},
+	[m_TooltipFunction.TOOLTIP_ATTRIBUTE_CRAFT_QUALITY] = {name = "Craft Quality: Grau %s", icon = 52, color = "#f0c674"},
+	[m_TooltipFunction.TOOLTIP_ATTRIBUTE_CRAFT_SPECIAL_RARITY] = {
+		[1] = {name = "Qualidade Especial: Normal", icon = 52, color = "#d8d8d8"},
+		[2] = {name = "Qualidade Especial: Raro", icon = 55, color = "#4ea8ff"},
+		[3] = {name = "Qualidade Especial: Excelente", icon = 50, color = "#b46cff"},
+		[4] = {name = "Qualidade Especial: Lendario", icon = 16, color = "#f0b84a"},
+	},
 
 
 	[m_TooltipFunction.TOOLTIP_ATTRIBUTE_RARITY] = {

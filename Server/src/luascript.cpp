@@ -1060,6 +1060,8 @@ void LuaScriptInterface::registerEnums(lua_State* L)
 	REGISTER_ENUM(L, TOOLTIP_ATTRIBUTE_EXPERIENCE);
 	REGISTER_ENUM(L, TOOLTIP_ATTRIBUTE_INCREMENTS);
 	REGISTER_ENUM(L, TOOLTIP_ATTRIBUTE_EXTRADEFENSE);
+	REGISTER_ENUM(L, TOOLTIP_ATTRIBUTE_CRAFT_QUALITY);
+	REGISTER_ENUM(L, TOOLTIP_ATTRIBUTE_CRAFT_SPECIAL_RARITY);
 
 	// Enums
 	REGISTER_ENUM(L, BATTLEPASS_QUEST_KILL_MONSTER);
@@ -1533,6 +1535,7 @@ void LuaScriptInterface::registerEnums(lua_State* L)
 	REGISTER_ENUM(L, ITEM_ATTRIBUTE_ATTACK_SPEED);
 	REGISTER_ENUM(L, ITEM_ATTRIBUTE_LOOTCATEGORY);
 	REGISTER_ENUM(L, ITEM_ATTRIBUTE_RARITYLEVEL);
+	REGISTER_ENUM(L, ITEM_ATTRIBUTE_CRAFTQUALITY);
 
 	REGISTER_ENUM(L, ITEM_TYPE_DEPOT);
 	REGISTER_ENUM(L, ITEM_TYPE_MAILBOX);
@@ -2393,6 +2396,7 @@ void LuaScriptInterface::registerFunctions()
 	registerMethod("Item", "getAttribute", LuaScriptInterface::luaItemGetAttribute);
 	registerMethod("Item", "setAttribute", LuaScriptInterface::luaItemSetAttribute);
 	registerMethod("Item", "removeAttribute", LuaScriptInterface::luaItemRemoveAttribute);
+	registerMethod("Item", "addTooltipAttribute", LuaScriptInterface::luaItemAddTooltipAttribute);
 	registerMethod("Item", "getCustomAttribute", LuaScriptInterface::luaItemGetCustomAttribute);
 	registerMethod("Item", "setCustomAttribute", LuaScriptInterface::luaItemSetCustomAttribute);
 	registerMethod("Item", "removeCustomAttribute", LuaScriptInterface::luaItemRemoveCustomAttribute);
@@ -7243,6 +7247,23 @@ int LuaScriptInterface::luaItemRemoveAttribute(lua_State* L)
 		reportErrorFunc(L, "Attempt to erase protected key \"uid\"");
 	}
 	pushBoolean(L, ret);
+	return 1;
+}
+
+int LuaScriptInterface::luaItemAddTooltipAttribute(lua_State* L)
+{
+	// item:addTooltipAttribute(attributeId, value[, type])
+	Item* item = getUserdata<Item>(L, 1);
+	if (!item) {
+		lua_pushnil(L);
+		return 1;
+	}
+
+	const auto attributeId = static_cast<ItemTooltipAttributes_t>(getNumber<uint32_t>(L, 2));
+	const int32_t value = getNumber<int32_t>(L, 3);
+	const int32_t type = getNumber<int32_t>(L, 4, -1);
+	item->addTooltipAttribute(attributeId, value, type);
+	pushBoolean(L, true);
 	return 1;
 }
 

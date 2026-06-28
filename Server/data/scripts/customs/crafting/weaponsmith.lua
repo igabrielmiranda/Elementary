@@ -322,6 +322,35 @@ Crafting.weaponsmith = {
         }
     },
     {
+        id = 28134,
+        name = "Amber Sabre [Quality]",
+        recipeKey = "amber_sabre_quality",
+        level = 28,
+        cost = 0,
+        count = 1,
+        qualityCraft = true,
+        qualityRequirements = {
+            {materialType = "metal", count = 20},
+            {materialType = "madeira", count = 10},
+            {materialType = "cristal", count = 5},
+        }
+    },
+    {
+        id = 2189,
+        name = "Orbe Elemental [Quality]",
+        recipeKey = "elemental_orb",
+        level = 26,
+        cost = 0,
+        count = 1,
+        qualityCraft = true,
+        specialRarityProfile = "elemental_orb",
+        qualityRequirements = {
+            {materialType = "metal", count = 20},
+            {materialType = "cristal", count = 20},
+            {materialType = "algodao", count = 10},
+        }
+    },
+    {
         id = 28135,
         name = "Amber Axe",
         level = 28,
