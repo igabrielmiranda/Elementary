@@ -105,7 +105,7 @@ local experienceTooltip = 'You have %d%% to advance to level %d.'
 local settings = {}
 local COMPACT_TOPBAR_WIDTH = 420
 local COMPACT_TOPBAR_CONTENT_WIDTH = COMPACT_TOPBAR_WIDTH - 8
-local COMPACT_TOPBAR_MARGIN_BOTTOM = 4
+local COMPACT_TOPBAR_MARGIN_BOTTOM = 22
 local COMPACT_SKILL_PANEL_HEIGHT = 16
 
 local function positionTopBar()

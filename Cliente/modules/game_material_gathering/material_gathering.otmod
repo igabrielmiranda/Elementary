@@ -1,0 +1,10 @@
+Module
+  name: game_material_gathering
+  description: Isolated material gathering click handler
+  author: Codex
+  sandboxed: true
+  autoload: true
+  dependencies: [ game_interface ]
+  scripts: [ material_gathering ]
+  @onLoad: init()
+  @onUnload: terminate()

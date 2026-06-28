@@ -2,6 +2,17 @@ function init()
   local files
   local loaded_files = {}
   local layout = g_resources:getLayout()
+  local allowedDataFonts = {
+    ["cipsoftFont.otfont"] = true,
+    ["sans-bold-16px.otfont"] = true,
+    ["terminus-10px.otfont"] = true,
+    ["terminus-14px-bold.otfont"] = true,
+    ["verdana-11px-antialised.otfont"] = true,
+    ["verdana-11px-monochrome.otfont"] = true,
+    ["verdana-11px-rounded.otfont"] = true,
+    ["verdana-9px.otfont"] = true,
+    ["verdana-9px-bold.otfont"] = true,
+  }
   
   local style_files = {}
   if layout:len() > 0 then
@@ -41,8 +52,9 @@ function init()
   end
 
   files = g_resources.listDirectoryFiles('/data/fonts')
+  table.sort(files)
   for _,file in pairs(files) do
-    if g_resources.isFileType(file, 'otfont') and not loaded_files[file] then
+    if allowedDataFonts[file] and g_resources.isFileType(file, 'otfont') and not loaded_files[file] then
       g_fonts.importFont('/data/fonts/' .. file)
     end
   end
