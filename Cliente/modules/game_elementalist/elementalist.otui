@@ -1,0 +1,689 @@
+ElementalistCard < UIButton
+  size: 362 92
+  image-source: /images/ui/panel_flat
+  image-border: 1
+  image-color: #3d3d3d
+  background-color: #101010ee
+  color: #ffffff
+  focusable: false
+
+  $hover:
+    image-color: #666666
+
+  UIWidget
+    id: highlightBar
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 4
+    image-source: /images/ui/panel_flat
+    image-border: 1
+    image-color: #2a2a2a
+    background-color: #2a2a2a
+    phantom: true
+
+  Label
+    id: accent
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin-left: 12
+    margin-top: 12
+    font: verdana-11px-monochrome
+    color: #5a5a5a
+    text: "--"
+    text-auto-resize: true
+
+  UIWidget
+    id: selectionBadge
+    anchors.right: parent.right
+    anchors.top: parent.top
+    margin-right: 12
+    margin-top: 10
+    size: 28 28
+    image-source: /images/ui/panel_flat
+    image-border: 1
+    image-color: #343434
+    background-color: #101010ee
+    phantom: true
+
+    Label
+      id: marker
+      anchors.centerIn: parent
+      font: verdana-11px-monochrome
+      color: #ffffff
+      text: ""
+      text-auto-resize: true
+      phantom: true
+
+  Label
+    id: role
+    anchors.right: selectionBadge.left
+    anchors.top: selectionBadge.top
+    margin-right: 8
+    color: #7a7a7a
+    text: ""
+    text-auto-resize: true
+
+  Label
+    id: title
+    anchors.left: accent.left
+    anchors.right: role.left
+    anchors.top: parent.top
+    margin-top: 30
+    margin-right: 10
+    color: #8d8d8d
+    text-auto-resize: true
+
+  Label
+    id: description
+    anchors.left: accent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-right: 12
+    margin-bottom: 10
+    color: #6d6d6d
+    text-wrap: true
+    text-auto-resize: true
+
+ElementalistSpellEntry < Panel
+  height: 54
+  image-source: /images/ui/panel_flat
+  image-border: 1
+  image-color: #454545
+  background-color: #0f0f0fcc
+  focusable: true
+
+  $hover:
+    image-color: #727272
+
+  $focus:
+    image-color: #c2953e
+    background-color: #241f13ee
+
+  UIWidget
+    id: iconBg
+    anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    margin-left: 8
+    size: 32 32
+    image-source: /images/ui/panel_flat
+    image-border: 1
+    image-color: #5f5f5f
+    background-color: #0f0f0fee
+    phantom: true
+
+  Label
+    id: iconText
+    anchors.centerIn: iconBg
+    font: verdana-11px-monochrome
+    color: #ffffff
+    text: "*"
+    phantom: true
+
+  Label
+    id: element
+    anchors.right: parent.right
+    anchors.top: parent.top
+    margin-right: 10
+    margin-top: 7
+    color: #f0c674
+    text-auto-resize: true
+    phantom: true
+
+  Label
+    id: status
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-right: 10
+    margin-bottom: 7
+    color: #92d36e
+    text-auto-resize: true
+    phantom: true
+
+  Label
+    id: name
+    anchors.left: iconBg.right
+    anchors.right: element.left
+    anchors.top: parent.top
+    margin-left: 10
+    margin-right: 8
+    margin-top: 7
+    color: #ffffff
+    text-auto-resize: true
+    phantom: true
+
+  Label
+    id: summary
+    anchors.left: name.left
+    anchors.right: status.left
+    anchors.bottom: parent.bottom
+    margin-right: 8
+    margin-bottom: 7
+    color: #d0c5b2
+    text-auto-resize: true
+    phantom: true
+
+ElementalistInfoLabel < Label
+  width: 118
+  color: #cfcfcf
+  text-auto-resize: true
+
+ElementalistInfoValue < Label
+  width: 246
+  color: #ffffff
+  text-auto-resize: true
+
+MainWindow
+  id: elementalistWindow
+  text: Habilidades Elementais
+  size: 780 640
+  @onEscape: modules.game_elementalist.hide()
+  @onClose: modules.game_elementalist.hide()
+
+  Label
+    id: introLabel
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: 12
+    margin-left: 16
+    margin-right: 16
+    text: Escolha ate 2 elementos para definir suas habilidades elementais.
+    text-align: center
+    text-wrap: true
+    color: #cfcfcf
+
+  HorizontalSeparator
+    id: topSeparator
+    anchors.top: introLabel.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: 10
+    margin-left: 14
+    margin-right: 14
+
+  ElementalistCard
+    id: fireCard
+    anchors.top: topSeparator.bottom
+    anchors.left: parent.left
+    margin-top: 12
+    margin-left: 16
+    @onClick: modules.game_elementalist.toggleElement(1)
+
+  ElementalistCard
+    id: waterCard
+    anchors.top: fireCard.top
+    anchors.right: parent.right
+    margin-right: 16
+    @onClick: modules.game_elementalist.toggleElement(2)
+
+  ElementalistCard
+    id: earthCard
+    anchors.top: fireCard.bottom
+    anchors.left: fireCard.left
+    margin-top: 10
+    @onClick: modules.game_elementalist.toggleElement(3)
+
+  ElementalistCard
+    id: airCard
+    anchors.top: waterCard.bottom
+    anchors.right: waterCard.right
+    margin-top: 10
+    @onClick: modules.game_elementalist.toggleElement(4)
+
+  Panel
+    id: currentPanel
+    anchors.top: earthCard.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: 12
+    margin-left: 16
+    margin-right: 16
+    height: 70
+    image-source: /images/ui/panel_flat
+    image-border: 1
+    image-color: #565656
+    background-color: #19191988
+
+    Label
+      anchors.left: parent.left
+      anchors.top: parent.top
+      margin-left: 12
+      margin-top: 12
+      text: 1. Elemento Primario:
+      color: #cfcfcf
+      text-auto-resize: true
+
+    Label
+      id: currentPrimaryValue
+      anchors.left: prev.right
+      anchors.top: prev.top
+      margin-left: 8
+      text: Nenhum
+      color: #ffffff
+      text-auto-resize: true
+
+    Label
+      anchors.left: parent.left
+      anchors.bottom: parent.bottom
+      margin-left: 12
+      margin-bottom: 12
+      text: 2. Elemento Secundario:
+      color: #cfcfcf
+      text-auto-resize: true
+
+    Label
+      id: currentSecondaryValue
+      anchors.left: prev.right
+      anchors.bottom: prev.bottom
+      margin-left: 8
+      text: Nenhum
+      color: #ffffff
+      text-auto-resize: true
+
+    Label
+      anchors.right: parent.right
+      anchors.verticalCenter: parent.verticalCenter
+      margin-right: 14
+      text: Clique nos cards para definir a ordem 1 e 2.
+      color: #9f9f9f
+      text-auto-resize: true
+
+  Panel
+    id: skillsPanel
+    anchors.top: currentPanel.bottom
+    anchors.left: currentPanel.left
+    anchors.right: currentPanel.right
+    anchors.bottom: feedbackLabel.top
+    margin-top: 12
+    margin-bottom: 12
+    image-source: /images/ui/panel_flat
+    image-border: 1
+    image-color: #565656
+    background-color: #19191988
+
+    Panel
+      id: skillListsColumn
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.bottom: parent.bottom
+      margin-top: 10
+      margin-left: 10
+      margin-bottom: 10
+      width: 312
+
+      Panel
+        id: unlockedSection
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: 176
+        image-source: /images/ui/panel_flat
+        image-border: 1
+        image-color: #4c4c4c
+        background-color: #141414aa
+
+        Label
+          anchors.top: parent.top
+          anchors.left: parent.left
+          anchors.right: parent.right
+          margin-top: 8
+          text: Habilidades liberadas
+          text-align: center
+          color: #ffffff
+          text-auto-resize: true
+
+        Label
+          anchors.top: prev.bottom
+          anchors.left: parent.left
+          anchors.right: parent.right
+          margin-top: 2
+          text: Ativas com a selecao atual
+          text-align: center
+          color: #92d36e
+          text-auto-resize: true
+
+        ScrollablePanel
+          id: unlockedSkillsList
+          anchors.top: prev.bottom
+          anchors.left: parent.left
+          anchors.bottom: parent.bottom
+          margin-top: 8
+          margin-left: 10
+          margin-bottom: 10
+          width: 272
+          padding: 2
+          layout: verticalBox
+            spacing: 4
+          vertical-scrollbar: unlockedSkillsScrollBar
+
+        VerticalScrollBar
+          id: unlockedSkillsScrollBar
+          anchors.top: unlockedSkillsList.top
+          anchors.bottom: unlockedSkillsList.bottom
+          anchors.left: unlockedSkillsList.right
+          margin-left: 4
+          step: 40
+          pixels-scroll: true
+
+        Label
+          id: unlockedEmptyLabel
+          anchors.left: unlockedSkillsList.left
+          anchors.right: unlockedSkillsList.right
+          anchors.verticalCenter: unlockedSkillsList.verticalCenter
+          text: Nenhuma habilidade liberada no momento.
+          text-align: center
+          color: #8f8f8f
+          visible: false
+
+      HorizontalSeparator
+        id: sectionsDivider
+        anchors.top: unlockedSection.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        margin-top: 8
+
+      Panel
+        id: blockedSection
+        anchors.top: sectionsDivider.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        margin-top: 8
+        image-source: /images/ui/panel_flat
+        image-border: 1
+        image-color: #4c4c4c
+        background-color: #121212aa
+
+        Label
+          anchors.top: parent.top
+          anchors.left: parent.left
+          anchors.right: parent.right
+          margin-top: 8
+          text: Habilidades bloqueadas
+          text-align: center
+          color: #ffffff
+          text-auto-resize: true
+
+        Label
+          anchors.top: prev.bottom
+          anchors.left: parent.left
+          anchors.right: parent.right
+          margin-top: 2
+          text: Exibidas para planejamento
+          text-align: center
+          color: #9f9f9f
+          text-auto-resize: true
+
+        ScrollablePanel
+          id: blockedSkillsList
+          anchors.top: prev.bottom
+          anchors.left: parent.left
+          anchors.bottom: parent.bottom
+          margin-top: 8
+          margin-left: 10
+          margin-bottom: 10
+          width: 272
+          padding: 2
+          layout: verticalBox
+            spacing: 4
+          vertical-scrollbar: blockedSkillsScrollBar
+
+        VerticalScrollBar
+          id: blockedSkillsScrollBar
+          anchors.top: blockedSkillsList.top
+          anchors.bottom: blockedSkillsList.bottom
+          anchors.left: blockedSkillsList.right
+          margin-left: 4
+          step: 40
+          pixels-scroll: true
+
+        Label
+          id: blockedEmptyLabel
+          anchors.left: blockedSkillsList.left
+          anchors.right: blockedSkillsList.right
+          anchors.verticalCenter: blockedSkillsList.verticalCenter
+          text: Nenhuma habilidade bloqueada configurada.
+          text-align: center
+          color: #8f8f8f
+          visible: false
+
+    VerticalSeparator
+      id: skillsDivider
+      anchors.top: skillListsColumn.top
+      anchors.bottom: skillListsColumn.bottom
+      anchors.left: skillListsColumn.right
+      margin-left: 10
+
+    Panel
+      id: skillDetailsPanel
+      anchors.top: skillListsColumn.top
+      anchors.left: skillsDivider.right
+      anchors.bottom: skillListsColumn.bottom
+      anchors.right: parent.right
+      margin-left: 10
+      margin-right: 10
+      image-source: /images/ui/panel_flat
+      image-border: 1
+      image-color: #474747
+      background-color: #15151599
+
+      Label
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        margin-top: 10
+        text: Painel da habilidade
+        text-align: center
+        color: #ffffff
+        text-auto-resize: true
+
+      Label
+        id: skillNameValue
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        margin-top: 34
+        margin-left: 12
+        margin-right: 12
+        text: Nenhuma habilidade selecionada
+        text-align: center
+        color: #f0c674
+        text-auto-resize: true
+
+      Label
+        id: skillWordsValue
+        anchors.top: skillNameValue.bottom
+        anchors.left: skillNameValue.left
+        anchors.right: skillNameValue.right
+        margin-top: 4
+        text: ""
+        text-align: center
+        color: #cfcfcf
+        text-auto-resize: true
+        visible: false
+
+      HorizontalSeparator
+        id: skillDetailsSeparator
+        anchors.top: skillWordsValue.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        margin-top: 10
+        margin-left: 12
+        margin-right: 12
+
+      Panel
+        id: skillDetailsContent
+        anchors.top: skillDetailsSeparator.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        margin-top: 10
+        margin-left: 14
+        margin-right: 14
+        margin-bottom: 12
+        layout: verticalBox
+          spacing: 6
+
+        Panel
+          id: skillElementRow
+          width: 372
+          height: 18
+          layout: horizontalBox
+            spacing: 8
+
+          ElementalistInfoLabel
+            text: Elemento:
+
+          ElementalistInfoValue
+            id: skillElementValue
+            text: -
+
+        Panel
+          id: skillStatusRow
+          width: 372
+          height: 18
+          layout: horizontalBox
+            spacing: 8
+
+          ElementalistInfoLabel
+            text: Status:
+
+          ElementalistInfoValue
+            id: skillStatusValue
+            text: -
+
+        Panel
+          id: skillRequirementRow
+          width: 372
+          height: 18
+          layout: horizontalBox
+            spacing: 8
+
+          ElementalistInfoLabel
+            text: Requisito:
+
+          ElementalistInfoValue
+            id: skillRequirementValue
+            text: -
+
+        Panel
+          id: skillEffectRow
+          width: 372
+          height: 18
+          layout: horizontalBox
+            spacing: 8
+          visible: false
+
+          ElementalistInfoLabel
+            text: Effect:
+
+          ElementalistInfoValue
+            id: skillEffectValue
+            text: -
+
+        Panel
+          id: skillManaRow
+          width: 372
+          height: 18
+          layout: horizontalBox
+            spacing: 8
+          visible: false
+
+          ElementalistInfoLabel
+            text: Mana:
+
+          ElementalistInfoValue
+            id: skillManaValue
+            text: -
+
+        Panel
+          id: skillCooldownRow
+          width: 372
+          height: 18
+          layout: horizontalBox
+            spacing: 8
+          visible: false
+
+          ElementalistInfoLabel
+            text: Cooldown:
+
+          ElementalistInfoValue
+            id: skillCooldownValue
+            text: -
+
+        Panel
+          id: skillLevelRow
+          width: 372
+          height: 18
+          layout: horizontalBox
+            spacing: 8
+          visible: false
+
+          ElementalistInfoLabel
+            text: Level necessario:
+
+          ElementalistInfoValue
+            id: skillLevelValue
+            text: -
+
+        Panel
+          id: skillDescriptionRow
+          width: 372
+          height: 96
+          layout: verticalBox
+            spacing: 4
+
+          Label
+            text: Descricao:
+            color: #cfcfcf
+            text-auto-resize: true
+
+          Label
+            id: skillDescriptionValue
+            width: 372
+            height: 70
+            text: Selecione uma habilidade para ver os detalhes.
+            text-wrap: true
+            color: #ffffff
+
+  Label
+    id: feedbackLabel
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-left: 18
+    margin-right: 18
+    margin-bottom: 44
+    height: 18
+    text: ""
+    text-align: center
+    color: #d8d8d8
+    visible: false
+
+  Button
+    id: clearButton
+    anchors.bottom: parent.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-bottom: 12
+    margin-right: 124
+    width: 118
+    text: Limpar selecao
+    @onClick: modules.game_elementalist.clearSelection()
+
+  Button
+    id: confirmButton
+    anchors.bottom: clearButton.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    width: 118
+    text: Confirmar
+    @onClick: modules.game_elementalist.confirmSelection()
+
+  Button
+    id: closeButton
+    anchors.bottom: confirmButton.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-left: 124
+    width: 118
+    text: Fechar
+    @onClick: modules.game_elementalist.hide()

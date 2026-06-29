@@ -68,6 +68,9 @@ combatDeath:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, "onGetDeathValues")
 combat:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, "onGetFormulaValues")
 
 function onCastSpell(creature, variant, isHotkey)
+	if not ElementalistCanCastSpell(creature, ELEMENT_WATER) then
+		return false
+	end
 	local player = Player(creature)
 	if player and player:getStorageValue(37019) == 1 then
         combatDeath:execute(creature, variant)

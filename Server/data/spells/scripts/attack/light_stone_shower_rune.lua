@@ -15,5 +15,8 @@ end
 combat:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, "onGetFormulaValues")
 
 function onCastSpell(creature, variant, isHotkey)
+	if not ElementalistCanCastSpell(creature, ELEMENT_EARTH) then
+		return false
+	end
 	return combat:execute(creature, variant)
 end

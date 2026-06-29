@@ -78,6 +78,9 @@ combat1:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, "onGet1FormulaValues")
 combat:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, "onGetFormulaValues")
 
 function onCastSpell(creature, variant)
+	if not ElementalistCanCastSpell(creature, ELEMENT_WATER) then
+		return false
+	end
 	local player = Player(creature)
 	if player and player:getStorageValue(37047) == 1 then
         combat4:execute(creature, variant)

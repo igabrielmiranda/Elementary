@@ -5,6 +5,9 @@ combat:setParameter(COMBAT_PARAM_AGGRESSIVE, false)
 combat:setArea(createCombatArea(AREA_CIRCLE3X3))
 
 function onCastSpell(creature, variant)
+	if not ElementalistCanCastSpell(creature, ELEMENT_WATER) then
+		return false
+	end
 	local min = (creature:getLevel() / 5) + (creature:getMagicLevel() * 4.6) + 100
 	local max = (creature:getLevel() / 5) + (creature:getMagicLevel() * 9.6) + 125
 	for _, target in ipairs(combat:getTargets(creature, variant)) do

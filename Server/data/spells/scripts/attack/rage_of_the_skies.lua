@@ -116,6 +116,9 @@ combatHoly:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, "onGetHolyValues")
 combat:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, "onGetFormulaValues")
 
 function onCastSpell(creature, variant)
+	if not ElementalistCanCastSpell(creature, ELEMENT_AIR) then
+		return false
+	end
 	local player = Player(creature)
 	if player and player:getStorageValue(37027) == 1 then
         combatIce:execute(creature, variant)

@@ -4,6 +4,9 @@ combat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_CARNIPHILA)
 combat:setParameter(COMBAT_PARAM_DISTANCEEFFECT, CONST_ANI_EARTH)
 
 function onCastSpell(creature, variant)
+	if not ElementalistCanCastSpell(creature, ELEMENT_EARTH) then
+		return false
+	end
 	local min = (creature:getLevel() / 80) + (creature:getMagicLevel() * 0.55) + 6
 	local max = (creature:getLevel() / 80) + (creature:getMagicLevel() * 0.75) + 7
 	local damage = math.random(math.floor(min) * 1000, math.floor(max) * 1000) / 1000

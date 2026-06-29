@@ -1,0 +1,10 @@
+Module
+  name: game_elementalist
+  description: Elementalist elemental selection interface
+  author: Codex
+  sandboxed: true
+  autoload: true
+  dependencies: [ game_interface, gamelib ]
+  scripts: [ elementalist ]
+  @onLoad: init()
+  @onUnload: terminate()

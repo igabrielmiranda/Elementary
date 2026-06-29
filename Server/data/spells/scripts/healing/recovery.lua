@@ -10,5 +10,8 @@ condition:setParameter(CONDITION_PARAM_BUFF_SPELL, true)
 combat:addCondition(condition)
 
 function onCastSpell(creature, variant)
+	if not ElementalistCanCastSpell(creature, ELEMENT_WATER) then
+		return false
+	end
 	return combat:execute(creature, variant)
 end
