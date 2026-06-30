@@ -1,0 +1,524 @@
+CustomSkillBarWindow < Panel
+  id: customSkillBar
+  size: 412 64
+  padding: 6
+  visible: false
+  focusable: false
+  phantom: false
+  background-color: #0b0b0be6
+  border-width: 1
+  border-color: #3a3a3a
+
+  Label
+    id: titleLabel
+    anchors.left: parent.left
+    anchors.top: parent.top
+    height: 14
+    color: #d8d8d8
+    font: verdana-11px-rounded
+    text: SKILL BAR
+
+  Button
+    id: testButton
+    anchors.right: parent.right
+    anchors.top: parent.top
+    size: 54 18
+    text: TESTE
+    visible: false
+
+  UIWidget
+    id: dragHandle
+    anchors.left: parent.left
+    anchors.right: testButton.left
+    anchors.top: parent.top
+    margin-right: 6
+    height: 18
+    focusable: false
+    phantom: false
+    draggable: true
+    change-cursor-image: true
+    cursor: pointer
+
+  UIWidget
+    id: slotsPanel
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: titleLabel.bottom
+    margin-top: 6
+    height: 36
+    clipping: true
+    focusable: false
+    layout:
+      type: horizontalBox
+      spacing: 4
+
+CustomSkillBarSlot < UIButton
+  size: 36 36
+  padding: 0
+  text: ''
+  clipping: true
+  focusable: false
+  phantom: false
+  background-color: #151515
+  border-width: 1
+  border-color: #303030
+  change-cursor-image: true
+  cursor: pointer
+
+  $hover:
+    background-color: #1d1d1d
+    border-color: #575757
+
+  $pressed:
+    background-color: #111111
+    border-color: #8a633a
+
+  UIWidget
+    id: icon
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.top: parent.top
+    margin-top: 4
+    size: 24 24
+    image-size: 24 24
+    image-source: /images/game/spells/cooldowns
+    image-clip: 40 0 20 20
+    phantom: true
+
+  Label
+    id: slotNumber
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-bottom: 2
+    height: 11
+    color: #f0f0f0
+    font: verdana-11px-monochrome
+    text-align: center
+    phantom: true
+
+  Label
+    id: hotkeyLabel
+    anchors.top: parent.top
+    anchors.right: parent.right
+    margin-top: 2
+    margin-right: 2
+    height: 11
+    padding-left: 2
+    padding-right: 2
+    color: #d8c49d
+    font: verdana-11px-monochrome
+    background-color: #0b0b0bdd
+    visible: false
+    phantom: true
+
+CustomSkillChoiceBadge < Label
+  phantom: true
+  focusable: false
+  height: 18
+  padding-left: 6
+  padding-right: 6
+  text-align: center
+  font: verdana-11px-monochrome
+  color: #f2e6cf
+  background-color: #3a2819
+  border-width: 1
+  border-color: #7c5d39
+
+CustomSkillChoiceFieldLabel < Label
+  focusable: false
+  height: 16
+  color: #cda76f
+  font: verdana-11px-rounded
+
+CustomSkillChoiceFieldValue < Label
+  focusable: false
+  height: 16
+  color: #f0e1c4
+  font: verdana-11px-monochrome
+
+CustomSkillChoiceEntry < UIButton
+  height: 76
+  margin-top: 6
+  anchors.left: parent.left
+  anchors.right: parent.right
+  focusable: true
+  phantom: false
+  clipping: true
+  padding: 8
+  background-color: #14100d
+  border-width: 1
+  border-color: #32261c
+
+  $hover !checked:
+    background-color: #1f1813
+    border-color: #5e432a
+
+  $checked:
+    background-color: #3a2818
+    border-color: #d0a167
+
+  UIWidget
+    id: icon
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin-left: 2
+    margin-top: 2
+    size: 36 36
+    image-size: 32 32
+    image-source: /images/game/spells/cooldowns
+    phantom: true
+
+  Label
+    id: nameLabel
+    anchors.left: icon.right
+    anchors.right: parent.right
+    anchors.top: parent.top
+    margin-left: 10
+    margin-right: 118
+    height: 16
+    color: #f3e4c2
+    font: verdana-11px-rounded
+    phantom: true
+
+  Label
+    id: wordsLabel
+    anchors.left: nameLabel.left
+    anchors.right: parent.right
+    anchors.top: nameLabel.bottom
+    margin-top: 3
+    margin-right: 118
+    height: 14
+    color: #cab89a
+    font: verdana-11px-monochrome
+    phantom: true
+
+  Label
+    id: metaLabel
+    anchors.left: nameLabel.left
+    anchors.right: parent.right
+    anchors.top: wordsLabel.bottom
+    margin-top: 8
+    margin-right: 118
+    height: 14
+    color: #8f826f
+    font: verdana-11px-monochrome
+    phantom: true
+
+  CustomSkillChoiceBadge
+    id: statusLabel
+    width: 104
+    anchors.top: parent.top
+    anchors.right: parent.right
+    margin-top: 1
+    phantom: true
+
+CustomSkillChoiceEmpty < Label
+  height: 42
+  margin-top: 16
+  margin-left: 8
+  margin-right: 8
+  color: #998a76
+  text-wrap: true
+  text-align: center
+  anchors.left: parent.left
+  anchors.right: parent.right
+
+CustomSkillChoiceWindow < MainWindow
+  id: customSkillChoiceWindow
+  text: Escolher Skill
+  size: 760 560
+  background-color: #090706
+  @onEscape: modules.game_custom_skillbar.closeChoiceWindow()
+
+  Label
+    id: slotLabel
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin-left: 14
+    margin-top: 10
+    height: 18
+    color: #f2deb4
+    font: verdana-11px-rounded
+    text: Slot
+
+  Label
+    id: searchLabel
+    anchors.left: parent.left
+    anchors.top: slotLabel.bottom
+    margin-left: 14
+    margin-top: 12
+    height: 16
+    color: #c8a96d
+    font: verdana-11px-rounded
+    text: Busca
+
+  TextEdit
+    id: searchInput
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: searchLabel.bottom
+    margin-left: 14
+    margin-right: 14
+    margin-top: 4
+    height: 24
+    placeholder: Buscar skill ou palavra magica
+    @onTextChange: modules.game_custom_skillbar.onChoiceSearchTextChange(self)
+
+  FlatPanel
+    id: contentPanel
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: searchInput.bottom
+    anchors.bottom: footerPanel.top
+    margin-left: 14
+    margin-right: 14
+    margin-top: 10
+    margin-bottom: 10
+    background-color: #090706
+
+    FlatPanel
+      id: listPanel
+      anchors.left: parent.left
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      width: 346
+      padding: 8
+      background-color: #0d0a08
+      border-width: 1
+      border-color: #45311f
+
+      Label
+        id: listTitleLabel
+        anchors.left: parent.left
+        anchors.top: parent.top
+        height: 18
+        color: #e3c48d
+        font: verdana-11px-rounded
+        text: Skills disponiveis
+
+      Label
+        id: resultLabel
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: listTitleLabel.bottom
+        margin-top: 3
+        height: 16
+        color: #a5947b
+        font: verdana-11px-monochrome
+        text: 0 skills
+
+      VerticalScrollBar
+        id: skillListScrollBar
+        anchors.top: resultLabel.bottom
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        margin-top: 10
+        pixels-scroll: true
+        step: 48
+
+      ScrollablePanel
+        id: skillList
+        anchors.left: parent.left
+        anchors.right: skillListScrollBar.left
+        anchors.top: resultLabel.bottom
+        anchors.bottom: parent.bottom
+        margin-top: 10
+        margin-right: 6
+        vertical-scrollbar: skillListScrollBar
+        layout:
+          type: verticalBox
+          spacing: 2
+
+    FlatPanel
+      id: detailPanel
+      anchors.left: listPanel.right
+      anchors.right: parent.right
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      margin-left: 12
+      padding: 8
+      background-color: #0d0a08
+      border-width: 1
+      border-color: #45311f
+
+      Label
+        id: detailPanelTitle
+        anchors.left: parent.left
+        anchors.top: parent.top
+        height: 18
+        color: #e3c48d
+        font: verdana-11px-rounded
+        text: Detalhes da skill
+
+      FlatPanel
+        id: summaryPanel
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: detailPanelTitle.bottom
+        margin-top: 10
+        height: 104
+        padding: 8
+        background-color: #110d0c
+        border-width: 1
+        border-color: #443120
+
+        UIWidget
+          id: detailIcon
+          anchors.left: parent.left
+          anchors.top: parent.top
+          margin-left: 2
+          margin-top: 2
+          size: 52 52
+          image-size: 40 40
+          image-source: /images/game/spells/cooldowns
+          image-clip: 40 0 20 20
+
+        Label
+          id: detailName
+          anchors.left: detailIcon.right
+          anchors.right: parent.right
+          anchors.top: detailIcon.top
+          margin-left: 12
+          margin-right: 126
+          height: 18
+          color: #f4e5c4
+          font: verdana-11px-rounded
+          text: Selecione uma skill
+
+        CustomSkillChoiceBadge
+          id: detailStatusLabel
+          width: 114
+          anchors.top: detailIcon.top
+          anchors.right: parent.right
+          phantom: true
+
+        Label
+          id: detailWords
+          anchors.left: detailName.left
+          anchors.right: parent.right
+          anchors.top: detailName.bottom
+          margin-top: 4
+          margin-right: 126
+          height: 14
+          color: #cab89a
+          font: verdana-11px-monochrome
+          text: -
+
+      CustomSkillChoiceFieldLabel
+        anchors.left: parent.left
+        anchors.top: summaryPanel.bottom
+        margin-top: 12
+        text: Tipo
+
+      CustomSkillChoiceFieldValue
+        id: detailTypeValue
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: prev.bottom
+        margin-top: 2
+        text: -
+
+      CustomSkillChoiceFieldLabel
+        anchors.left: parent.left
+        anchors.top: detailTypeValue.bottom
+        margin-top: 8
+        text: Grupo
+
+      CustomSkillChoiceFieldValue
+        id: detailGroupValue
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: prev.bottom
+        margin-top: 2
+        text: -
+
+      CustomSkillChoiceFieldLabel
+        anchors.left: parent.left
+        anchors.top: detailGroupValue.bottom
+        margin-top: 8
+        text: Arma necessaria
+
+      CustomSkillChoiceFieldValue
+        id: detailRequiredItemValue
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: prev.bottom
+        margin-top: 2
+        height: 28
+        text-wrap: true
+        text: -
+
+      CustomSkillChoiceFieldLabel
+        anchors.left: parent.left
+        anchors.top: detailRequiredItemValue.bottom
+        margin-top: 8
+        text: Descricao
+
+      CustomSkillChoiceFieldValue
+        id: detailDescriptionValue
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: prev.bottom
+        margin-top: 2
+        height: 74
+        text-wrap: true
+        text: Selecione uma skill na lista para ver os detalhes.
+
+  FlatPanel
+    id: footerPanel
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-left: 14
+    margin-right: 14
+    margin-bottom: 12
+    height: 56
+    padding: 8
+    background-color: #0d0a08
+    border-width: 1
+    border-color: #45311f
+
+    Label
+      id: hotkeyLabel
+      anchors.left: parent.left
+      anchors.top: parent.top
+      height: 14
+      color: #c8a96d
+      font: verdana-11px-rounded
+      text: Tecla do slot
+
+    ComboBox
+      id: hotkeyCombo
+      anchors.left: parent.left
+      anchors.top: hotkeyLabel.bottom
+      width: 132
+      height: 22
+      margin-top: 3
+
+    Button
+      id: selectButton
+      anchors.right: clearButton.left
+      anchors.bottom: parent.bottom
+      width: 100
+      margin-right: 8
+      text: Selecionar
+      @onClick: modules.game_custom_skillbar.confirmChoiceSelection()
+
+    Button
+      id: clearButton
+      anchors.right: closeButton.left
+      anchors.bottom: parent.bottom
+      width: 104
+      margin-right: 8
+      text: Limpar Slot
+      @onClick: modules.game_custom_skillbar.onClearChoiceButtonClick()
+
+    Button
+      id: closeButton
+      anchors.right: parent.right
+      anchors.bottom: parent.bottom
+      width: 74
+      text: Fechar
+      @onClick: modules.game_custom_skillbar.closeChoiceWindow()
+
+CustomSkillBarWindow

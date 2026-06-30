@@ -1,0 +1,14 @@
+Module
+  name: game_custom_skillbar
+  description: Isolated custom skill bar overlay
+  author: Codex
+  sandboxed: true
+  autoload: true
+  scripts: [ custom_skillbar ]
+  @onLoad: init()
+  @onUnload: terminate()
+  dependencies:
+    - gamelib
+    - game_interface
+    - game_console
+    - game_textmessage
