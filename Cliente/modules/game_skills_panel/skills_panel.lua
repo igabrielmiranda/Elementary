@@ -14,19 +14,19 @@ local CATEGORY_HEADER_LABELS = {
 }
 local CATEGORY_COLORS = {
   Ofensiva = {
-    background = '#5a2f1c',
-    border = '#a55c33',
-    text = '#f2d7bf'
+    background = '#38231f',
+    border = '#7c5248',
+    text = '#efd9d3'
   },
   Defensiva = {
-    background = '#1d4537',
-    border = '#3d8b72',
-    text = '#d5f0e5'
+    background = '#1b392f',
+    border = '#417f6b',
+    text = '#d7efe5'
   },
   Utilidade = {
-    background = '#2b3543',
-    border = '#5f7f9f',
-    text = '#d9e5f1'
+    background = '#23303c',
+    border = '#5a738b',
+    text = '#dae6f1'
   }
 }
 local CATEGORY_ICON_CLIPS = {
@@ -35,43 +35,43 @@ local CATEGORY_ICON_CLIPS = {
   Utilidade = '40 0 20 20'
 }
 local SKILL_ENTRY_DEFAULT_STYLE = {
-  background = '#14100d',
-  border = '#32261c'
+  background = '#14181c',
+  border = '#2d3239'
 }
 local SKILL_ENTRY_SELECTED_STYLE = {
-  background = '#3a2818',
-  border = '#d0a167'
+  background = '#222831',
+  border = '#677383'
 }
 local STATUS_STYLES = {
   liberada = {
     label = 'Liberada',
-    background = '#305638',
-    border = '#6fb17b',
-    text = '#e1f3e4'
+    background = '#1c4035',
+    border = '#408a70',
+    text = '#d8f2e7'
   },
   arma_incorreta = {
     label = 'Arma incorreta',
-    background = '#5a3122',
-    border = '#c67a54',
-    text = '#f5ddd1'
+    background = '#412823',
+    border = '#906152',
+    text = '#f1ddd7'
   },
   nivel_insuficiente = {
     label = 'Nivel insuficiente',
-    background = '#5b4421',
-    border = '#c79a4f',
-    text = '#f5e7c8'
+    background = '#443821',
+    border = '#968157',
+    text = '#efe5d0'
   },
   premium_necessario = {
     label = 'Premium necessario',
-    background = '#56461e',
-    border = '#b49a4f',
-    text = '#f0e7c9'
+    background = '#3f3521',
+    border = '#8b7b52',
+    text = '#ebe2cd'
   },
   indisponivel = {
     label = 'Indisponivel',
-    background = '#40363a',
-    border = '#86737b',
-    text = '#efe6e9'
+    background = '#232830',
+    border = '#59616c',
+    text = '#dbe0e7'
   }
 }
 local TYPE_LABELS = {
@@ -1650,11 +1650,11 @@ local function createSkillOverviewSection(parent, spell)
   setWidgetPassThrough(icon)
 
   createDetailText('Label', section, spell.name, 66, 28, titleWidth, 18, {
-    color = '#f4e5c4',
+    color = '#edf1f4',
     font = 'verdana-11px-rounded'
   })
   createDetailText('Label', section, spell.words, 66, 48, titleWidth, 24, {
-    color = '#cab89a',
+    color = '#b3bbc4',
     font = 'verdana-11px-monochrome',
     wrap = true
   })
@@ -2349,6 +2349,8 @@ local function onLevelChange()
 end
 
 function init()
+  g_ui.importStyle('/modules/game_custom_skillbar/modern_skill_theme.otui')
+
   connect(g_game, {
     onGameStart = online,
     onGameEnd = offline

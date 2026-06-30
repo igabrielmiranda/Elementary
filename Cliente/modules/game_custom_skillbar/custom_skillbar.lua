@@ -39,15 +39,15 @@ local GROUP_LABELS = {
 local CHOICE_STATUS_STYLES = {
   liberada = {
     label = 'Liberada',
-    background = '#305638',
-    border = '#6fb17b',
-    text = '#def2e4'
+    background = '#1c4035',
+    border = '#3f8970',
+    text = '#d8f2e6'
   },
   indisponivel = {
     label = 'Indisponivel',
-    background = '#40363a',
-    border = '#86737b',
-    text = '#efe6e9'
+    background = '#232830',
+    border = '#59616c',
+    text = '#dbe0e7'
   }
 }
 
@@ -990,8 +990,8 @@ local function updateSlotWidget(slotIndex)
   if slotData then
     slotWidget:setTooltip(buildSlotTooltip(slotData))
     local available = getSkillAvailability(slotData)
-    slotWidget:setBackgroundColor(available and '#232323' or '#151515')
-    slotWidget:setBorderColor(available and '#8a633a' or '#40363a')
+    slotWidget:setBackgroundColor(available and '#1a1f25' or '#14181c')
+    slotWidget:setBorderColor(available and '#627080' or '#313740')
     if slotWidget.iconWidget and available then
       applySkillIconToWidget(slotWidget.iconWidget, slotData.icon, slotData.name, slotData.iconResolvedFrom, 'slot')
       slotWidget.iconWidget:show()
@@ -1000,8 +1000,8 @@ local function updateSlotWidget(slotIndex)
     end
   else
     slotWidget:setTooltip(buildEmptySlotTooltip(slotIndex))
-    slotWidget:setBackgroundColor('#151515')
-    slotWidget:setBorderColor('#303030')
+    slotWidget:setBackgroundColor('#14181c')
+    slotWidget:setBorderColor('#2f343b')
     if slotWidget.iconWidget then
       slotWidget.iconWidget:hide()
     end
@@ -1563,6 +1563,8 @@ end
 local function createChoiceEntry(parent, skill)
   local entry = g_ui.createWidget('CustomSkillChoiceEntry', parent)
   entry.skillData = skill
+  entry:setHeight(78)
+  entry:setChecked(false)
   entry.nameLabel:setText(skill.name)
   entry.wordsLabel:setText(skill.words)
   entry.metaLabel:setText(string.format('Arma: %s', skill.requiredItemName ~= '' and skill.requiredItemName or '-'))
@@ -1981,6 +1983,8 @@ end
 
 function init()
   logInfo('init')
+
+  g_ui.importStyle('/modules/game_custom_skillbar/modern_skill_theme.otui')
 
   connect(g_game, {
     onGameStart = online,

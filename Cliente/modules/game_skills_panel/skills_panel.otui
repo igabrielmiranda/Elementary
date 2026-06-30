@@ -1,140 +1,77 @@
-SkillPanelTabButton < Button
-  height: 30
-  width: 164
-  text-offset: 0 2
-  font: verdana-11px-rounded
-  color: #cdb88f
-  background-color: #130f0d
-  border-width: 1
-  border-color: #4a3725
-
-  $hover !on:
-    background-color: #221911
-    color: #f2e1bd
-
-  $on:
-    background-color: #3b2818
-    color: #f3e4c2
-    border-color: #93683f
-
-SkillCategoryFilterButton < Button
+SkillPanelTabButton < ModernButton
   height: 28
-  width: 94
+  width: 158
   text-offset: 0 2
-  font: verdana-11px-rounded
-  color: #af9c7a
-  background-color: #110d0c
-  border-width: 1
-  border-color: #33261b
+  color: #c7cdd4
+  background-color: #14181c
+  border-color: #30363d
 
   $hover !on:
-    background-color: #1c1510
-    color: #ead8b2
+    background-color: #1c2127
+    color: #eef1f4
+    border-color: #4b545e
 
   $on:
-    background-color: #342315
-    color: #f3e4c2
-    border-color: #8e6641
+    background-color: #20262e
+    color: #f2f5f8
+    border-color: #697584
 
-SkillCategoryHeader < Label
+SkillCategoryFilterButton < ModernButton
+  height: 26
+  width: 90
+  text-offset: 0 2
+  color: #aeb5be
+  background-color: #12161a
+  border-color: #2f353b
+
+  $hover !on:
+    background-color: #1a1f25
+    color: #e4e8ec
+    border-color: #49515a
+
+  $on:
+    background-color: #1f252d
+    color: #f1f4f7
+    border-color: #64707f
+
+SkillCategoryHeader < ModernHeaderStrip
   height: 22
   margin-top: 8
   anchors.left: parent.left
   anchors.right: parent.right
-  padding-left: 8
-  font: verdana-11px-rounded
-  color: #e1c18a
-  background-color: #20160f
-  border-width: 1
-  border-color: #43301f
-  text-offset: 0 3
 
-SkillEmptyLabel < Label
+SkillEmptyLabel < ModernMutedText
   height: 52
   margin-top: 16
   margin-left: 6
   margin-right: 6
-  color: #998a76
   text-wrap: true
   text-align: center
   anchors.left: parent.left
   anchors.right: parent.right
 
-SkillBadge < Label
-  phantom: true
-  focusable: false
-  height: 18
-  padding-left: 4
-  padding-right: 4
-  text-align: center
-  font: verdana-11px-monochrome
-  color: #f2e6cf
-  background-color: #3a2819
-  border-width: 1
-  border-color: #7c5d39
+SkillBadge < ModernBadge
 
-SkillStatChip < Label
-  phantom: true
-  focusable: false
-  width: 88
-  height: 18
-  padding-left: 4
-  padding-right: 4
-  text-align: center
-  font: verdana-11px-monochrome
-  color: #dbc9a7
-  background-color: #16110e
-  border-width: 1
-  border-color: #35281d
+SkillStatChip < ModernChip
+  width: 84
 
-SkillSectionCard < FlatPanel
+SkillSectionCard < ModernCard
   anchors.left: parent.left
   anchors.right: parent.right
-  padding: 8
-  background-color: #110d0c
-  border-width: 1
-  border-color: #443120
 
-SkillSectionTitle < Label
+SkillSectionTitle < ModernTitle
   focusable: false
-  height: 18
-  color: #e2c289
-  font: verdana-11px-rounded
 
-SkillDetailLabel < Label
+SkillDetailLabel < ModernFieldLabel
   focusable: false
   width: 112
-  height: 16
   text-align: right
-  color: #cda76f
-  font: verdana-11px-rounded
 
-SkillDetailValue < Label
+SkillDetailValue < ModernFieldValue
   focusable: false
-  height: 16
-  color: #f0e1c4
-  font: verdana-11px-monochrome
-  text-wrap: true
 
-SkillListEntry < UIButton
-  height: 88
-  margin-top: 6
-  anchors.left: parent.left
-  anchors.right: parent.right
-  focusable: true
-  phantom: false
-  padding: 8
-  background-color: #14100d
-  border-width: 1
-  border-color: #32261c
-
-  $hover !checked:
-    background-color: #1f1813
-    border-color: #5e432a
-
-  $checked:
-    background-color: #2c1f15
-    border-color: #a97c47
+SkillListEntry < ModernListEntry
+  height: 84
 
   UIWidget
     id: icon
@@ -156,7 +93,7 @@ SkillListEntry < UIButton
     margin-left: 10
     margin-right: 144
     height: 16
-    color: #f3e4c2
+    color: #eef1f4
     font: verdana-11px-rounded
     phantom: true
 
@@ -176,7 +113,7 @@ SkillListEntry < UIButton
     margin-top: 3
     margin-right: 144
     height: 14
-    color: #cab89a
+    color: #b6bcc4
     font: verdana-11px-monochrome
     phantom: true
 
@@ -209,25 +146,22 @@ SkillListEntry < UIButton
     margin-left: 6
     phantom: true
 
-MainWindow
+ModernWindow
   id: skillsPanelWindow
   text: Painel de Skills
   size: 1000 640
-  background-color: #090706
   @onEscape: modules.game_skills_panel.hide()
 
-  Label
+  ModernTitle
     id: panelTitleLabel
     anchors.top: parent.top
     anchors.left: parent.left
     margin-top: 10
     margin-left: 14
     height: 20
-    color: #f2deb4
-    font: verdana-11px-rounded
     text: Grimorio de Skills
 
-  Label
+  ModernMutedText
     id: panelSubtitleLabel
     anchors.top: panelTitleLabel.bottom
     anchors.left: panelTitleLabel.left
@@ -235,8 +169,6 @@ MainWindow
     margin-top: 2
     margin-right: 14
     height: 16
-    color: #a89780
-    font: verdana-11px-monochrome
     text: Catalogo visual com filtros por categoria, disponibilidade e preparo para arma equipada.
 
   SkillPanelTabButton
@@ -255,13 +187,15 @@ MainWindow
     margin-left: 8
     @onClick: modules.game_skills_panel.selectAvailableTab()
 
-  HorizontalSeparator
+  UIWidget
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: tabAllSkills.bottom
     margin-top: 10
+    height: 1
+    background-color: #282d34
 
-  Label
+  ModernMutedText
     id: tabHintLabel
     anchors.left: parent.left
     anchors.right: parent.right
@@ -271,11 +205,9 @@ MainWindow
     margin-right: 14
     height: 30
     text-wrap: true
-    color: #b0a28f
-    font: verdana-11px-monochrome
     text: -
 
-  FlatPanel
+  ModernCard
     id: listPanel
     anchors.left: parent.left
     anchors.top: tabHintLabel.bottom
@@ -284,38 +216,30 @@ MainWindow
     margin-left: 14
     margin-top: 8
     margin-bottom: 48
-    padding: 8
-    background-color: #0d0a08
-    border-width: 1
-    border-color: #45311f
 
-    Label
+    ModernTitle
       id: listTitleLabel
       anchors.left: parent.left
       anchors.top: parent.top
       height: 18
-      color: #e3c48d
-      font: verdana-11px-rounded
       text: Todas as Skills
 
-    Label
+    ModernMutedText
       id: listResultLabel
       anchors.left: parent.left
       anchors.right: parent.right
       anchors.top: listTitleLabel.bottom
       margin-top: 3
       height: 16
-      color: #a5947b
-      font: verdana-11px-monochrome
       text: -
 
-    Label
+    SkillDetailLabel
       anchors.left: parent.left
       anchors.top: listResultLabel.bottom
       margin-top: 10
       height: 16
-      color: #c8a96d
-      font: verdana-11px-rounded
+      width: 96
+      text-align: left
       text: Filtro visual
 
     SkillCategoryFilterButton
@@ -350,7 +274,7 @@ MainWindow
       margin-left: 6
       @onClick: modules.game_skills_panel.selectUtilityCategoryFilter()
 
-    TextEdit
+    ModernInput
       id: searchInput
       anchors.top: filterAllCategories.bottom
       anchors.left: parent.left
@@ -360,7 +284,7 @@ MainWindow
       placeholder: Buscar skill ou palavra magica
       @onTextChange: modules.game_skills_panel.onSearchTextChange(self)
 
-    FlatPanel
+    ModernCard
       id: paginationPanel
       anchors.top: searchInput.bottom
       anchors.left: parent.left
@@ -368,11 +292,10 @@ MainWindow
       margin-top: 10
       height: 30
       padding: 3
-      background-color: #120e0c
-      border-width: 1
-      border-color: #33261b
+      background-color: #12161a
+      border-color: #2e343b
 
-      Button
+      ModernButton
         id: previousPageButton
         text: Anterior
         width: 88
@@ -383,7 +306,7 @@ MainWindow
         margin-top: 1
         @onClick: modules.game_skills_panel.selectPreviousPage()
 
-      Label
+      ModernMutedText
         id: pageInfoLabel
         anchors.left: previousPageButton.right
         anchors.right: parent.right
@@ -393,11 +316,9 @@ MainWindow
         margin-top: 4
         height: 18
         text-align: center
-        color: #b6a691
-        font: verdana-11px-monochrome
         text: Pagina 1/1
 
-      Button
+      ModernButton
         id: nextPageButton
         text: Proxima
         width: 88
@@ -407,7 +328,7 @@ MainWindow
         margin-right: 3
         @onClick: modules.game_skills_panel.selectNextPage()
 
-    VerticalScrollBar
+    ModernScrollBar
       id: skillsListScrollBar
       anchors.top: paginationPanel.bottom
       anchors.right: parent.right
@@ -416,7 +337,7 @@ MainWindow
       pixels-scroll: true
       step: 48
 
-    ScrollablePanel
+    ModernList
       id: skillsList
       anchors.top: paginationPanel.bottom
       anchors.left: parent.left
@@ -429,7 +350,7 @@ MainWindow
         type: verticalBox
         spacing: 2
 
-  FlatPanel
+  ModernCard
     id: detailPanel
     anchors.left: listPanel.right
     anchors.right: parent.right
@@ -437,17 +358,11 @@ MainWindow
     anchors.bottom: listPanel.bottom
     margin-left: 12
     margin-right: 14
-    padding: 8
-    background-color: #0d0a08
-    border-width: 1
-    border-color: #45311f
 
-    Label
+    ModernTitle
       anchors.left: parent.left
       anchors.top: parent.top
       height: 18
-      color: #e3c48d
-      font: verdana-11px-rounded
       text: Detalhes e disponibilidade
 
     Panel
@@ -478,18 +393,18 @@ MainWindow
           margin-right: 2
           virtual: true
 
-        Label
+        SkillDetailLabel
           anchors.left: parent.left
           anchors.right: equippedItemPreview.left
           anchors.top: prev.bottom
           margin-top: 8
           margin-right: 8
           height: 14
-          color: #caa972
-          font: verdana-11px-rounded
+          width: 96
+          text-align: left
           text: Item equipado
 
-        Label
+        SkillDetailValue
           id: equippedItemLabel
           anchors.left: parent.left
           anchors.right: equippedItemPreview.left
@@ -497,19 +412,15 @@ MainWindow
           margin-top: 2
           margin-right: 8
           height: 16
-          color: #f0e1c4
-          font: verdana-11px-monochrome
           text: -
 
-        Label
+        ModernMutedText
           id: equippedItemHint
           anchors.left: parent.left
           anchors.right: parent.right
           anchors.top: equippedItemLabel.bottom
           margin-top: 4
           height: 28
-          color: #998973
-          font: verdana-11px-monochrome
           text-wrap: true
           text: -
 
@@ -520,16 +431,16 @@ MainWindow
           margin-top: 8
           virtual: true
 
-        Label
+        SkillDetailLabel
           anchors.left: rightHandItem.right
           anchors.top: rightHandItem.top
           margin-left: 8
           height: 14
-          color: #caa972
-          font: verdana-11px-rounded
+          width: 96
+          text-align: left
           text: Mao Direita
 
-        Label
+        SkillDetailValue
           id: rightHandLabel
           anchors.left: prev.left
           anchors.right: parent.horizontalCenter
@@ -537,9 +448,7 @@ MainWindow
           margin-top: 2
           margin-right: 8
           height: 28
-          color: #f0e1c4
           text-wrap: true
-          font: verdana-11px-monochrome
           text: -
 
         Item
@@ -549,25 +458,23 @@ MainWindow
           margin-left: 6
           virtual: true
 
-        Label
+        SkillDetailLabel
           anchors.left: leftHandItem.right
           anchors.top: leftHandItem.top
           margin-left: 8
           height: 14
-          color: #caa972
-          font: verdana-11px-rounded
+          width: 96
+          text-align: left
           text: Mao Esquerda
 
-        Label
+        SkillDetailValue
           id: leftHandLabel
           anchors.left: prev.left
           anchors.right: parent.right
           anchors.top: prev.bottom
           margin-top: 2
           height: 28
-          color: #f0e1c4
           text-wrap: true
-          font: verdana-11px-monochrome
           text: -
 
       SkillSectionCard
@@ -589,7 +496,7 @@ MainWindow
           image-size: 40 40
           image-clip: 40 0 20 20
 
-        Label
+        ModernTitle
           id: selectedSkillName
           anchors.left: selectedSkillIcon.right
           anchors.right: parent.right
@@ -597,8 +504,6 @@ MainWindow
           margin-left: 12
           margin-right: 160
           height: 18
-          color: #f4e5c4
-          font: verdana-11px-rounded
           text: Selecione uma skill
 
         SkillBadge
@@ -608,7 +513,7 @@ MainWindow
           anchors.right: parent.right
           phantom: true
 
-        Label
+        ModernMutedText
           id: selectedSkillWords
           anchors.left: selectedSkillName.left
           anchors.right: parent.right
@@ -616,8 +521,6 @@ MainWindow
           margin-top: 4
           margin-right: 160
           height: 14
-          color: #cab89a
-          font: verdana-11px-monochrome
           text: -
 
         SkillBadge
@@ -628,15 +531,13 @@ MainWindow
           margin-top: 4
           phantom: true
 
-        Label
+        ModernMutedText
           id: selectedSkillMeta
           anchors.left: selectedSkillName.left
           anchors.right: parent.right
           anchors.top: selectedSkillWords.bottom
           margin-top: 8
           height: 14
-          color: #9d8c74
-          font: verdana-11px-monochrome
           text: -
 
       SkillSectionCard
@@ -832,7 +733,7 @@ MainWindow
           anchors.top: parent.top
           text: Status e Notas
 
-        Label
+        ModernMutedText
           id: detailStatusLabel
           anchors.left: parent.left
           anchors.right: parent.right
@@ -840,11 +741,9 @@ MainWindow
           margin-top: 10
           height: 64
           text-wrap: true
-          color: #a99a84
-          font: verdana-11px-monochrome
           text: -
 
-  Label
+  ModernMutedText
     id: dataSourceLabel
     anchors.left: parent.left
     anchors.right: parent.right
@@ -854,11 +753,9 @@ MainWindow
     margin-bottom: 12
     height: 24
     text-wrap: true
-    color: #8f826f
-    font: verdana-11px-monochrome
     text: Fonte: -
 
-  Button
+  ModernButtonPrimary
     id: fixBarButton
     text: Fixar na barra
     width: 138
@@ -868,7 +765,7 @@ MainWindow
     margin-bottom: 10
     @onClick: modules.game_skills_panel.onFixButtonClick()
 
-  Button
+  ModernButton
     id: closeButton
     text: Fechar
     width: 88

@@ -1,0 +1,320 @@
+ModernWindow < MainWindow
+  image-source:
+  image-border: 0
+  padding-top: 18
+  padding-left: 14
+  padding-right: 14
+  padding-bottom: 14
+  background-color: #101114
+  border-width: 1
+  border-color: #343a42
+  color: #dfe3e8
+  font: verdana-11px-rounded
+  text-offset: 0 4
+
+  $dragging:
+    opacity: 0.96
+
+ModernPanel < Panel
+  background-color: #111317
+  border-width: 1
+  border-color: #2d3239
+
+ModernCard < FlatPanel
+  background-color: #15181c
+  border-width: 1
+  border-color: #30353c
+  padding: 8
+
+ModernTitle < Label
+  height: 16
+  color: #edf0f3
+  font: verdana-11px-rounded
+
+ModernMutedText < Label
+  color: #969da6
+  font: verdana-11px-monochrome
+
+ModernFieldLabel < Label
+  height: 16
+  color: #b0b7c0
+  font: verdana-11px-rounded
+
+ModernFieldValue < Label
+  height: 16
+  color: #e3e7eb
+  font: verdana-11px-monochrome
+  text-wrap: true
+
+ModernBadge < Label
+  phantom: true
+  focusable: false
+  height: 18
+  padding-left: 6
+  padding-right: 6
+  text-align: center
+  font: verdana-11px-monochrome
+  color: #e8ebef
+  background-color: #1b2027
+  border-width: 1
+  border-color: #39414b
+
+ModernChip < Label
+  phantom: true
+  focusable: false
+  height: 18
+  padding-left: 6
+  padding-right: 6
+  text-align: center
+  font: verdana-11px-monochrome
+  color: #cdd3da
+  background-color: #13171c
+  border-width: 1
+  border-color: #2e343c
+
+ModernHeaderStrip < Label
+  height: 22
+  padding-left: 8
+  color: #dce1e7
+  font: verdana-11px-rounded
+  background-color: #161a1f
+  border-width: 1
+  border-color: #2c3138
+  text-offset: 0 3
+
+ModernButton < Button
+  height: 24
+  padding-left: 8
+  padding-right: 8
+  font: verdana-11px-rounded
+  color: #e7eaee
+  text-offset: 0 1
+  image-source:
+  image-border: 0
+  background-color: #171b20
+  border-width: 1
+  border-color: #313740
+
+  $hover !disabled:
+    background-color: #1e2329
+    border-color: #4c555f
+
+  $pressed:
+    background-color: #111419
+    border-color: #6c7683
+
+  $disabled:
+    color: #888f99
+    background-color: #121418
+    border-color: #24292f
+
+ModernButtonPrimary < ModernButton
+  background-color: #20262d
+  border-color: #5f6977
+
+  $hover !disabled:
+    background-color: #272f37
+    border-color: #798595
+
+  $pressed:
+    background-color: #181d23
+    border-color: #97a2b1
+
+ModernInput < TextEdit
+  size: 86 24
+  padding-left: 6
+  padding-right: 6
+  padding-top: 4
+  padding-bottom: 3
+  font: verdana-11px-rounded
+  color: #eef1f4
+  text-offset: 0 3
+  image-source:
+  image-border: 0
+  background-color: #0f1115
+  border-width: 1
+  border-color: #2e333a
+  placeholder-color: #6f7780
+  selection-color: #111418
+  selection-background-color: #b7bfc7
+
+  $hover !disabled:
+    border-color: #464d56
+
+  $focus:
+    border-color: #667281
+
+  $disabled:
+    color: #8a919a
+    background-color: #0d0f12
+    border-color: #22262c
+
+ModernComboBoxPopupMenuButton < ComboBoxPopupMenuButton
+  height: 22
+  margin: 1
+  font: verdana-11px-rounded
+  text-align: left
+  text-offset: 6 0
+  color: #e5e8ec
+  background-color: #14181c
+
+  $hover !disabled:
+    color: #f4f6f8
+    background-color: #20252c
+
+  $disabled:
+    color: #8b929c
+
+ModernComboBoxPopupMenu < ComboBoxPopupMenu
+  image-source:
+  image-border: 0
+  background-color: #101114
+  border-width: 1
+  border-color: #313740
+
+ModernComboBox < ComboBox
+  size: 104 22
+  font: verdana-11px-rounded
+  color: #e5e8ec
+  text-offset: 6 0
+  text-align: left
+  image-source:
+  image-border: 0
+  background-color: #12161a
+  border-width: 1
+  border-color: #30353c
+
+  $hover !disabled:
+    background-color: #1a1e24
+    border-color: #4b535d
+
+  $on:
+    background-color: #20262d
+    border-color: #6a7583
+
+  $disabled:
+    color: #8b929c
+    background-color: #0f1215
+    border-color: #23272d
+
+ModernList < ScrollablePanel
+  clipping: true
+  background-color: alpha
+
+ModernScrollBarSlider < UIButton
+  id: sliderButton
+  anchors.centerIn: parent
+  size: 8 18
+  image-source:
+  image-border: 0
+  background-color: #2a3038
+  border-width: 1
+  border-color: #4d5560
+
+  $hover:
+    background-color: #333a44
+    border-color: #667180
+
+  $pressed:
+    background-color: #1e232a
+    border-color: #808b99
+
+ModernScrollBarValueLabel < Label
+  id: valueLabel
+  anchors.fill: parent
+  color: #00000000
+  text-align: center
+
+ModernScrollBar < UIScrollBar
+  orientation: vertical
+  width: 10
+  height: 40
+  image-source:
+  image-border: 0
+  background-color: #0e1014
+  border-width: 1
+  border-color: #252b32
+  pixels-scroll: true
+
+  UIButton
+    id: decrementButton
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 9
+    image-source:
+    image-border: 0
+    background-color: #15191e
+
+    $hover:
+      background-color: #1d2228
+
+    $pressed:
+      background-color: #101317
+
+  UIButton
+    id: incrementButton
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 9
+    image-source:
+    image-border: 0
+    background-color: #15191e
+
+    $hover:
+      background-color: #1d2228
+
+    $pressed:
+      background-color: #101317
+
+  ModernScrollBarSlider
+  ModernScrollBarValueLabel
+
+ModernSlot < UIButton
+  size: 36 36
+  padding: 0
+  text: ''
+  clipping: true
+  focusable: false
+  phantom: false
+  image-source:
+  image-border: 0
+  background-color: #14181c
+  border-width: 1
+  border-color: #2f343b
+  change-cursor-image: true
+  cursor: pointer
+
+  $hover:
+    background-color: #1b2026
+    border-color: #4c555f
+
+  $pressed:
+    background-color: #101317
+    border-color: #6a7582
+
+ModernListEntry < UIButton
+  margin-top: 6
+  anchors.left: parent.left
+  anchors.right: parent.right
+  focusable: true
+  phantom: false
+  clipping: true
+  padding: 8
+  image-source:
+  image-border: 0
+  background-color: #14181c
+  border-width: 1
+  border-color: #2d3239
+
+  $hover !checked:
+    background-color: #1b2026
+    border-color: #474f59
+
+  $checked:
+    background-color: #222831
+    border-color: #677383
+
+  $focus:
+    border-color: #596473
