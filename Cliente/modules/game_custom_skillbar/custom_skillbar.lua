@@ -1,5 +1,6 @@
 local MODULE_TAG = '[CustomSkillBar]'
-local SLOT_COUNT = 10
+local SLOT_COUNT = 20
+local SLOTS_PER_ROW = 10
 local SLOT_SIZE = 36
 local SLOT_SPACING = 4
 local BAR_POSITION_X = 20
@@ -12,7 +13,10 @@ local PLACEHOLDER_ICON = {
   source = '/images/game/spells/cooldowns',
   clip = '40 0 20 20'
 }
-local SLOT_LABELS = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'}
+local SLOT_LABELS = {
+  '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+  'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10'
+}
 
 local HOTKEY_OPTIONS = {
   { text = 'Sem', value = '' }
@@ -53,7 +57,10 @@ for index = 1, 9 do
   ALLOWED_HOTKEYS[value] = true
 end
 
-for index = 1, 9 do
+table.insert(HOTKEY_OPTIONS, { text = '0', value = '0' })
+ALLOWED_HOTKEYS['0'] = true
+
+for index = 1, 10 do
   local value = 'F' .. index
   table.insert(HOTKEY_OPTIONS, { text = value, value = value })
   ALLOWED_HOTKEYS[value] = true
@@ -64,6 +71,8 @@ local choiceWindow = nil
 local positionEvent = nil
 local activeCharacterName = nil
 local slotsPanelWidget = nil
+local topRowWidget = nil
+local bottomRowWidget = nil
 local dragHandleWidget = nil
 local testButton = nil
 local hoveredSlotIndex = nil
@@ -488,7 +497,13 @@ local function getSlotDisplayLabel(slotIndex)
 end
 
 local function getDefaultHotkeyForSlot(slotIndex)
-  return sanitizeHotkey(getSlotDisplayLabel(slotIndex))
+  return ''
+end
+
+local function hasConfiguredHotkey(slotData)
+  return type(slotData) == 'table'
+    and slotData.hotkeyConfigured == true
+    and sanitizeHotkey(slotData.hotkey) ~= ''
 end
 
 local function normalizeBarPosition(value)
@@ -821,12 +836,14 @@ local function filterSkills(searchText)
 end
 
 local function buildStoredSlotData(skill, hotkey)
+  local normalizedHotkey = sanitizeHotkey(hotkey)
   return {
     name = skill.name,
     words = skill.words,
     icon = cloneTable(skill.icon or PLACEHOLDER_ICON),
     iconResolvedFrom = skill.iconResolvedFrom or 'fallback',
-    hotkey = sanitizeHotkey(hotkey),
+    hotkey = normalizedHotkey,
+    hotkeyConfigured = normalizedHotkey ~= '',
     needWeapon = skill.needWeapon == true,
     requiredItemId = skill.requiredItemId,
     requiredItemIds = cloneTable(skill.requiredItemIds),
@@ -850,6 +867,7 @@ local function serializeSlotData(slotData)
     icon = cloneTable(slotData.icon),
     iconResolvedFrom = slotData.iconResolvedFrom or 'fallback',
     hotkey = sanitizeHotkey(slotData.hotkey),
+    hotkeyConfigured = slotData.hotkeyConfigured == true and sanitizeHotkey(slotData.hotkey) ~= '',
     needWeapon = slotData.needWeapon == true,
     requiredItemId = slotData.requiredItemId,
     requiredItemIds = cloneTable(slotData.requiredItemIds),
@@ -862,7 +880,7 @@ local function serializeSlotData(slotData)
   }
 end
 
-local function normalizeStoredSlotData(slotData)
+local function normalizeStoredSlotData(slotData, slotIndex)
   if type(slotData) ~= 'table' then
     return nil
   end
@@ -871,12 +889,19 @@ local function normalizeStoredSlotData(slotData)
     return nil
   end
 
+  local normalizedHotkey = sanitizeHotkey(slotData.hotkey)
+  local hotkeyConfigured = slotData.hotkeyConfigured == true and normalizedHotkey ~= ''
+  if slotData.hotkeyConfigured == nil then
+    hotkeyConfigured = normalizedHotkey ~= '' and normalizedHotkey ~= sanitizeHotkey(getSlotDisplayLabel(slotIndex))
+  end
+
   local normalizedSlotData = {
     name = slotData.name,
     words = slotData.words,
     icon = cloneTable(slotData.icon or PLACEHOLDER_ICON),
     iconResolvedFrom = slotData.iconResolvedFrom or 'fallback',
-    hotkey = sanitizeHotkey(slotData.hotkey),
+    hotkey = hotkeyConfigured and normalizedHotkey or '',
+    hotkeyConfigured = hotkeyConfigured,
     needWeapon = slotData.needWeapon == true,
     requiredItemId = slotData.requiredItemId,
     requiredItemIds = cloneTable(slotData.requiredItemIds),
@@ -911,7 +936,7 @@ local function buildEmptySlotTooltip(slotIndex)
 end
 
 local function buildSlotTooltip(slotData)
-  local hotkeyText = slotData.hotkey ~= '' and slotData.hotkey or '-'
+  local hotkeyText = hasConfiguredHotkey(slotData) and sanitizeHotkey(slotData.hotkey) or '-'
   local requiredItemText = slotData.requiredItemName ~= '' and slotData.requiredItemName or '-'
   local available, availabilityDetail = getSkillAvailability(slotData)
   local statusText = available and 'Liberada' or 'Indisponivel'
@@ -928,25 +953,19 @@ local function buildSlotTooltip(slotData)
 end
 
 local function getSlotHotkeyBadgeText(slotIndex, slotData)
-  if not slotData or not slotData.hotkey or slotData.hotkey == '' then
+  if not hasConfiguredHotkey(slotData) then
     return ''
   end
 
-  local hotkey = sanitizeHotkey(slotData.hotkey)
-  if hotkey == getSlotDisplayLabel(slotIndex) then
-    return ''
-  end
-
-  return hotkey
+  return sanitizeHotkey(slotData.hotkey)
 end
 
 local function getSlotPrimaryLabel(slotIndex, slotData)
-  local hotkey = slotData and sanitizeHotkey(slotData.hotkey) or ''
-  if hotkey ~= '' then
-    return hotkey
+  if hasConfiguredHotkey(slotData) then
+    return sanitizeHotkey(slotData.hotkey)
   end
 
-  return getSlotDisplayLabel(slotIndex)
+  return ''
 end
 
 local function updateSlotWidget(slotIndex)
@@ -1024,11 +1043,12 @@ local function removeDuplicateLoadedHotkeys()
 
   for slotIndex = 1, SLOT_COUNT do
     local slotData = slotSettings[slotIndex]
-    local hotkey = slotData and sanitizeHotkey(slotData.hotkey) or ''
+    local hotkey = hasConfiguredHotkey(slotData) and sanitizeHotkey(slotData.hotkey) or ''
 
     if hotkey ~= '' then
       if usedHotkeys[hotkey] then
         slotData.hotkey = ''
+        slotData.hotkeyConfigured = false
         changed = true
         logError(string.format('duplicate hotkey removed from slot %s: %s', getSlotDisplayLabel(slotIndex), hotkey))
       else
@@ -1051,7 +1071,7 @@ local function loadSettings()
 
   for slotIndex = 1, SLOT_COUNT do
     local savedSlot = savedSlots[tostring(slotIndex)] or savedSlots[slotIndex]
-    slotSettings[slotIndex] = normalizeStoredSlotData(savedSlot)
+    slotSettings[slotIndex] = normalizeStoredSlotData(savedSlot, slotIndex)
   end
 
   removeDuplicateLoadedHotkeys()
@@ -1223,7 +1243,7 @@ local function rebindHotkeys()
 
   for slotIndex = 1, SLOT_COUNT do
     local slotData = slotSettings[slotIndex]
-    local hotkey = slotData and sanitizeHotkey(slotData.hotkey) or ''
+    local hotkey = hasConfiguredHotkey(slotData) and sanitizeHotkey(slotData.hotkey) or ''
 
     if hotkey ~= '' then
       bindSlotHotkey(slotIndex, hotkey)
@@ -1775,7 +1795,7 @@ local function buildChoiceWindow(slotIndex, currentSlotData)
   end
 
   if choiceWidgets.hotkeyCombo then
-    local currentHotkey = currentSlotData and currentSlotData.hotkey or getDefaultHotkeyForSlot(slotIndex)
+    local currentHotkey = hasConfiguredHotkey(currentSlotData) and currentSlotData.hotkey or getDefaultHotkeyForSlot(slotIndex)
     fillHotkeyOptions(choiceWidgets.hotkeyCombo, currentHotkey)
   end
 
@@ -1844,8 +1864,8 @@ function openSkillChooser(slotIndex)
   end
 end
 
-local function createSlotButton(slotIndex)
-  local slotWidget = g_ui.createWidget('CustomSkillBarSlot', slotsPanelWidget or customSkillBar)
+local function createSlotButton(slotIndex, parentWidget)
+  local slotWidget = g_ui.createWidget('CustomSkillBarSlot', parentWidget or slotsPanelWidget or customSkillBar)
   slotWidget.slotIndex = slotIndex
   slotWidget.iconWidget = slotWidget:getChildById('icon')
   slotWidget.slotNumberLabel = slotWidget:getChildById('slotNumber')
@@ -1881,7 +1901,20 @@ local function createSlots()
     slotsPanelWidget:setVisible(true)
     slotsPanelWidget:setPhantom(false)
     slotsPanelWidget:setFocusable(false)
-    slotsPanelWidget:destroyChildren()
+    topRowWidget = slotsPanelWidget:getChildById('topRow')
+    bottomRowWidget = slotsPanelWidget:getChildById('bottomRow')
+    if topRowWidget then
+      topRowWidget:setVisible(true)
+      topRowWidget:setPhantom(false)
+      topRowWidget:setFocusable(false)
+      topRowWidget:destroyChildren()
+    end
+    if bottomRowWidget then
+      bottomRowWidget:setVisible(true)
+      bottomRowWidget:setPhantom(false)
+      bottomRowWidget:setFocusable(false)
+      bottomRowWidget:destroyChildren()
+    end
   else
     for _, slotWidget in pairs(slotWidgets) do
       if slotWidget then
@@ -1893,7 +1926,11 @@ local function createSlots()
   hoveredSlotIndex = nil
 
   for slotIndex = 1, SLOT_COUNT do
-    createSlotButton(slotIndex)
+    local parentWidget = slotsPanelWidget
+    if topRowWidget and bottomRowWidget then
+      parentWidget = slotIndex <= SLOTS_PER_ROW and topRowWidget or bottomRowWidget
+    end
+    createSlotButton(slotIndex, parentWidget)
   end
 
   logInfo(string.format('slot count: %d', SLOT_COUNT))

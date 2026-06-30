@@ -1,6 +1,6 @@
 CustomSkillBarWindow < Panel
   id: customSkillBar
-  size: 412 64
+  size: 412 104
   padding: 6
   visible: false
   focusable: false
@@ -45,12 +45,34 @@ CustomSkillBarWindow < Panel
     anchors.right: parent.right
     anchors.top: titleLabel.bottom
     margin-top: 6
-    height: 36
+    height: 76
     clipping: true
     focusable: false
-    layout:
-      type: horizontalBox
-      spacing: 4
+
+    UIWidget
+      id: topRow
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.top: parent.top
+      height: 36
+      focusable: false
+      clipping: false
+      layout:
+        type: horizontalBox
+        spacing: 4
+
+    UIWidget
+      id: bottomRow
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.top: topRow.bottom
+      margin-top: 4
+      height: 36
+      focusable: false
+      clipping: false
+      layout:
+        type: horizontalBox
+        spacing: 4
 
 CustomSkillBarSlot < UIButton
   size: 36 36
