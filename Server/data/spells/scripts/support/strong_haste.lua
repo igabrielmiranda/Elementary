@@ -8,9 +8,6 @@ condition:setFormula(0.7, -56, 0.7, -56)
 combat:addCondition(condition)
 
 function onCastSpell(creature, variant)
-	if not ElementalistCanCastSpell(creature, ELEMENT_AIR) then
-		return false
-	end
 	creature:addBuff(BUFF_UTANI_GRAN_HUR)
 	return combat:execute(creature, variant)
 end

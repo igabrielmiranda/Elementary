@@ -20,7 +20,7 @@ local function short(value)
 end
 
 local function formatNumbers(number)
-	local ret = number
+	local ret = tostring(number or 0)
 	while true do  
 		ret, k = string.gsub(ret, "^(-?%d+)(%d%d%d)", '%1,%2')
 		if k == 0 then
@@ -28,6 +28,28 @@ local function formatNumbers(number)
 		end
 	end
 	return ret
+end
+
+local function getBalanceLabel()
+  return storeWindow and storeWindow:getChildById('balanceInfo'):getChildById('coinBalance')
+end
+
+local function getCurrentBalance()
+  local balanceLabel = getBalanceLabel()
+  if not balanceLabel then
+    return 0
+  end
+
+  local balanceText = balanceLabel:getText() or ''
+  local unformatted = balanceText:gsub(',', ''):gsub('%s+', '')
+  return tonumber(unformatted) or 0
+end
+
+local function requestCoinsBalance()
+  local protocolGame = g_game.getProtocolGame()
+  if protocolGame then
+    protocolGame:sendExtendedOpcode(COINS_OPCODE, 'fetch')
+  end
 end
 
 function init()
@@ -45,6 +67,7 @@ function init()
   imageDesc = storeWindow:getChildById('indexDescription'):getChildById('imageDesc')
   titleDesc = storeWindow:getChildById('indexDescription'):getChildById('titleDesc')
   description = storeWindow:getChildById('indexDescription'):getChildById('description')
+  getBalanceLabel():setText(formatNumbers(0))
   
   productList = storeWindow:getChildById('productList')
   
@@ -97,21 +120,11 @@ function init()
             end
 
             local acceptFunc = function()
-			  local balance = storeWindow:getChildById('balanceInfo'):getChildById('coinBalance'):getText()
-			  local unformatted = balance:gsub(',', '')
-			  local balanceInfo = tonumber(unformatted)
+			  local balanceInfo = getCurrentBalance()
 			  if balanceInfo >= storeProducts[j].price then
                 g_game.talk(COMMAND_BUYITEM .. ' ' ..  storeIndex[i].id  .. ', ' .. storeProducts[j].id)
 	            acceptWindow:destroy()
 	            acceptWindow = nil
-			  
-			    local balance = storeWindow:getChildById('balanceInfo'):getChildById('coinBalance'):getText()
-			    local unformatted = balance:gsub(',', '')
-			    local balanceInfo = tonumber(unformatted)
-			    local balanceAfterPurchase = balanceInfo - storeProducts[j].price
-			  
-			    local balanceLabel = storeWindow:getChildById('balanceInfo'):getChildById('coinBalance')
-			    balanceLabel:setText((formatNumbers(balanceAfterPurchase)))
 			  else
 			    acceptWindow:destroy()
 	            acceptWindow = nil
@@ -157,8 +170,7 @@ function terminate()
 end
 
 function coinsBalance(protocol, opcode, buffer)
-    local balanceLabel = storeWindow:getChildById('balanceInfo'):getChildById('coinBalance')
-    balanceLabel:setText(formatNumbers(buffer))
+    getBalanceLabel():setText(formatNumbers(buffer))
 end
 
 function refresh()
@@ -184,6 +196,7 @@ function onOpenStore()
   storeWindow:show()
   storeWindow:raise()
   storeWindow:focus()
+  requestCoinsBalance()
   
   local descriptionImage = storeWindow:getChildById('indexDescription'):getChildById('imageDesc')
   descriptionImage:setImageSource(storeIndex[1].image)
@@ -222,21 +235,11 @@ function onOpenStore()
         end
 
         local acceptFunc = function()
-		  local balance = storeWindow:getChildById('balanceInfo'):getChildById('coinBalance'):getText()
-		  local unformatted = balance:gsub(',', '')
-		  local balanceInfo = tonumber(unformatted)
+		  local balanceInfo = getCurrentBalance()
 		  if balanceInfo >= storeProducts[j].price then
             g_game.talk(COMMAND_BUYITEM .. ' ' ..  storeIndex[1].id  .. ', ' .. storeProducts[j].id)
 	        acceptWindow:destroy()
 	        acceptWindow = nil
-			  
-		    local balance = storeWindow:getChildById('balanceInfo'):getChildById('coinBalance'):getText()
-		    local unformatted = balance:gsub(',', '')
-		    local balanceInfo = tonumber(unformatted)
-		    local balanceAfterPurchase = balanceInfo - storeProducts[j].price
-			  
-		    local balanceLabel = storeWindow:getChildById('balanceInfo'):getChildById('coinBalance')
-		    balanceLabel:setText((formatNumbers(balanceAfterPurchase)))
 		  else
 			acceptWindow:destroy()
 	        acceptWindow = nil
@@ -263,6 +266,4 @@ function onCloseStore()
 	acceptWindow = nil
   end
 end
-
-
 

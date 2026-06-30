@@ -35,8 +35,9 @@ task_monsters = {
  task_storage = 480000
  task_sto_time = 480002
  task_time = 1
- taskd_storage = 480004
- time_daySto = 480005
+taskd_storage = 480004
+time_daySto = 480005
+local ANCESTRAL_POINTS_OPCODE = 89
  
  
  local ranks_task = {
@@ -94,7 +95,7 @@ function getTaskDailyInfo(player)
 end
  
  
- function taskPoints_get(player)
+function taskPoints_get(player)
     local points = 0
     local accountId = player:getGuid() 
     local resultId = db.storeQuery("SELECT `ancestral_points` FROM `players` WHERE `id` = " .. accountId)
@@ -105,12 +106,23 @@ end
     return points
  end
 
+function sendAncestralPointsBalance(player)
+    if not player then
+        return 0
+    end
+
+    local points = taskPoints_get(player)
+    player:sendExtendedOpcode(ANCESTRAL_POINTS_OPCODE, tostring(points))
+    return points
+end
+
 
 
  function taskPoints_add(player, count)
     local accountId = player:getGuid() 
 
     db.query(string.format("UPDATE players SET ancestral_points = ancestral_points + %d WHERE id = %d", count, accountId))
+    return sendAncestralPointsBalance(player)
 end
  
  function taskPoints_remove(player, count)
@@ -123,6 +135,7 @@ end
     end
 
     db.query(string.format("UPDATE players SET ancestral_points = %d WHERE id = %d", newPoints, accountId))
+    return sendAncestralPointsBalance(player)
 end
 
 

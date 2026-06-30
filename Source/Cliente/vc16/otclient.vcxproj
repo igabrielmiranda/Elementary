@@ -307,7 +307,7 @@
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <PreventDllBinding>true</PreventDllBinding>
       <RegisterOutput>false</RegisterOutput>
-      <AdditionalDependencies>$(ProjectDir)..\otclient_debug_lib.lib;advapi32.lib;ole32.lib;bcrypt.lib;crypt32.lib;dbghelp.lib;gdi32.lib;psapi.lib;shell32.lib;user32.lib;winmm.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)..\..\..\Cliente\otclient_debug_lib.lib;advapi32.lib;ole32.lib;bcrypt.lib;crypt32.lib;dbghelp.lib;gdi32.lib;psapi.lib;shell32.lib;user32.lib;winmm.lib</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <AdditionalOptions>/VERBOSE:LIB %(AdditionalOptions)</AdditionalOptions>
     </Link>

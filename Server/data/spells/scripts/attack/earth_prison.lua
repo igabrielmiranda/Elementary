@@ -1,3 +1,5 @@
+-- TODO: Futuramente esta skill deve usar requisito por arma equipada.
+
 local PRISON_EFFECT = 323
 local PRISON_RADIUS = 3
 local PRISON_DURATION_MS = 5000
@@ -170,10 +172,6 @@ local function createBarrier(centerPosition)
 end
 
 function onCastSpell(creature, variant)
-	local player = Player(creature)
-	if player and not player:checkElementRequirement(ELEMENT_EARTH) then
-		return false
-	end
 
 	if not damageCombat:execute(creature, variant) then
 		return false

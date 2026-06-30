@@ -1,3 +1,5 @@
+-- TODO: Futuramente esta skill deve usar requisito por arma equipada.
+
 local combat = Combat()
 combat:setParameter(COMBAT_PARAM_TYPE, COMBAT_ENERGYDAMAGE)
 combat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_ENERGYHIT)
@@ -12,10 +14,6 @@ end
 combat:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, "onGetFormulaValues")
 
 function onCastSpell(creature, variant)
-	local player = Player(creature)
-	if player and not player:checkElementRequirement(ELEMENT_AIR) then
-		return false
-	end
 
 	return combat:execute(creature, variant)
 end

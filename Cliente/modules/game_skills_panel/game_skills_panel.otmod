@@ -1,0 +1,14 @@
+Module
+  name: game_skills_panel
+  description: Painel visual de skills e spells
+  author: Codex
+  website: https://github.com/edubart/otclient
+  sandboxed: true
+  scripts: [ skills_panel ]
+  @onLoad: init()
+  @onUnload: terminate()
+  dependencies:
+    - gamelib
+    - game_interface
+    - client_topmenu
+    - game_console

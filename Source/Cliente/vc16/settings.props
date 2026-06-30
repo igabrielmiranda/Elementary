@@ -46,7 +46,7 @@
     </OTCLIENT_LIBDEPS>
   </PropertyGroup>
   <PropertyGroup>
-    <OutDir>$(ProjectDir)../</OutDir>
+    <OutDir>$(ProjectDir)..\..\..\Cliente\</OutDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Label="Globals">

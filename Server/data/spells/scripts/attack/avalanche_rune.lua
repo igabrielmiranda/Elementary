@@ -22,7 +22,6 @@ combatEnergy:setParameter(COMBAT_PARAM_EFFECT, 217)
 combatEnergy:setParameter(COMBAT_PARAM_DISTANCEEFFECT, 36)
 combatEnergy:setArea(createCombatArea(AREA_CIRCLE3X3))
 
-
 local combatDeath = Combat()
 combatDeath:setParameter(COMBAT_PARAM_TYPE, COMBAT_DEATHDAMAGE)
 combatDeath:setParameter(COMBAT_PARAM_EFFECT, 18)
@@ -53,13 +52,11 @@ function onGetEnergyValues(player, level, magicLevel)
 	return -min, -max
 end
 
-
 function onGetDeathValues(player, level, magicLevel)
 	local min = (level / 5) + (magicLevel * 1.52) + 7
 	local max = (level / 5) + (magicLevel * 3.13) + 16
 	return -min, -max
 end
-
 
 combatFire:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, "onGetFireValues")
 combatEarth:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, "onGetEarthValues")
@@ -68,9 +65,6 @@ combatDeath:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, "onGetDeathValues")
 combat:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, "onGetFormulaValues")
 
 function onCastSpell(creature, variant, isHotkey)
-	if not ElementalistCanCastSpell(creature, ELEMENT_WATER) then
-		return false
-	end
 	local player = Player(creature)
 	if player and player:getStorageValue(37019) == 1 then
         combatDeath:execute(creature, variant)

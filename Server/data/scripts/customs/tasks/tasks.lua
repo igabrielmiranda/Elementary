@@ -1145,6 +1145,7 @@ end
     local accountId = self:getGuid() 
     db.query(string.format("UPDATE players SET ancestral_points = ancestral_points + %d WHERE id = %d", points, accountId))
     self:sendTasksPointsUpdate()
+    sendAncestralPointsBalance(self)
   end
 
   local ranks_task = {

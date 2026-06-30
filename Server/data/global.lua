@@ -6,7 +6,6 @@ ExtendedOPCodes = {
 	CODE_DUNGEONS = 109,
 	CODE_CHARSTATS = 106,
 	CODE_INSPECT = 107,
-	CODE_ELEMENTALIST = 110,
 }
 
 ropeSpots = {

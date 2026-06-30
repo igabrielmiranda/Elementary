@@ -11,11 +11,7 @@ end
 
 combat:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, "onGetFormulaValues")
 
-
 function onCastSpell(creature, var)
-	if not ElementalistCanCastSpell(creature, ELEMENT_WATER) then
-		return false
-	end
 	if not creature or not creature:isPlayer() then
 		return false
 	end

@@ -4,9 +4,6 @@ combat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_ENERGYAREA)
 combat:setParameter(COMBAT_PARAM_DISTANCEEFFECT, CONST_ANI_ENERGY)
 
 function onCastSpell(creature, variant)
-	if not ElementalistCanCastSpell(creature, ELEMENT_AIR) then
-		return false
-	end
 	local min = (creature:getLevel() / 80) + (creature:getMagicLevel() * 0.15) + 1
 	local max = (creature:getLevel() / 80) + (creature:getMagicLevel() * 0.25) + 1
 	local rounds = math.random(math.floor(min), math.floor(max))

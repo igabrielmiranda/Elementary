@@ -4,9 +4,6 @@ combat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_HITBYFIRE)
 combat:setParameter(COMBAT_PARAM_DISTANCEEFFECT, CONST_ANI_FIRE)
 
 function onCastSpell(creature, variant, isHotkey)
-	if not ElementalistCanCastSpell(creature, ELEMENT_FIRE) then
-		return false
-	end
 	local min = (creature:getLevel() / 80) + (creature:getMagicLevel() * 0.3) + 2
 	local max = (creature:getLevel() / 80) + (creature:getMagicLevel() * 0.6) + 4
 	local rounds = math.random(math.floor(min), math.floor(max))

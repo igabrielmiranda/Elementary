@@ -13,9 +13,6 @@ end
 combat:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, "onGetFormulaValues")
 
 function onCastSpell(creature, variant)
-	if not ElementalistCanCastSpell(creature, ELEMENT_WATER) then
-		return false
-	end
 	creature:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
 	return combat:execute(creature, variant)
 end

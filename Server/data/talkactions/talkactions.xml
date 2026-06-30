@@ -30,6 +30,7 @@
 	<talkaction words="/summon" separator=" " script="place_summon.lua" />
 	<talkaction words="/chameleon" separator=" " script="chameleon.lua" />
 	<talkaction words="/addskill" separator=" " script="add_skill.lua" />
+	<talkaction words="/addancestralpoints;/addap" separator=" " script="add_ancestral_points.lua" />
 	<talkaction words="/mccheck" script="mccheck.lua" />
 	<talkaction words="/ghost" script="ghost.lua" />
 	<talkaction words="/clean" script="clean.lua" />
@@ -50,47 +51,9 @@
 	<talkaction words="!online;/online" script="online.lua" />
 	<talkaction words="!serverinfo" script="serverinfo.lua" />
 	<talkaction words="!ancestral" script="ancestral.lua" />
+	<talkaction words="!ancestralstore" separator=" " script="ancestral_store.lua" />
 	<talkaction words="!dungeon" script="dungeon.lua" />
 
 	<!-- Ancestral shop -->
-
-	<!-- Wings -->
-	<talkaction words="!ancestralstore 2, 1" script="fiery_wings.lua" />
-	<talkaction words="!ancestralstore 2, 2" script="lullaby_wings.lua" />
-	<talkaction words="!ancestralstore 2, 3" script="vampire_wings.lua" />
-	<talkaction words="!ancestralstore 2, 4" script="bark_wings.lua" />
-	<talkaction words="!ancestralstore 2, 5" script="falanaar_wings.lua" />
-
-	<!-- Auras -->
-	<talkaction words="!ancestralstore 1, 6" script="fireflies.lua" />
-	<talkaction words="!ancestralstore 1, 7" script="fire_essence.lua" />
-	<talkaction words="!ancestralstore 1, 8" script="electric_shock.lua" />
-	<talkaction words="!ancestralstore 1, 9" script="star_shine.lua" />
-	<talkaction words="!ancestralstore 1, 10" script="bats.lua" />
-
-	<!-- Exercise Chests -->
-	<talkaction words="!ancestralstore 3, 11" script="sword_chest.lua" />
-	<talkaction words="!ancestralstore 3, 12" script="axe_chest.lua" />
-	<talkaction words="!ancestralstore 3, 13" script="club_chest.lua" />
-	<talkaction words="!ancestralstore 3, 14" script="bow_chest.lua" />
-	<talkaction words="!ancestralstore 3, 15" script="rod_chest.lua" />
-	<talkaction words="!ancestralstore 3, 16" script="wand_chest.lua" />
-	<talkaction words="!ancestralstore 3, 17" script="shield_chest.lua" />
-
-	<talkaction words="!ancestralstore 3, 18" script="durable_sword_chest.lua" />
-	<talkaction words="!ancestralstore 3, 19" script="durable_axe_chest.lua" />
-	<talkaction words="!ancestralstore 3, 20" script="durable_club_chest.lua" />
-	<talkaction words="!ancestralstore 3, 21" script="durable_bow_chest.lua" />
-	<talkaction words="!ancestralstore 3, 22" script="durable_rod_chest.lua" />
-	<talkaction words="!ancestralstore 3, 23" script="durable_wand_chest.lua" />
-	<talkaction words="!ancestralstore 3, 24" script="durable_shield_chest.lua" />
-
-	<talkaction words="!ancestralstore 3, 25" script="lasting_sword_chest.lua" />
-	<talkaction words="!ancestralstore 3, 26" script="lasting_axe_chest.lua" />
-	<talkaction words="!ancestralstore 3, 27" script="lasting_club_chest.lua" />
-	<talkaction words="!ancestralstore 3, 28" script="lasting_bow_chest.lua" />
-	<talkaction words="!ancestralstore 3, 29" script="lasting_rod_chest.lua" />
-	<talkaction words="!ancestralstore 3, 30" script="lasting_wand_chest.lua" />
-	<talkaction words="!ancestralstore 3, 31" script="lasting_shield_chest.lua" />
 
 </talkactions>

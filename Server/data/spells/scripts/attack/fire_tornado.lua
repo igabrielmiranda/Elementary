@@ -1,6 +1,12 @@
+-- TODO: Futuramente esta skill deve usar requisito por arma equipada.
+
 local TORNADO_EFFECT = 321
 local TORNADO_DURATION_MS = 10000
 local TORNADO_TICK_MS = 500
+local REQUIRED_ORB_ITEM_ID = 2189
+local REQUIRED_ORB_RECIPE_KEY = "elemental_orb"
+local REQUIRED_ORB_NAME = "orbe elemental"
+local REQUIRED_ORB_MESSAGE = "Voce precisa equipar um Orbe Elemental para usar esta habilidade."
 
 local combat = Combat()
 combat:setParameter(COMBAT_PARAM_TYPE, COMBAT_FIREDAMAGE)
@@ -82,9 +88,32 @@ local function pullTargets(creature, centerPosition)
   end
 end
 
+local function getEquippedOrbItem(player)
+  for _, slot in ipairs({CONST_SLOT_LEFT, CONST_SLOT_RIGHT}) do
+    local item = player:getSlotItem(slot)
+    if item and item:getId() == REQUIRED_ORB_ITEM_ID then
+      local recipeKey = item:getCustomAttribute("craft_recipe_key")
+      if recipeKey == REQUIRED_ORB_RECIPE_KEY then
+        return item
+      end
+
+      local customName = item:getAttribute(ITEM_ATTRIBUTE_NAME)
+      if type(customName) == "string" and customName:lower():find(REQUIRED_ORB_NAME, 1, true) then
+        return item
+      end
+    end
+  end
+
+  return nil
+end
+
 function onCastSpell(creature, variant)
-  local player = Player(creature)
-  if player and not player:checkElementRequirement(ELEMENT_FIRE) then
+  if not creature or not creature:isPlayer() then
+    return false
+  end
+
+  if not getEquippedOrbItem(creature) then
+    creature:sendCancelMessage(REQUIRED_ORB_MESSAGE)
     return false
   end
 

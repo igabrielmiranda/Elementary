@@ -1,0 +1,879 @@
+SkillPanelTabButton < Button
+  height: 30
+  width: 164
+  text-offset: 0 2
+  font: verdana-11px-rounded
+  color: #cdb88f
+  background-color: #130f0d
+  border-width: 1
+  border-color: #4a3725
+
+  $hover !on:
+    background-color: #221911
+    color: #f2e1bd
+
+  $on:
+    background-color: #3b2818
+    color: #f3e4c2
+    border-color: #93683f
+
+SkillCategoryFilterButton < Button
+  height: 28
+  width: 94
+  text-offset: 0 2
+  font: verdana-11px-rounded
+  color: #af9c7a
+  background-color: #110d0c
+  border-width: 1
+  border-color: #33261b
+
+  $hover !on:
+    background-color: #1c1510
+    color: #ead8b2
+
+  $on:
+    background-color: #342315
+    color: #f3e4c2
+    border-color: #8e6641
+
+SkillCategoryHeader < Label
+  height: 22
+  margin-top: 8
+  anchors.left: parent.left
+  anchors.right: parent.right
+  padding-left: 8
+  font: verdana-11px-rounded
+  color: #e1c18a
+  background-color: #20160f
+  border-width: 1
+  border-color: #43301f
+  text-offset: 0 3
+
+SkillEmptyLabel < Label
+  height: 52
+  margin-top: 16
+  margin-left: 6
+  margin-right: 6
+  color: #998a76
+  text-wrap: true
+  text-align: center
+  anchors.left: parent.left
+  anchors.right: parent.right
+
+SkillBadge < Label
+  phantom: true
+  focusable: false
+  height: 18
+  padding-left: 4
+  padding-right: 4
+  text-align: center
+  font: verdana-11px-monochrome
+  color: #f2e6cf
+  background-color: #3a2819
+  border-width: 1
+  border-color: #7c5d39
+
+SkillStatChip < Label
+  phantom: true
+  focusable: false
+  width: 88
+  height: 18
+  padding-left: 4
+  padding-right: 4
+  text-align: center
+  font: verdana-11px-monochrome
+  color: #dbc9a7
+  background-color: #16110e
+  border-width: 1
+  border-color: #35281d
+
+SkillSectionCard < FlatPanel
+  anchors.left: parent.left
+  anchors.right: parent.right
+  padding: 8
+  background-color: #110d0c
+  border-width: 1
+  border-color: #443120
+
+SkillSectionTitle < Label
+  focusable: false
+  height: 18
+  color: #e2c289
+  font: verdana-11px-rounded
+
+SkillDetailLabel < Label
+  focusable: false
+  width: 112
+  height: 16
+  text-align: right
+  color: #cda76f
+  font: verdana-11px-rounded
+
+SkillDetailValue < Label
+  focusable: false
+  height: 16
+  color: #f0e1c4
+  font: verdana-11px-monochrome
+  text-wrap: true
+
+SkillListEntry < UIButton
+  height: 88
+  margin-top: 6
+  anchors.left: parent.left
+  anchors.right: parent.right
+  focusable: true
+  phantom: false
+  padding: 8
+  background-color: #14100d
+  border-width: 1
+  border-color: #32261c
+
+  $hover !checked:
+    background-color: #1f1813
+    border-color: #5e432a
+
+  $checked:
+    background-color: #2c1f15
+    border-color: #a97c47
+
+  UIWidget
+    id: icon
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin-left: 2
+    margin-top: 2
+    size: 42 42
+    image-size: 40 40
+    image-source: /images/game/spells/cooldowns
+    image-clip: 40 0 20 20
+    phantom: true
+
+  Label
+    id: nameLabel
+    anchors.left: icon.right
+    anchors.right: parent.right
+    anchors.top: parent.top
+    margin-left: 10
+    margin-right: 144
+    height: 16
+    color: #f3e4c2
+    font: verdana-11px-rounded
+    phantom: true
+
+  SkillBadge
+    id: categoryBadge
+    width: 110
+    anchors.top: parent.top
+    anchors.right: parent.right
+    margin-top: 1
+    phantom: true
+
+  Label
+    id: wordsLabel
+    anchors.left: nameLabel.left
+    anchors.right: parent.right
+    anchors.top: nameLabel.bottom
+    margin-top: 3
+    margin-right: 144
+    height: 14
+    color: #cab89a
+    font: verdana-11px-monochrome
+    phantom: true
+
+  SkillBadge
+    id: statusBadge
+    width: 132
+    anchors.top: categoryBadge.bottom
+    anchors.right: parent.right
+    margin-top: 4
+    phantom: true
+
+  SkillStatChip
+    id: manaChip
+    anchors.left: nameLabel.left
+    anchors.top: wordsLabel.bottom
+    margin-top: 9
+    phantom: true
+
+  SkillStatChip
+    id: cooldownChip
+    anchors.left: manaChip.right
+    anchors.top: manaChip.top
+    margin-left: 6
+    phantom: true
+
+  SkillStatChip
+    id: levelChip
+    anchors.left: cooldownChip.right
+    anchors.top: manaChip.top
+    margin-left: 6
+    phantom: true
+
+MainWindow
+  id: skillsPanelWindow
+  text: Painel de Skills
+  size: 1000 640
+  background-color: #090706
+  @onEscape: modules.game_skills_panel.hide()
+
+  Label
+    id: panelTitleLabel
+    anchors.top: parent.top
+    anchors.left: parent.left
+    margin-top: 10
+    margin-left: 14
+    height: 20
+    color: #f2deb4
+    font: verdana-11px-rounded
+    text: Grimorio de Skills
+
+  Label
+    id: panelSubtitleLabel
+    anchors.top: panelTitleLabel.bottom
+    anchors.left: panelTitleLabel.left
+    anchors.right: parent.right
+    margin-top: 2
+    margin-right: 14
+    height: 16
+    color: #a89780
+    font: verdana-11px-monochrome
+    text: Catalogo visual com filtros por categoria, disponibilidade e preparo para arma equipada.
+
+  SkillPanelTabButton
+    id: tabAllSkills
+    text: Todas as Skills
+    anchors.top: panelSubtitleLabel.bottom
+    anchors.left: panelTitleLabel.left
+    margin-top: 10
+    @onClick: modules.game_skills_panel.selectAllTab()
+
+  SkillPanelTabButton
+    id: tabAvailableSkills
+    text: Skills Disponiveis
+    anchors.top: tabAllSkills.top
+    anchors.left: tabAllSkills.right
+    margin-left: 8
+    @onClick: modules.game_skills_panel.selectAvailableTab()
+
+  HorizontalSeparator
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: tabAllSkills.bottom
+    margin-top: 10
+
+  Label
+    id: tabHintLabel
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 8
+    margin-left: 14
+    margin-right: 14
+    height: 30
+    text-wrap: true
+    color: #b0a28f
+    font: verdana-11px-monochrome
+    text: -
+
+  FlatPanel
+    id: listPanel
+    anchors.left: parent.left
+    anchors.top: tabHintLabel.bottom
+    anchors.bottom: parent.bottom
+    width: 432
+    margin-left: 14
+    margin-top: 8
+    margin-bottom: 48
+    padding: 8
+    background-color: #0d0a08
+    border-width: 1
+    border-color: #45311f
+
+    Label
+      id: listTitleLabel
+      anchors.left: parent.left
+      anchors.top: parent.top
+      height: 18
+      color: #e3c48d
+      font: verdana-11px-rounded
+      text: Todas as Skills
+
+    Label
+      id: listResultLabel
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.top: listTitleLabel.bottom
+      margin-top: 3
+      height: 16
+      color: #a5947b
+      font: verdana-11px-monochrome
+      text: -
+
+    Label
+      anchors.left: parent.left
+      anchors.top: listResultLabel.bottom
+      margin-top: 10
+      height: 16
+      color: #c8a96d
+      font: verdana-11px-rounded
+      text: Filtro visual
+
+    SkillCategoryFilterButton
+      id: filterAllCategories
+      text: Todas
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      margin-top: 6
+      @onClick: modules.game_skills_panel.selectAllCategoriesFilter()
+
+    SkillCategoryFilterButton
+      id: filterOffensiveCategory
+      text: Ofensivas
+      anchors.top: filterAllCategories.top
+      anchors.left: filterAllCategories.right
+      margin-left: 6
+      @onClick: modules.game_skills_panel.selectOffensiveCategoryFilter()
+
+    SkillCategoryFilterButton
+      id: filterDefensiveCategory
+      text: Defensivas
+      anchors.top: filterAllCategories.top
+      anchors.left: filterOffensiveCategory.right
+      margin-left: 6
+      @onClick: modules.game_skills_panel.selectDefensiveCategoryFilter()
+
+    SkillCategoryFilterButton
+      id: filterUtilityCategory
+      text: Utilidade
+      anchors.top: filterAllCategories.top
+      anchors.left: filterDefensiveCategory.right
+      margin-left: 6
+      @onClick: modules.game_skills_panel.selectUtilityCategoryFilter()
+
+    TextEdit
+      id: searchInput
+      anchors.top: filterAllCategories.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-top: 10
+      height: 22
+      placeholder: Buscar skill ou palavra magica
+      @onTextChange: modules.game_skills_panel.onSearchTextChange(self)
+
+    FlatPanel
+      id: paginationPanel
+      anchors.top: searchInput.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-top: 10
+      height: 30
+      padding: 3
+      background-color: #120e0c
+      border-width: 1
+      border-color: #33261b
+
+      Button
+        id: previousPageButton
+        text: Anterior
+        width: 88
+        height: 22
+        anchors.left: parent.left
+        anchors.top: parent.top
+        margin-left: 3
+        margin-top: 1
+        @onClick: modules.game_skills_panel.selectPreviousPage()
+
+      Label
+        id: pageInfoLabel
+        anchors.left: previousPageButton.right
+        anchors.right: parent.right
+        anchors.top: parent.top
+        margin-left: 8
+        margin-right: 99
+        margin-top: 4
+        height: 18
+        text-align: center
+        color: #b6a691
+        font: verdana-11px-monochrome
+        text: Pagina 1/1
+
+      Button
+        id: nextPageButton
+        text: Proxima
+        width: 88
+        height: 22
+        anchors.top: previousPageButton.top
+        anchors.right: parent.right
+        margin-right: 3
+        @onClick: modules.game_skills_panel.selectNextPage()
+
+    VerticalScrollBar
+      id: skillsListScrollBar
+      anchors.top: paginationPanel.bottom
+      anchors.right: parent.right
+      anchors.bottom: parent.bottom
+      margin-top: 10
+      pixels-scroll: true
+      step: 48
+
+    ScrollablePanel
+      id: skillsList
+      anchors.top: paginationPanel.bottom
+      anchors.left: parent.left
+      anchors.right: skillsListScrollBar.left
+      anchors.bottom: parent.bottom
+      margin-top: 10
+      margin-right: 6
+      vertical-scrollbar: skillsListScrollBar
+      layout:
+        type: verticalBox
+        spacing: 2
+
+  FlatPanel
+    id: detailPanel
+    anchors.left: listPanel.right
+    anchors.right: parent.right
+    anchors.top: listPanel.top
+    anchors.bottom: listPanel.bottom
+    margin-left: 12
+    margin-right: 14
+    padding: 8
+    background-color: #0d0a08
+    border-width: 1
+    border-color: #45311f
+
+    Label
+      anchors.left: parent.left
+      anchors.top: parent.top
+      height: 18
+      color: #e3c48d
+      font: verdana-11px-rounded
+      text: Detalhes e disponibilidade
+
+    Panel
+      id: detailContent
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.top: prev.bottom
+      anchors.bottom: parent.bottom
+      margin-top: 8
+      layout:
+        type: verticalBox
+        spacing: 8
+
+      SkillSectionCard
+        id: equippedWeaponPanel
+        height: 134
+
+        SkillSectionTitle
+          anchors.left: parent.left
+          anchors.top: parent.top
+          text: Arma Equipada
+
+        Item
+          id: equippedItemPreview
+          anchors.right: parent.right
+          anchors.top: parent.top
+          margin-top: 2
+          margin-right: 2
+          virtual: true
+
+        Label
+          anchors.left: parent.left
+          anchors.right: equippedItemPreview.left
+          anchors.top: prev.bottom
+          margin-top: 8
+          margin-right: 8
+          height: 14
+          color: #caa972
+          font: verdana-11px-rounded
+          text: Item equipado
+
+        Label
+          id: equippedItemLabel
+          anchors.left: parent.left
+          anchors.right: equippedItemPreview.left
+          anchors.top: prev.bottom
+          margin-top: 2
+          margin-right: 8
+          height: 16
+          color: #f0e1c4
+          font: verdana-11px-monochrome
+          text: -
+
+        Label
+          id: equippedItemHint
+          anchors.left: parent.left
+          anchors.right: parent.right
+          anchors.top: equippedItemLabel.bottom
+          margin-top: 4
+          height: 28
+          color: #998973
+          font: verdana-11px-monochrome
+          text-wrap: true
+          text: -
+
+        Item
+          id: rightHandItem
+          anchors.left: parent.left
+          anchors.top: equippedItemHint.bottom
+          margin-top: 8
+          virtual: true
+
+        Label
+          anchors.left: rightHandItem.right
+          anchors.top: rightHandItem.top
+          margin-left: 8
+          height: 14
+          color: #caa972
+          font: verdana-11px-rounded
+          text: Mao Direita
+
+        Label
+          id: rightHandLabel
+          anchors.left: prev.left
+          anchors.right: parent.horizontalCenter
+          anchors.top: prev.bottom
+          margin-top: 2
+          margin-right: 8
+          height: 28
+          color: #f0e1c4
+          text-wrap: true
+          font: verdana-11px-monochrome
+          text: -
+
+        Item
+          id: leftHandItem
+          anchors.left: parent.horizontalCenter
+          anchors.top: rightHandItem.top
+          margin-left: 6
+          virtual: true
+
+        Label
+          anchors.left: leftHandItem.right
+          anchors.top: leftHandItem.top
+          margin-left: 8
+          height: 14
+          color: #caa972
+          font: verdana-11px-rounded
+          text: Mao Esquerda
+
+        Label
+          id: leftHandLabel
+          anchors.left: prev.left
+          anchors.right: parent.right
+          anchors.top: prev.bottom
+          margin-top: 2
+          height: 28
+          color: #f0e1c4
+          text-wrap: true
+          font: verdana-11px-monochrome
+          text: -
+
+      SkillSectionCard
+        id: selectedSkillPanel
+        height: 108
+
+        SkillSectionTitle
+          anchors.left: parent.left
+          anchors.top: parent.top
+          text: Resumo
+
+        UIWidget
+          id: selectedSkillIcon
+          anchors.left: parent.left
+          anchors.top: prev.bottom
+          margin-top: 10
+          size: 52 52
+          image-source: /images/game/spells/cooldowns
+          image-size: 40 40
+          image-clip: 40 0 20 20
+
+        Label
+          id: selectedSkillName
+          anchors.left: selectedSkillIcon.right
+          anchors.right: parent.right
+          anchors.top: selectedSkillIcon.top
+          margin-left: 12
+          margin-right: 160
+          height: 18
+          color: #f4e5c4
+          font: verdana-11px-rounded
+          text: Selecione uma skill
+
+        SkillBadge
+          id: selectedSkillCategoryBadge
+          width: 110
+          anchors.top: selectedSkillIcon.top
+          anchors.right: parent.right
+          phantom: true
+
+        Label
+          id: selectedSkillWords
+          anchors.left: selectedSkillName.left
+          anchors.right: parent.right
+          anchors.top: selectedSkillName.bottom
+          margin-top: 4
+          margin-right: 160
+          height: 14
+          color: #cab89a
+          font: verdana-11px-monochrome
+          text: -
+
+        SkillBadge
+          id: selectedSkillStatusBadge
+          width: 144
+          anchors.top: selectedSkillCategoryBadge.bottom
+          anchors.right: parent.right
+          margin-top: 4
+          phantom: true
+
+        Label
+          id: selectedSkillMeta
+          anchors.left: selectedSkillName.left
+          anchors.right: parent.right
+          anchors.top: selectedSkillWords.bottom
+          margin-top: 8
+          height: 14
+          color: #9d8c74
+          font: verdana-11px-monochrome
+          text: -
+
+      SkillSectionCard
+        id: costsSection
+        height: 108
+
+        SkillSectionTitle
+          anchors.left: parent.left
+          anchors.top: parent.top
+          text: Custos
+
+        SkillDetailLabel
+          anchors.left: parent.left
+          anchors.top: prev.bottom
+          margin-top: 10
+          text: Mana:
+
+        SkillDetailValue
+          id: detailCostManaValue
+          anchors.left: prev.right
+          anchors.right: parent.right
+          anchors.top: prev.top
+          margin-left: 8
+          text: -
+
+        SkillDetailLabel
+          anchors.left: parent.left
+          anchors.top: prev.bottom
+          margin-top: 6
+          text: Cooldown:
+
+        SkillDetailValue
+          id: detailCostCooldownValue
+          anchors.left: prev.right
+          anchors.right: parent.right
+          anchors.top: prev.top
+          margin-left: 8
+          height: 28
+          text: -
+
+        SkillDetailLabel
+          anchors.left: parent.left
+          anchors.top: prev.bottom
+          margin-top: 6
+          text: Grupo:
+
+        SkillDetailValue
+          id: detailCostGroupValue
+          anchors.left: prev.right
+          anchors.right: parent.right
+          anchors.top: prev.top
+          margin-left: 8
+          text: -
+
+      SkillSectionCard
+        id: requirementsSection
+        height: 116
+
+        SkillSectionTitle
+          anchors.left: parent.left
+          anchors.top: parent.top
+          text: Requisitos
+
+        SkillDetailLabel
+          anchors.left: parent.left
+          anchors.top: prev.bottom
+          margin-top: 10
+          text: Nivel:
+
+        SkillDetailValue
+          id: detailRequirementLevelValue
+          anchors.left: prev.right
+          anchors.right: parent.right
+          anchors.top: prev.top
+          margin-left: 8
+          text: -
+
+        SkillDetailLabel
+          anchors.left: parent.left
+          anchors.top: prev.bottom
+          margin-top: 6
+          text: Premium:
+
+        SkillDetailValue
+          id: detailRequirementPremiumValue
+          anchors.left: prev.right
+          anchors.right: parent.right
+          anchors.top: prev.top
+          margin-left: 8
+          text: -
+
+        SkillDetailLabel
+          anchors.left: parent.left
+          anchors.top: prev.bottom
+          margin-top: 6
+          text: Arma:
+
+        SkillDetailValue
+          id: detailRequirementWeaponValue
+          anchors.left: prev.right
+          anchors.right: parent.right
+          anchors.top: prev.top
+          margin-left: 8
+          text: -
+
+        SkillDetailLabel
+          anchors.left: parent.left
+          anchors.top: prev.bottom
+          margin-top: 6
+          text: Vocacao:
+
+        SkillDetailValue
+          id: detailRequirementVocationValue
+          anchors.left: prev.right
+          anchors.right: parent.right
+          anchors.top: prev.top
+          margin-left: 8
+          height: 28
+          text: -
+
+      SkillSectionCard
+        id: informationSection
+        height: 146
+
+        SkillSectionTitle
+          anchors.left: parent.left
+          anchors.top: parent.top
+          text: Informacoes
+
+        SkillDetailLabel
+          anchors.left: parent.left
+          anchors.top: prev.bottom
+          margin-top: 10
+          text: Tipo:
+
+        SkillDetailValue
+          id: detailInfoTypeValue
+          anchors.left: prev.right
+          anchors.right: parent.right
+          anchors.top: prev.top
+          margin-left: 8
+          text: -
+
+        SkillDetailLabel
+          anchors.left: parent.left
+          anchors.top: prev.bottom
+          margin-top: 6
+          text: Alvo:
+
+        SkillDetailValue
+          id: detailInfoTargetValue
+          anchors.left: prev.right
+          anchors.right: parent.right
+          anchors.top: prev.top
+          margin-left: 8
+          text: -
+
+        SkillDetailLabel
+          anchors.left: parent.left
+          anchors.top: prev.bottom
+          margin-top: 6
+          text: Alcance:
+
+        SkillDetailValue
+          id: detailInfoRangeValue
+          anchors.left: prev.right
+          anchors.right: parent.right
+          anchors.top: prev.top
+          margin-left: 8
+          text: -
+
+        SkillDetailLabel
+          anchors.left: parent.left
+          anchors.top: prev.bottom
+          margin-top: 6
+          text: Descricao:
+
+        SkillDetailValue
+          id: detailInfoDescriptionValue
+          anchors.left: prev.right
+          anchors.right: parent.right
+          anchors.top: prev.top
+          margin-left: 8
+          height: 42
+          text: -
+
+      SkillSectionCard
+        id: statusSection
+        height: 104
+
+        SkillSectionTitle
+          anchors.left: parent.left
+          anchors.top: parent.top
+          text: Status e Notas
+
+        Label
+          id: detailStatusLabel
+          anchors.left: parent.left
+          anchors.right: parent.right
+          anchors.top: prev.bottom
+          margin-top: 10
+          height: 64
+          text-wrap: true
+          color: #a99a84
+          font: verdana-11px-monochrome
+          text: -
+
+  Label
+    id: dataSourceLabel
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-left: 14
+    margin-right: 260
+    margin-bottom: 12
+    height: 24
+    text-wrap: true
+    color: #8f826f
+    font: verdana-11px-monochrome
+    text: Fonte: -
+
+  Button
+    id: fixBarButton
+    text: Fixar na barra
+    width: 138
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-right: 108
+    margin-bottom: 10
+    @onClick: modules.game_skills_panel.onFixButtonClick()
+
+  Button
+    id: closeButton
+    text: Fechar
+    width: 88
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-right: 14
+    margin-bottom: 10
+    @onClick: modules.game_skills_panel.hide()

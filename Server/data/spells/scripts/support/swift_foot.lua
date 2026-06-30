@@ -17,9 +17,6 @@ pacified:setParameter(CONDITION_PARAM_TICKS, 10000)
 combat:addCondition(pacified)
 
 function onCastSpell(creature, variant)
-	if not ElementalistCanCastSpell(creature, ELEMENT_AIR) then
-		return false
-	end
 	creature:addBuff(BUFF_UTAMO_TEMPO_SAN)
 	return combat:execute(creature, variant)
 end
