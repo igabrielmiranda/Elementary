@@ -19,7 +19,7 @@ function init()
   statsButton:setOn(true)
   statsWindow = g_ui.loadUI("characterstats", modules.game_interface.getRightPanel())
 
-  statsWindow:setContentMaximumHeight(290)
+  statsWindow:setContentMaximumHeight(330)
 
   statsWindow:setup()
 
@@ -112,6 +112,7 @@ function update(data)
     local statWidget = content:getChildById(key)
     statWidget:getChildById("points"):setText(stat.points)
     statWidget:getChildById("value"):setText("+" .. stat.value .. "%")
+    statWidget:getChildById("plusButton"):setEnabled(remainingPoints > 0)
   end
 end
 

@@ -21,6 +21,8 @@ ModernPanel < Panel
   border-color: #2d3239
 
 ModernCard < FlatPanel
+  image-source:
+  image-border: 0
   background-color: #15181c
   border-width: 1
   border-color: #30353c
@@ -295,9 +297,9 @@ ModernSlot < UIButton
     border-color: #6a7582
 
 ModernListEntry < UIButton
-  margin-top: 6
-  anchors.left: parent.left
-  anchors.right: parent.right
+  margin-top: 4
+  margin-left: 6
+  margin-right: 6
   focusable: true
   phantom: false
   clipping: true

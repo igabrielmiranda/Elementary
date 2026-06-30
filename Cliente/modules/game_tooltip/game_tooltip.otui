@@ -1,50 +1,80 @@
 LookItemName < Label
   phantom: true
-  height: 18
+  height: 20
   font: terminus-14px-bold
   text-horizontal-auto-resize: true
   text-align: center
-  margin-top: 4
+  margin-top: 5
+  color: #eef2f6
+
+TooltipSectionTitle < Label
+  phantom: true
+  height: 20
+  font: verdana-11px-rounded
+  text-horizontal-auto-resize: true
+  text-align: left
+  text-offset: 8 3
+  margin-top: 5
+  color: #aeb8c2
+  background-color: #12171c
+  border-width: 1
+  border-color: #2b343d
 
 TooltipSeparator < UIWidget
-  image-source: /images/ui/separator_horizontal
-  height: 2
-  margin-top: 4
+  image-source:
+  image-border: 0
+  background-color: #2c343d
+  height: 1
+  margin-top: 5
+  margin-left: 2
+  margin-right: 2
+  phantom: true
 
 LookItemIconAttribute < UIWidget
-  font: terminus-10px
+  font: verdana-11px-monochrome
   phantom: true
-  height: 14
-  text-offset: 24 0
+  height: 22
+  text-offset: 30 4
   text-horizontal-auto-resize: true
   text-vertical-auto-resize: true
+  text-wrap: true
   text-align: left
-  margin-top: 4
+  margin-top: 3
+  color: #d7dde3
+  background-color: #0d1115
+  border-width: 1
+  border-color: #252d35
 
   UIWidget
     id: icon
     anchors.left: parent.left
     anchors.verticalcenter: parent.verticalcenter
+    margin-left: 5
     image-source: icons
     phantom: true
     size: 19 19
 
-UIMiniWindow
+UIWidget
   id: tooltipWindow
   focusable: false
   phantom: true
-  
-  UIWidget
-    anchors.fill: parent
-    image-source: /images/ui/panel_side
-    image-border: 2
-    phantom: true
+  image-source:
+  image-border: 0
+  background-color: #090c10
+  border-width: 1
+  border-color: #3a424c
   
   Item
     id: item
     anchors.top: parent.top
     anchors.horizontalcenter: parent.horizontalcenter
-    margin-top: 8
+    margin-top: 10
+    size: 42 42
+    image-source:
+    image-border: 0
+    background-color: #0d1115
+    border-width: 1
+    border-color: #3a444f
 
     UIWidget
       id: rarityId
@@ -57,7 +87,10 @@ UIMiniWindow
     id: list
     anchors.fill: parent
     anchors.top: prev.bottom
-    margin-left: 6
-    margin-right: 6
+    margin-top: 3
+    margin-left: 10
+    margin-right: 10
+    margin-bottom: 8
     layout:
       type: verticalBox
+      spacing: 1

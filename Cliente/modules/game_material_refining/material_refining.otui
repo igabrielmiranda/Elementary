@@ -1,22 +1,31 @@
-RefinePanel < Panel
+RefinePanel < RefinedDarkTitledPanel
   text-offset: 0 2
   text-align: top
-  image-source: /images/ui/miniwindow
-  image-border: 4
-  image-border-top: 23
-  image-border-bottom: 4
-  padding: 6
-  padding-top: 23
+  image-source:
+  image-border: 0
+  background-color: #12151a
+  border-width: 1
+  border-color: #2d343d
+  color: #eef2f6
+  padding-top: 20
+  padding-left: 8
+  padding-right: 8
+  padding-bottom: 6
 
-RefineCard < Panel
-  image-source: /images/ui/panel_flat
-  image-border: 1
-  image-color: #6f6f6f
-  background-color: #20202077
+RefineCard < RefinedDarkCard
+  image-source:
+  image-border: 0
+  background-color: #0e1115
+  border-width: 1
+  border-color: #303943
+  padding: 8
 
 RefinePreviewItem < Item
   virtual: true
-  size: 42 42
+  size: 46 46
+  background-color: #090c0f
+  border-width: 1
+  border-color: #3a444f
 
   UIWidget
     id: rarityId
@@ -26,56 +35,80 @@ RefinePreviewItem < Item
     visible: false
 
 RefineInfoLabel < Label
-  color: #cfcfcf
+  color: #929ca7
+  font: verdana-11px-rounded
   text-align: left
   text-auto-resize: true
 
 RefineInfoValue < Label
-  color: #ffffff
+  color: #edf1f5
+  font: verdana-11px-monochrome
   text-align: right
   text-auto-resize: true
 
 RefineInfoRow < Panel
-  height: 22
+  height: 20
+  image-source:
+  image-border: 0
+  background-color: #0e1115
+  border-width: 1
+  border-color: #272e36
+  padding-left: 8
+  padding-right: 8
 
 RefineBaseButton < UIButton
-  height: 44
-  image-source: /images/ui/panel_flat
-  image-border: 1
-  image-color: #6a6a6a
-  color: #dfdfdf
+  height: 36
+  image-source:
+  image-border: 0
+  background-color: #0e1115
+  border-width: 1
+  border-color: #2c343d
+  color: #dfe4e9
   focusable: false
   phantom: false
-  padding-left: 30
+  padding-left: 36
+  change-cursor-image: true
+  cursor: pointer
 
   $hover !disabled:
-    image-color: #9f9f9f
+    background-color: #181e24
+    border-color: #4a5764
 
   $on:
-    image-color: #c2953e
+    background-color: #1c2924
+    border-color: #4f886d
 
   $disabled:
-    image-color: #4c4c4c
-    color: #8a8a8a
+    background-color: #0b0d10
+    border-color: #20262c
+    color: #68717b
+    change-cursor-image: false
 
   Label
     id: indicator
     anchors.left: parent.left
     anchors.verticalCenter: parent.verticalCenter
     margin-left: 10
+    size: 18 18
     text: o
-    color: #d8d8d8
+    text-align: center
+    text-offset: 0 1
+    color: #8e99a5
+    background-color: #11161b
+    border-width: 1
+    border-color: #39434e
 
   Label
     id: title
     anchors.top: parent.top
     anchors.left: prev.right
     anchors.right: parent.right
-    margin-top: 6
+    margin-top: 4
     margin-left: 6
     margin-right: 84
     text-align: left
-    color: #ffffff
+    color: #eef2f6
+    font: verdana-11px-rounded
     text-auto-resize: true
 
   Label
@@ -83,10 +116,11 @@ RefineBaseButton < UIButton
     anchors.left: title.left
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    margin-bottom: 6
+    margin-bottom: 4
     margin-right: 84
     text-align: left
-    color: #cfcfcf
+    color: #9ca6b0
+    font: verdana-11px-monochrome
     text-auto-resize: true
 
   Label
@@ -96,94 +130,144 @@ RefineBaseButton < UIButton
     margin-top: 1
     margin-right: 10
     text-align: right
-    color: #f0c674
+    color: #78b596
+    font: verdana-11px-monochrome
     text-auto-resize: true
 
 RefineCounterButton < UIButton
   size: 36 32
-  image-source: /images/ui/button
-  image-color: #ababab
-  image-clip: 0 0 22 23
-  image-border: 3
-  color: #ffffff
+  image-source:
+  image-border: 0
+  background-color: #171b20
+  border-width: 1
+  border-color: #343d47
+  color: #eef2f6
 
   $hover !disabled:
-    image-color: #dfdfdf
+    background-color: #20272e
+    border-color: #53606d
 
   $pressed:
-    image-clip: 0 46 22 23
+    background-color: #101419
 
   $disabled:
-    color: #888888
-    image-color: #727272
+    color: #68717b
+    background-color: #0c0f12
+    border-color: #252b32
 
-MainWindow
-  id: materialRefiningWindow
-  text: Refino de Materiais
-  size: 760 560
-  @onEscape: modules.game_material_refining.hide()
+RefinePrimaryButton < RefinedDarkPrimaryButton
+  height: 26
+  background-color: #193127
+  border-color: #39765c
+  color: #effaf4
+
+  $hover !disabled:
+    background-color: #214132
+    border-color: #4d9677
+
+  $pressed:
+    background-color: #12241d
+    border-color: #62aa8b
+
+RefineSecondaryButton < RefinedDarkButton
+  height: 26
+
+RefineSectionHint < Label
+  height: 18
+  color: #8e98a3
+  font: verdana-11px-monochrome
+  text-align: center
+
+RefineStatusStrip < Panel
+  height: 36
+  image-source:
+  image-border: 0
+  background-color: #0e1115
+  border-width: 1
+  border-color: #272e36
+  padding-left: 10
+  padding-right: 10
+
+MaterialRefiningPanel < Panel
+  image-source:
+  image-border: 0
+  background-color: alpha
+  border-width: 0
 
   RefinePanel
     id: materialSection
     anchors.top: parent.top
     anchors.left: parent.left
     width: 300
-    height: 252
+    height: 208
     text: Material
 
     RefineCard
       id: materialDropArea
       anchors.top: parent.top
       anchors.left: parent.left
-      margin-top: 10
-      margin-left: 10
-      size: 120 134
+      size: 118 106
 
       Label
         id: dropTitle
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
-        margin-top: 8
-        text: Slot principal
+        margin-top: 6
+        text: SLOT PRINCIPAL
         text-align: center
         phantom: true
-        color: #cfcfcf
+        color: #929ca7
+        font: verdana-11px-monochrome
 
       RefinePreviewItem
         id: materialPreview
         anchors.centerIn: parent
-        margin-top: 6
+        margin-top: 2
+        phantom: true
+
+      Label
+        id: emptyHint
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        margin-left: 6
+        margin-right: 6
+        margin-bottom: 7
+        text: Arraste o material aqui
+        text-align: center
+        color: #707a84
+        font: verdana-11px-monochrome
         phantom: true
 
     Label
       anchors.verticalCenter: materialDropArea.verticalCenter
       anchors.left: materialDropArea.right
-      margin-left: 12
-      text: ">"
-      font: verdana-11px-antialised
-      color: #f0c674
+      margin-left: 9
+      text: ">>"
+      font: verdana-11px-rounded
+      color: #78b596
 
     RefineCard
       id: resultArea
       anchors.top: materialDropArea.top
       anchors.left: prev.right
       anchors.right: parent.right
-      margin-left: 12
-      margin-right: 10
-      height: 134
+      margin-left: 9
+      height: 106
 
       Label
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        margin-top: 8
-        margin-left: 6
-        margin-right: 6
-        text: Preview
+        margin-top: 6
+        margin-left: 4
+        margin-right: 4
+        text: PREVIEW
         text-align: center
         text-auto-resize: true
         phantom: true
-        color: #cfcfcf
+        color: #929ca7
+        font: verdana-11px-monochrome
 
       RefinePreviewItem
         id: resultPreview
@@ -204,30 +288,37 @@ MainWindow
         text-wrap: true
         text-auto-resize: true
         phantom: true
-        color: #9c9c9c
+        color: #7f8994
         visible: false
 
-    Button
+    RefineSecondaryButton
       id: clearButton
       anchors.bottom: parent.bottom
       anchors.left: parent.left
-      margin-left: 10
       text: Limpar
-      width: 90
+      width: 96
       @onClick: modules.game_material_refining.clearSelectionByUser()
 
-    Label
-      id: previewCurrent
+    RefineStatusStrip
+      id: previewStatusStrip
       anchors.top: materialDropArea.bottom
       anchors.left: parent.left
       anchors.right: parent.right
-      margin-top: 10
+      margin-top: 8
+
+    Label
+      id: previewCurrent
+      anchors.top: previewStatusStrip.top
+      anchors.left: previewStatusStrip.left
+      anchors.right: previewStatusStrip.right
+      margin-top: 7
       margin-left: 10
       margin-right: 10
       text: Atual: -
       text-wrap: true
       text-auto-resize: true
-      color: #cfcfcf
+      color: #d9dfe5
+      font: verdana-11px-monochrome
       text-align: left
 
     Label
@@ -239,7 +330,8 @@ MainWindow
       text: Resultado: -
       text-wrap: true
       text-auto-resize: true
-      color: #cfcfcf
+      color: #8fae9e
+      font: verdana-11px-monochrome
       text-align: left
 
   RefinePanel
@@ -248,22 +340,21 @@ MainWindow
     anchors.left: materialSection.right
     anchors.right: parent.right
     margin-left: 10
-    height: 252
+    height: 208
     text: Base do Refino
 
-    Label
+    RefineSectionHint
       anchors.top: parent.top
       anchors.left: parent.left
       anchors.right: parent.right
-      text: Escolha a base do refinamento
-      text-align: center
+      text: Escolha a combinacao de chance e consumo
 
     RefineBaseButton
       id: base5
       anchors.top: prev.bottom
       anchors.left: parent.left
       anchors.right: parent.right
-      margin-top: 8
+      margin-top: 4
       @onClick: modules.game_material_refining.selectBase(5)
 
     RefineBaseButton
@@ -271,7 +362,7 @@ MainWindow
       anchors.top: prev.bottom
       anchors.left: parent.left
       anchors.right: parent.right
-      margin-top: 6
+      margin-top: 4
       @onClick: modules.game_material_refining.selectBase(4)
 
     RefineBaseButton
@@ -279,7 +370,7 @@ MainWindow
       anchors.top: prev.bottom
       anchors.left: parent.left
       anchors.right: parent.right
-      margin-top: 6
+      margin-top: 4
       @onClick: modules.game_material_refining.selectBase(3)
 
     RefineBaseButton
@@ -287,7 +378,7 @@ MainWindow
       anchors.top: prev.bottom
       anchors.left: parent.left
       anchors.right: parent.right
-      margin-top: 6
+      margin-top: 4
       @onClick: modules.game_material_refining.selectBase(2)
 
   RefinePanel
@@ -295,8 +386,9 @@ MainWindow
     anchors.top: materialSection.bottom
     anchors.left: parent.left
     width: 300
-    height: 190
-    margin-top: 10
+    margin-top: 8
+    anchors.bottom: actionSeparator.top
+    margin-bottom: 8
     text: Informacoes do Material
 
     RefineInfoRow
@@ -321,7 +413,7 @@ MainWindow
       anchors.top: prev.bottom
       anchors.left: parent.left
       anchors.right: parent.right
-      margin-top: 8
+      margin-top: 4
 
       RefineInfoLabel
         anchors.left: parent.left
@@ -340,7 +432,7 @@ MainWindow
       anchors.top: prev.bottom
       anchors.left: parent.left
       anchors.right: parent.right
-      margin-top: 8
+      margin-top: 4
 
       RefineInfoLabel
         anchors.left: parent.left
@@ -359,7 +451,7 @@ MainWindow
       anchors.top: prev.bottom
       anchors.left: parent.left
       anchors.right: parent.right
-      margin-top: 8
+      margin-top: 4
 
       RefineInfoLabel
         anchors.left: parent.left
@@ -378,7 +470,7 @@ MainWindow
       anchors.top: prev.bottom
       anchors.left: parent.left
       anchors.right: parent.right
-      margin-top: 8
+      margin-top: 4
 
       RefineInfoLabel
         anchors.left: parent.left
@@ -398,117 +490,142 @@ MainWindow
     anchors.top: baseSection.bottom
     anchors.left: infoSection.right
     anchors.right: parent.right
-    height: 190
-    margin-top: 10
+    margin-top: 8
     margin-left: 10
+    anchors.bottom: actionSeparator.top
+    margin-bottom: 8
     text: Resumo do Refino
 
-    RefineInfoLabel
+    RefineInfoRow
+      id: selectedBaseRow
       anchors.top: parent.top
       anchors.left: parent.left
-      text: Base selecionada
-
-    RefineInfoValue
-      id: selectedBaseValue
-      anchors.top: prev.top
       anchors.right: parent.right
-      text: -
 
-    RefineInfoLabel
+      RefineInfoLabel
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+        text: Base selecionada
+
+      RefineInfoValue
+        id: selectedBaseValue
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        text: -
+
+    RefineInfoRow
+      id: chanceRow
       anchors.top: prev.bottom
       anchors.left: parent.left
-      margin-top: 9
-      text: Chance de sucesso
-
-    RefineInfoValue
-      id: chanceValue
-      anchors.top: prev.top
       anchors.right: parent.right
-      text: -
+      margin-top: 4
 
-    RefineInfoLabel
+      RefineInfoLabel
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+        text: Chance de sucesso
+
+      RefineInfoValue
+        id: chanceValue
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        color: #78b596
+        text: -
+
+    RefineInfoRow
+      id: consumeRow
       anchors.top: prev.bottom
       anchors.left: parent.left
-      margin-top: 9
-      text: Consumo por tentativa
-
-    RefineInfoValue
-      id: consumeValue
-      anchors.top: prev.top
       anchors.right: parent.right
-      text: -
+      margin-top: 4
 
-    RefineInfoLabel
+      RefineInfoLabel
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+        text: Consumo por tentativa
+
+      RefineInfoValue
+        id: consumeValue
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        text: -
+
+    RefineInfoRow
+      id: maxAttemptsRow
       anchors.top: prev.bottom
       anchors.left: parent.left
-      margin-top: 9
-      text: Maximo possivel
-
-    RefineInfoValue
-      id: maxAttemptsValue
-      anchors.top: prev.top
       anchors.right: parent.right
-      text: -
+      margin-top: 4
 
-    RefineInfoLabel
+      RefineInfoLabel
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+        text: Maximo possivel
+
+      RefineInfoValue
+        id: maxAttemptsValue
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        text: -
+
+    RefineInfoRow
+      id: totalConsumeRow
       anchors.top: prev.bottom
       anchors.left: parent.left
-      margin-top: 9
-      text: Consumo total
-
-    RefineInfoValue
-      id: totalConsumeValue
-      anchors.top: prev.top
       anchors.right: parent.right
-      text: -
+      margin-top: 4
 
-  HorizontalSeparator
+      RefineInfoLabel
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+        text: Consumo total
+
+      RefineInfoValue
+        id: totalConsumeValue
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        color: #f0d08a
+        text: -
+
+  RefinedDarkSeparator
     id: actionSeparator
     anchors.bottom: parent.bottom
     anchors.left: parent.left
     anchors.right: parent.right
-    margin-bottom: 46
+    margin-bottom: 44
 
   Label
     id: feedbackLabel
-    anchors.left: attemptsSection.left
-    anchors.right: attemptsSection.right
+    anchors.left: parent.left
+    anchors.right: parent.right
     anchors.bottom: actionSeparator.top
     margin-left: 12
     margin-right: 12
-    margin-bottom: 14
-    height: 28
+    margin-bottom: 6
+    height: 20
     text-align: right
     text-wrap: true
     text-auto-resize: true
-    color: #d8d8d8
+    color: #aeb8c2
+    font: verdana-11px-monochrome
     visible: false
 
-  Button
+  RefinePrimaryButton
     id: refineButton
     anchors.bottom: parent.bottom
     anchors.horizontalCenter: parent.horizontalCenter
     margin-bottom: 8
-    margin-right: 80
-    width: 120
+    margin-right: 76
+    width: 116
     text: Refinar
     @onClick: modules.game_material_refining.refineSingle()
 
-  Button
+  RefinePrimaryButton
     id: refineAllButton
     anchors.bottom: parent.bottom
     anchors.horizontalCenter: parent.horizontalCenter
     margin-bottom: 8
-    margin-left: 80
-    width: 120
+    margin-left: 76
+    width: 116
     text: Refinar tudo
     @onClick: modules.game_material_refining.refineAll()
-
-  Button
-    id: closeButton
-    anchors.bottom: parent.bottom
-    anchors.right: parent.right
-    margin-bottom: 8
-    width: 60
-    text: Close
-    @onClick: modules.game_material_refining.hide()

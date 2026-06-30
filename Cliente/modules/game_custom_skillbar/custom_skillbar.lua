@@ -1563,7 +1563,7 @@ end
 local function createChoiceEntry(parent, skill)
   local entry = g_ui.createWidget('CustomSkillChoiceEntry', parent)
   entry.skillData = skill
-  entry:setHeight(78)
+  entry:setHeight(72)
   entry:setChecked(false)
   entry.nameLabel:setText(skill.name)
   entry.wordsLabel:setText(skill.words)

@@ -1,0 +1,874 @@
+ModernWindow < MainWindow
+  font: verdana-11px-rounded
+  color: #f0f0f0
+  image-source:
+  image-border: 0
+  background-color: #0f0f10
+  border-width: 1
+  border-color: #343434
+  padding-top: 28
+  padding-left: 12
+  padding-right: 12
+  padding-bottom: 12
+  text-offset: 0 4
+  text-align: top
+
+  $disabled:
+    color: #7e7e7e
+
+  $dragging:
+    opacity: 0.96
+
+ModernMainWindow < ModernWindow
+  anchors.centerIn: parent
+
+ModernMiniWindow < UIMiniWindow
+  font: verdana-11px-rounded
+  icon-rect: 4 4 16 16
+  width: 192
+  height: 200
+  color: #f0f0f0
+  text-offset: 24 4
+  text-align: topLeft
+  image-source:
+  image-border: 0
+  background-color: #101114
+  border-width: 1
+  border-color: #343434
+  focusable: false
+  padding-top: 0
+  padding-left: 0
+  padding-right: 0
+  padding-bottom: 0
+  &minimizedHeight: 24
+
+  $on:
+    border-color: #3a3a3a
+
+  $dragging:
+    opacity: 0.96
+
+  UIWidget
+    id: miniwindowTopBar
+    anchors.top: parent.top
+    anchors.right: parent.right
+    anchors.left: parent.left
+    margin-top: 1
+    margin-left: 1
+    margin-right: 1
+    height: 22
+    phantom: true
+    background-color: #17181b
+    border-width: 1
+    border-color: #2b2c2f
+
+  UIButton
+    id: closeButton
+    anchors.top: parent.top
+    anchors.right: parent.right
+    margin-top: 5
+    margin-right: 5
+    size: 14 14
+    image-source: /images/ui/miniwindow_buttons
+    image-clip: 28 0 14 14
+    image-color: #d8d8d8
+    opacity: 0.9
+
+    $hover:
+      image-clip: 28 14 14 14
+      opacity: 1.0
+
+    $pressed:
+      image-clip: 28 28 14 14
+
+  UIButton
+    id: minimizeButton
+    anchors.top: closeButton.top
+    anchors.right: closeButton.left
+    margin-right: 3
+    size: 14 14
+    image-source: /images/ui/miniwindow_buttons
+    image-clip: 0 0 14 14
+    image-color: #d8d8d8
+    opacity: 0.9
+
+    $hover:
+      image-clip: 0 14 14 14
+      opacity: 1.0
+
+    $pressed:
+      image-clip: 0 28 14 14
+
+    $on:
+      image-clip: 14 0 14 14
+
+    $on hover:
+      image-clip: 14 14 14 14
+
+    $on pressed:
+      image-clip: 14 28 14 14
+
+  UIButton
+    id: lockButton
+    anchors.top: minimizeButton.top
+    anchors.right: minimizeButton.left
+    margin-right: 3
+    size: 14 14
+    image-source: /images/ui/miniwindow_buttons
+    image-clip: 112 0 14 14
+    image-color: #d8d8d8
+    opacity: 0.9
+
+    $hover:
+      image-clip: 112 14 14 14
+      opacity: 1.0
+
+    $pressed:
+      image-clip: 112 28 14 14
+
+    $on:
+      image-clip: 98 0 14 14
+
+    $on hover:
+      image-clip: 98 14 14 14
+
+    $on pressed:
+      image-clip: 98 28 14 14
+
+  UIScrollBar
+    id: miniwindowScrollBar
+    orientation: vertical
+    width: 10
+    height: 40
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    step: 14
+    margin-top: 25
+    margin-right: 4
+    margin-bottom: 4
+    image-source:
+    image-border: 0
+    background-color: #111214
+    border-width: 1
+    border-color: #2f3135
+    pixels-scroll: true
+
+    UIButton
+      id: decrementButton
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      height: 9
+      image-source:
+      image-border: 0
+      background-color: #17181b
+
+      $hover:
+        background-color: #202124
+
+      $pressed:
+        background-color: #252525
+
+    UIButton
+      id: incrementButton
+      anchors.bottom: parent.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      height: 9
+      image-source:
+      image-border: 0
+      background-color: #17181b
+
+      $hover:
+        background-color: #202124
+
+      $pressed:
+        background-color: #252525
+
+    UIButton
+      id: sliderButton
+      anchors.centerIn: parent
+      size: 8 18
+      image-source:
+      image-border: 0
+      background-color: #2b2d31
+      border-width: 1
+      border-color: #4a4a4a
+
+      $hover:
+        background-color: #34363b
+        border-color: #5d5d5d
+
+      $pressed:
+        background-color: #25272b
+        border-color: #666b73
+
+    Label
+      id: valueLabel
+      anchors.fill: parent
+      color: #00000000
+      text-align: center
+
+    $!on:
+      width: 0
+
+  ResizeBorder
+    id: bottomResizeBorder
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 4
+    minimum: 48
+    margin-left: 1
+    margin-right: 1
+    background: #343434
+
+ModernMiniWindowContents < ScrollablePanel
+  id: contentsPanel
+  anchors.fill: parent
+  anchors.right: miniwindowScrollBar.left
+  margin-left: 6
+  margin-bottom: 6
+  margin-top: 28
+  margin-right: 4
+  vertical-scrollbar: miniwindowScrollBar
+
+ModernPanel < Panel
+  background-color: #151618
+  border-width: 1
+  border-color: #2f3135
+
+ModernFlatPanel < FlatPanel
+  image-source:
+  image-border: 0
+  background-color: #1a1a1c
+  border-width: 1
+  border-color: #343434
+
+ModernScrollablePanel < ScrollablePanel
+  background-color: #1a1a1c
+  border-width: 1
+  border-color: #343434
+
+ModernButton < UIButton
+  font: verdana-11px-rounded
+  color: #f0f0f0
+  size: 106 24
+  text-offset: 0 1
+  image-source:
+  image-border: 0
+  background-color: #1a1a1c
+  border-width: 1
+  border-color: #343434
+  padding: 5 10 5 10
+  change-cursor-image: true
+  cursor: pointer
+
+  $hover !disabled:
+    background-color: #202124
+    border-color: #4a4a4a
+
+  $pressed:
+    background-color: #252525
+    border-color: #5a5a5a
+    text-offset: 0 1
+
+  $disabled:
+    color: #8a8a8a
+    background-color: #131315
+    border-color: #2a2a2d
+    change-cursor-image: false
+
+ModernButtonBox < UICheckBox
+  font: verdana-11px-rounded
+  color: #f0f0f0
+  size: 106 24
+  text-align: center
+  image-source:
+  image-border: 0
+  background-color: #1a1a1c
+  border-width: 1
+  border-color: #343434
+  change-cursor-image: true
+  cursor: pointer
+
+  $hover !disabled:
+    background-color: #202124
+    border-color: #4a4a4a
+
+  $checked:
+    background-color: #252a2e
+    border-color: #5d6873
+    color: #f0f0f0
+
+  $disabled:
+    color: #8a8a8a
+    background-color: #131315
+    border-color: #2a2a2d
+    change-cursor-image: false
+
+ModernTextEdit < UITextEdit
+  font: verdana-11px-rounded
+  color: #f0f0f0
+  size: 86 24
+  text-offset: 0 4
+  padding: 4
+  image-source:
+  image-border: 0
+  background-color: #121214
+  border-width: 1
+  border-color: #343434
+  selection-color: #121214
+  selection-background-color: #c6c6c6
+  change-cursor-image: true
+
+  $hover !disabled:
+    border-color: #4a4a4a
+
+  $focus:
+    border-color: #5f6670
+
+  $disabled:
+    color: #8a8a8a
+    background-color: #111113
+    border-color: #2a2a2d
+    change-cursor-image: false
+
+ModernInput < ModernTextEdit
+
+ModernComboBoxPopupMenuButton < UIButton
+  height: 22
+  margin: 1
+  font: verdana-11px-rounded
+  text-align: left
+  text-offset: 6 0
+  color: #f0f0f0
+  background-color: #17181b
+
+  $hover !disabled:
+    background-color: #202124
+
+  $disabled:
+    color: #8a8a8a
+
+ModernComboBoxPopupMenu < UIPopupMenu
+  image-source:
+  image-border: 0
+  background-color: #121214
+  border-width: 1
+  border-color: #343434
+
+ModernComboBox < UIComboBox
+  font: verdana-11px-rounded
+  color: #f0f0f0
+  size: 91 24
+  text-offset: 6 0
+  text-align: left
+  image-source:
+  image-border: 0
+  background-color: #1a1a1c
+  border-width: 1
+  border-color: #343434
+
+  $hover !disabled:
+    background-color: #202124
+    border-color: #4a4a4a
+
+  $on:
+    background-color: #252525
+    border-color: #5a5a5a
+
+  $disabled:
+    color: #8a8a8a
+    background-color: #131315
+    border-color: #2a2a2d
+
+ModernCheckBox < UICheckBox
+  size: 18 18
+  text-align: left
+  text-offset: 24 1
+  color: #d8d8d8
+  image-source:
+  image-border: 0
+  background-color: #121214
+  border-width: 1
+  border-color: #343434
+  change-cursor-image: true
+  cursor: pointer
+
+  $hover !disabled:
+    color: #f0f0f0
+    border-color: #4a4a4a
+
+  $!checked:
+    background-color: #121214
+
+  $checked:
+    background-color: #1c3323
+    border-color: #3f6b4c
+
+  $hover checked:
+    background-color: #25402d
+    border-color: #4d835d
+
+  $disabled:
+    color: #8a8a8a
+    border-color: #2a2a2d
+    background-color: #111113
+    change-cursor-image: false
+
+ModernScrollBarSlider < UIButton
+  id: sliderButton
+  anchors.centerIn: parent
+  size: 8 18
+  image-source:
+  image-border: 0
+  background-color: #2b2d31
+  border-width: 1
+  border-color: #4a4a4a
+
+  $hover:
+    background-color: #34363b
+    border-color: #5d5d5d
+
+  $pressed:
+    background-color: #25272b
+    border-color: #666b73
+
+ModernScrollBarValueLabel < Label
+  id: valueLabel
+  anchors.fill: parent
+  color: #00000000
+  text-align: center
+
+ModernVerticalScrollBar < UIScrollBar
+  orientation: vertical
+  width: 10
+  height: 40
+  image-source:
+  image-border: 0
+  background-color: #111214
+  border-width: 1
+  border-color: #2f3135
+  pixels-scroll: true
+
+  UIButton
+    id: decrementButton
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 9
+    image-source:
+    image-border: 0
+    background-color: #17181b
+
+    $hover:
+      background-color: #202124
+
+    $pressed:
+      background-color: #252525
+
+  UIButton
+    id: incrementButton
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 9
+    image-source:
+    image-border: 0
+    background-color: #17181b
+
+    $hover:
+      background-color: #202124
+
+    $pressed:
+      background-color: #252525
+
+  ModernScrollBarSlider
+  ModernScrollBarValueLabel
+
+ModernHorizontalScrollBar < UIScrollBar
+  orientation: horizontal
+  height: 10
+  width: 40
+  image-source:
+  image-border: 0
+  background-color: #111214
+  border-width: 1
+  border-color: #2f3135
+
+  UIButton
+    id: decrementButton
+    anchors.top: parent.top
+    anchors.left: parent.left
+    width: 9
+    image-source:
+    image-border: 0
+    background-color: #17181b
+
+    $hover:
+      background-color: #202124
+
+    $pressed:
+      background-color: #252525
+
+  UIButton
+    id: incrementButton
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    width: 9
+    image-source:
+    image-border: 0
+    background-color: #17181b
+
+    $hover:
+      background-color: #202124
+
+    $pressed:
+      background-color: #252525
+
+  ModernScrollBarSlider
+  ModernScrollBarValueLabel
+
+ModernTextList < TextList
+  border-width: 1
+  border-color: #343434
+  background-color: #141416
+  padding: 4
+
+ModernHorizontalSeparator < UIWidget
+  height: 1
+  background-color: #2f3135
+  phantom: true
+  focusable: false
+
+ModernProgressBar < UIProgressBar
+  height: 6
+  background-color: #3f6b4c
+  border-width: 1
+  border-color: #2a2c30
+  font: verdana-11px-rounded
+  text-offset: 0 0
+
+  $!on:
+    visible: false
+    margin-top: 0
+    margin-bottom: 0
+    height: 0
+
+ModernTabBarVertical < UITabBar
+  width: 118
+
+  ModernScrollablePanel
+    id: buttonsPanel
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: scrollBar.left
+    anchors.bottom: parent.bottom
+    vertical-scrollbar: scrollBar
+    margin-right: 6
+    padding: 8
+
+  ModernVerticalScrollBar
+    id: scrollBar
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    step: 16
+    pixels-scroll: true
+
+    $!on:
+      width: 0
+
+ModernTabBarVerticalButton < UIButton
+  height: 40
+  color: #9b9b9b
+  anchors.left: parent.left
+  anchors.right: parent.right
+  text-align: left
+  text-offset: 34 0
+  icon-align: left
+  icon-offset: 8 0
+  background-color: #17181b
+  border-width: 1
+  border-color: #2f3135
+
+  $first:
+    anchors.top: parent.top
+
+  $!first:
+    anchors.top: prev.bottom
+    margin-top: 6
+
+  $hover !checked:
+    color: #f0f0f0
+    background-color: #202124
+    border-color: #4a4a4a
+
+  $disabled:
+    color: #686868
+    icon-color: #686868
+
+  $checked:
+    color: #f0f0f0
+    background-color: #252525
+    border-color: #5a5a5a
+
+  $on !checked:
+    color: #8db59a
+
+RefinedDarkWindow < UIWindow
+  font: verdana-11px-rounded
+  size: 200 200
+  opacity: 1
+  color: #f0f0f0
+  text-offset: 0 5
+  text-align: top
+  image-source:
+  image-border: 0
+  background-color: #111214
+  border-width: 1
+  border-color: #333333
+  padding-top: 32
+  padding-left: 14
+  padding-right: 14
+  padding-bottom: 14
+
+  $disabled:
+    color: #8f8f8f
+
+  $dragging:
+    opacity: 0.96
+
+RefinedDarkMainWindow < ModernMainWindow
+  background-color: #111214
+  border-color: #333333
+  color: #f0f0f0
+  padding-top: 30
+  padding-left: 14
+  padding-right: 14
+  padding-bottom: 14
+
+RefinedDarkPanel < Panel
+  background-color: #161719
+  border-width: 1
+  border-color: #333333
+
+RefinedDarkCard < FlatPanel
+  image-source:
+  image-border: 0
+  background-color: #1b1c1f
+  border-width: 1
+  border-color: #3a3a3a
+  padding: 8
+
+RefinedDarkTitledPanel < Panel
+  color: #f0f0f0
+  font: verdana-11px-rounded
+  text-offset: 0 3
+  text-align: top
+  background-color: #161719
+  border-width: 1
+  border-color: #333333
+  padding-top: 20
+  padding-left: 8
+  padding-right: 8
+  padding-bottom: 8
+
+RefinedDarkScrollablePanel < ScrollablePanel
+  background-color: #111214
+  border-width: 1
+  border-color: #333333
+  padding: 4
+
+RefinedDarkTitle < Label
+  color: #f0f0f0
+  font: verdana-11px-rounded
+  height: 18
+
+RefinedDarkMutedText < Label
+  color: #9b9b9b
+  font: verdana-11px-monochrome
+
+RefinedDarkButton < ModernButton
+  background-color: #161719
+  border-color: #3a3a3a
+  color: #f0f0f0
+
+  $hover !disabled:
+    background-color: #1b1c1f
+    border-color: #4a4a4a
+
+  $pressed:
+    background-color: #111214
+    border-color: #5a5a5a
+
+  $disabled:
+    color: #878787
+    background-color: #141517
+    border-color: #2d2d2d
+
+RefinedDarkPrimaryButton < RefinedDarkButton
+  background-color: #1d2328
+  border-color: #55606b
+
+  $hover !disabled:
+    background-color: #252d34
+    border-color: #6a7784
+
+  $pressed:
+    background-color: #151a1f
+    border-color: #7d8a97
+
+RefinedDarkListEntry < Panel
+  phantom: false
+  focusable: true
+  background-color: #161719
+  border-width: 1
+  border-color: #333333
+
+  $hover !disabled:
+    background-color: #1b1c1f
+    border-color: #4a4a4a
+
+  $focus:
+    background-color: #1d2024
+    border-color: #596472
+
+RefinedDarkSeparator < UIWidget
+  height: 1
+  background-color: #333333
+  phantom: true
+  focusable: false
+
+RefinedDarkVerticalScrollBar < UIScrollBar
+  orientation: vertical
+  width: 10
+  height: 40
+  image-source:
+  image-border: 0
+  background-color: #111214
+  border-width: 1
+  border-color: #333333
+  pixels-scroll: true
+
+  UIButton
+    id: decrementButton
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 9
+    image-source:
+    image-border: 0
+    background-color: #161719
+
+    $hover:
+      background-color: #1b1c1f
+
+    $pressed:
+      background-color: #101113
+
+  UIButton
+    id: incrementButton
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 9
+    image-source:
+    image-border: 0
+    background-color: #161719
+
+    $hover:
+      background-color: #1b1c1f
+
+    $pressed:
+      background-color: #101113
+
+  UIButton
+    id: sliderButton
+    anchors.centerIn: parent
+    size: 8 18
+    image-source:
+    image-border: 0
+    background-color: #2a2c30
+    border-width: 1
+    border-color: #4a4a4a
+
+    $hover:
+      background-color: #34373c
+      border-color: #5a5a5a
+
+    $pressed:
+      background-color: #202327
+      border-color: #666b72
+
+  Label
+    id: valueLabel
+    anchors.fill: parent
+    color: #00000000
+    text-align: center
+
+RefinedDarkHorizontalScrollBar < UIScrollBar
+  orientation: horizontal
+  height: 10
+  width: 40
+  image-source:
+  image-border: 0
+  background-color: #111214
+  border-width: 1
+  border-color: #333333
+
+  UIButton
+    id: decrementButton
+    anchors.top: parent.top
+    anchors.left: parent.left
+    width: 9
+    image-source:
+    image-border: 0
+    background-color: #161719
+
+    $hover:
+      background-color: #1b1c1f
+
+    $pressed:
+      background-color: #101113
+
+  UIButton
+    id: incrementButton
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    width: 9
+    image-source:
+    image-border: 0
+    background-color: #161719
+
+    $hover:
+      background-color: #1b1c1f
+
+    $pressed:
+      background-color: #101113
+
+  UIButton
+    id: sliderButton
+    anchors.centerIn: parent
+    size: 18 8
+    image-source:
+    image-border: 0
+    background-color: #2a2c30
+    border-width: 1
+    border-color: #4a4a4a
+
+    $hover:
+      background-color: #34373c
+      border-color: #5a5a5a
+
+    $pressed:
+      background-color: #202327
+      border-color: #666b72
+
+  Label
+    id: valueLabel
+    anchors.fill: parent
+    color: #00000000
+    text-align: center

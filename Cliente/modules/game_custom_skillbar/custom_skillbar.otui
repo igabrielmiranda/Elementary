@@ -121,46 +121,86 @@ CustomSkillChoiceFieldValue < ModernFieldValue
   focusable: false
 
 CustomSkillChoicePane < ModernCard
-  background-color: #17181b
-  border-color: #30343a
+  image-source:
+  image-border: 0
+  background-color: #12151a
+  border-color: #2d343d
   padding: 10
+
+CustomSkillChoiceSectionTitle < ModernTitle
+  color: #eef2f6
+  text-offset: 0 1
+
+CustomSkillChoiceInfoRow < Panel
+  height: 30
+  image-source:
+  image-border: 0
+  background-color: #0f1216
+  border-width: 1
+  border-color: #282e36
+  padding-left: 10
+  padding-right: 10
+
+CustomSkillChoiceDescriptionCard < Panel
+  image-source:
+  image-border: 0
+  background-color: #0f1216
+  border-width: 1
+  border-color: #282e36
+  padding: 10
+
+CustomSkillChoicePrimaryButton < ModernButtonPrimary
+  height: 26
+  background-color: #193127
+  border-color: #39765c
+  color: #effaf4
+
+  $hover !disabled:
+    background-color: #214132
+    border-color: #4d9677
+
+  $pressed:
+    background-color: #12241d
+    border-color: #62aa8b
 
 CustomSkillChoiceEntry < UIButton
   checkable: true
-  height: 78
+  height: 72
   margin-top: 6
-  anchors.left: parent.left
-  anchors.right: parent.right
+  margin-left: 6
+  margin-right: 6
   focusable: true
   phantom: false
   clipping: false
-  padding: 10
+  padding: 8
   image-source:
   image-border: 0
-  background-color: #1d1f23
+  background-color: #171b20
   border-width: 1
-  border-color: #353942
+  border-color: #303741
 
   $hover !checked:
-    background-color: #23262c
-    border-color: #4e5661
+    background-color: #1e242b
+    border-color: #4d5966
 
   $checked:
-    background-color: #272c34
-    border-color: #687383
+    background-color: #202a2e
+    border-color: #4f806d
 
   $focus:
-    border-color: #5e6978
+    background-color: #202a2e
+    border-color: #5d917c
 
   UIWidget
     id: icon
     anchors.left: parent.left
     anchors.top: parent.top
-    margin-left: 2
-    margin-top: 2
-    size: 36 36
+    size: 42 42
     image-size: 32 32
     image-source: /images/game/spells/cooldowns
+    background-color: #0c0f13
+    border-width: 1
+    border-color: #333b45
     phantom: true
 
   Label
@@ -171,7 +211,7 @@ CustomSkillChoiceEntry < UIButton
     margin-left: 10
     margin-right: 118
     height: 16
-    color: #f0f0f0
+    color: #f2f4f7
     font: verdana-11px-rounded
     phantom: true
 
@@ -180,7 +220,7 @@ CustomSkillChoiceEntry < UIButton
     anchors.left: nameLabel.left
     anchors.right: parent.right
     anchors.top: nameLabel.bottom
-    margin-top: 3
+    margin-top: 4
     margin-right: 118
     height: 14
     color: #d4d8dd
@@ -192,7 +232,7 @@ CustomSkillChoiceEntry < UIButton
     anchors.left: nameLabel.left
     anchors.right: parent.right
     anchors.top: wordsLabel.bottom
-    margin-top: 8
+    margin-top: 7
     margin-right: 118
     height: 14
     color: #9ea4ac
@@ -220,16 +260,23 @@ CustomSkillChoiceEmpty < ModernMutedText
 CustomSkillChoiceWindow < ModernWindow
   id: customSkillChoiceWindow
   text: Escolher Skill
-  size: 760 560
+  size: 780 580
+  background-color: #0b0e12
+  border-color: #39424d
+  padding-top: 22
   @onEscape: modules.game_custom_skillbar.closeChoiceWindow()
 
-  ModernTitle
+  ModernHeaderStrip
     id: slotLabel
     anchors.left: parent.left
     anchors.top: parent.top
     margin-left: 14
-    margin-top: 10
-    height: 18
+    margin-top: 8
+    width: 150
+    height: 22
+    background-color: #151a20
+    border-color: #313a45
+    color: #dfe6ed
     text: Slot
 
   CustomSkillChoiceFieldLabel
@@ -237,8 +284,9 @@ CustomSkillChoiceWindow < ModernWindow
     anchors.left: parent.left
     anchors.top: slotLabel.bottom
     margin-left: 14
-    margin-top: 12
-    text: Busca
+    margin-top: 10
+    color: #8f9aa6
+    text: BUSCAR SKILL
 
   ModernInput
     id: searchInput
@@ -248,9 +296,10 @@ CustomSkillChoiceWindow < ModernWindow
     margin-left: 14
     margin-right: 14
     margin-top: 4
-    height: 24
-    background-color: #101113
-    border-color: #31343a
+    height: 28
+    background-color: #0d1014
+    border-color: #35404b
+    padding-left: 9
     placeholder: Buscar skill ou palavra magica
     @onTextChange: modules.game_custom_skillbar.onChoiceSearchTextChange(self)
 
@@ -272,11 +321,11 @@ CustomSkillChoiceWindow < ModernWindow
       anchors.left: parent.left
       anchors.top: parent.top
       anchors.bottom: parent.bottom
-      width: 346
-      background-color: #17181b
-      border-color: #30343a
+      width: 354
+      background-color: #12151a
+      border-color: #2d343d
 
-      ModernTitle
+      CustomSkillChoiceSectionTitle
         id: listTitleLabel
         anchors.left: parent.left
         anchors.top: parent.top
@@ -285,19 +334,20 @@ CustomSkillChoiceWindow < ModernWindow
 
       ModernMutedText
         id: resultLabel
-        anchors.left: parent.left
         anchors.right: parent.right
-        anchors.top: listTitleLabel.bottom
-        margin-top: 3
+        anchors.top: listTitleLabel.top
+        width: 120
         height: 16
+        color: #7f8995
+        text-align: right
         text: 0 skills
 
       ModernScrollBar
         id: skillListScrollBar
-        anchors.top: resultLabel.bottom
+        anchors.top: listTitleLabel.bottom
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        margin-top: 10
+        margin-top: 8
         pixels-scroll: true
         step: 48
 
@@ -305,13 +355,13 @@ CustomSkillChoiceWindow < ModernWindow
         id: skillList
         anchors.left: parent.left
         anchors.right: skillListScrollBar.left
-        anchors.top: resultLabel.bottom
+        anchors.top: listTitleLabel.bottom
         anchors.bottom: parent.bottom
-        margin-top: 10
-        margin-right: 8
-        background-color: #101113
+        margin-top: 8
+        margin-right: 7
+        background-color: #0b0e12
         border-width: 1
-        border-color: #292d33
+        border-color: #252c34
         vertical-scrollbar: skillListScrollBar
         layout:
           type: verticalBox
@@ -324,10 +374,10 @@ CustomSkillChoiceWindow < ModernWindow
       anchors.top: parent.top
       anchors.bottom: parent.bottom
       margin-left: 12
-      background-color: #17181b
-      border-color: #30343a
+      background-color: #12151a
+      border-color: #2d343d
 
-      ModernTitle
+      CustomSkillChoiceSectionTitle
         id: detailPanelTitle
         anchors.left: parent.left
         anchors.top: parent.top
@@ -340,21 +390,22 @@ CustomSkillChoiceWindow < ModernWindow
         anchors.right: parent.right
         anchors.top: detailPanelTitle.bottom
         margin-top: 10
-        height: 104
-        background-color: #1f2023
-        border-color: #393d44
-        padding: 8
+        height: 96
+        background-color: #171c22
+        border-color: #35404b
+        padding: 10
 
         UIWidget
           id: detailIcon
           anchors.left: parent.left
           anchors.top: parent.top
-          margin-left: 2
-          margin-top: 2
           size: 52 52
           image-size: 40 40
           image-source: /images/game/spells/cooldowns
           image-clip: 40 0 20 20
+          background-color: #0b0e12
+          border-width: 1
+          border-color: #3b4652
 
         ModernTitle
           id: detailName
@@ -383,65 +434,100 @@ CustomSkillChoiceWindow < ModernWindow
           height: 14
           text: -
 
-      CustomSkillChoiceFieldLabel
+      CustomSkillChoiceInfoRow
+        id: typeRow
         anchors.left: parent.left
+        anchors.right: parent.right
         anchors.top: summaryPanel.bottom
-        margin-top: 12
-        text: Tipo
+        margin-top: 10
 
-      CustomSkillChoiceFieldValue
-        id: detailTypeValue
+        CustomSkillChoiceFieldLabel
+          anchors.left: parent.left
+          anchors.verticalCenter: parent.verticalCenter
+          width: 104
+          text: Tipo
+
+        CustomSkillChoiceFieldValue
+          id: detailTypeValue
+          anchors.left: prev.right
+          anchors.right: parent.right
+          anchors.verticalCenter: parent.verticalCenter
+          margin-left: 8
+          color: #e8edf2
+          text: -
+
+      CustomSkillChoiceInfoRow
+        id: groupRow
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.top: prev.bottom
-        margin-top: 2
-        text: -
+        anchors.top: typeRow.bottom
+        margin-top: 6
 
-      CustomSkillChoiceFieldLabel
+        CustomSkillChoiceFieldLabel
+          anchors.left: parent.left
+          anchors.verticalCenter: parent.verticalCenter
+          width: 104
+          text: Grupo
+
+        CustomSkillChoiceFieldValue
+          id: detailGroupValue
+          anchors.left: prev.right
+          anchors.right: parent.right
+          anchors.verticalCenter: parent.verticalCenter
+          margin-left: 8
+          color: #e8edf2
+          text: -
+
+      CustomSkillChoiceInfoRow
+        id: weaponRow
         anchors.left: parent.left
-        anchors.top: detailTypeValue.bottom
+        anchors.right: parent.right
+        anchors.top: groupRow.bottom
+        margin-top: 6
+        height: 36
+
+        CustomSkillChoiceFieldLabel
+          anchors.left: parent.left
+          anchors.verticalCenter: parent.verticalCenter
+          width: 104
+          text: Arma necessaria
+
+        CustomSkillChoiceFieldValue
+          id: detailRequiredItemValue
+          anchors.left: prev.right
+          anchors.right: parent.right
+          anchors.verticalCenter: parent.verticalCenter
+          margin-left: 8
+          height: 28
+          color: #e8edf2
+          text-wrap: true
+          text: -
+
+      CustomSkillChoiceDescriptionCard
+        id: descriptionCard
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: weaponRow.bottom
+        anchors.bottom: parent.bottom
         margin-top: 8
-        text: Grupo
 
-      CustomSkillChoiceFieldValue
-        id: detailGroupValue
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: prev.bottom
-        margin-top: 2
-        text: -
+        CustomSkillChoiceFieldLabel
+          anchors.left: parent.left
+          anchors.right: parent.right
+          anchors.top: parent.top
+          color: #8f9aa6
+          text: DESCRICAO
 
-      CustomSkillChoiceFieldLabel
-        anchors.left: parent.left
-        anchors.top: detailGroupValue.bottom
-        margin-top: 8
-        text: Arma necessaria
-
-      CustomSkillChoiceFieldValue
-        id: detailRequiredItemValue
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: prev.bottom
-        margin-top: 2
-        height: 28
-        text-wrap: true
-        text: -
-
-      CustomSkillChoiceFieldLabel
-        anchors.left: parent.left
-        anchors.top: detailRequiredItemValue.bottom
-        margin-top: 8
-        text: Descricao
-
-      CustomSkillChoiceFieldValue
-        id: detailDescriptionValue
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: prev.bottom
-        margin-top: 2
-        height: 74
-        text-wrap: true
-        text: Selecione uma skill na lista para ver os detalhes.
+        CustomSkillChoiceFieldValue
+          id: detailDescriptionValue
+          anchors.left: parent.left
+          anchors.right: parent.right
+          anchors.top: prev.bottom
+          anchors.bottom: parent.bottom
+          margin-top: 5
+          color: #d9dfe5
+          text-wrap: true
+          text: Selecione uma skill na lista para ver os detalhes.
 
   CustomSkillChoicePane
     id: footerPanel
@@ -451,14 +537,15 @@ CustomSkillChoiceWindow < ModernWindow
     margin-left: 14
     margin-right: 14
     margin-bottom: 12
-    height: 56
-    background-color: #17181b
-    border-color: #30343a
+    height: 58
+    background-color: #11151a
+    border-color: #303943
 
     CustomSkillChoiceFieldLabel
       id: hotkeyLabel
       anchors.left: parent.left
       anchors.top: parent.top
+      color: #8f9aa6
       text: Tecla do slot
 
     ModernComboBox
@@ -466,14 +553,16 @@ CustomSkillChoiceWindow < ModernWindow
       anchors.left: parent.left
       anchors.top: hotkeyLabel.bottom
       width: 132
-      height: 22
+      height: 24
       margin-top: 3
+      background-color: #0b0e12
+      border-color: #35404b
 
-    ModernButtonPrimary
+    CustomSkillChoicePrimaryButton
       id: selectButton
       anchors.right: clearButton.left
       anchors.bottom: parent.bottom
-      width: 100
+      width: 104
       margin-right: 8
       text: Selecionar
       @onClick: modules.game_custom_skillbar.confirmChoiceSelection()
@@ -483,6 +572,7 @@ CustomSkillChoiceWindow < ModernWindow
       anchors.right: closeButton.left
       anchors.bottom: parent.bottom
       width: 104
+      height: 26
       margin-right: 8
       text: Limpar Slot
       @onClick: modules.game_custom_skillbar.onClearChoiceButtonClick()
@@ -492,6 +582,7 @@ CustomSkillChoiceWindow < ModernWindow
       anchors.right: parent.right
       anchors.bottom: parent.bottom
       width: 74
+      height: 26
       text: Fechar
       @onClick: modules.game_custom_skillbar.closeChoiceWindow()
 

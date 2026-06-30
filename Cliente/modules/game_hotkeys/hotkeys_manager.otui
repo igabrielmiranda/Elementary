@@ -1,14 +1,15 @@
 HotkeyListLabel < UILabel
   font: verdana-11px-monochrome
   background-color: alpha
+  color: #d8d8d8
   text-offset: 2 0
   focusable: true
   phantom: false
 
   $focus:
-    background-color: #ffffff22
+    background-color: #252525
 
-MainWindow
+ModernMainWindow
   id: hotkeysWindow
   !text: tr('Hotkeys')
   size: 370 475
@@ -16,7 +17,7 @@ MainWindow
   @onEnter: modules.game_hotkeys.ok()
   @onEscape: modules.game_hotkeys.cancel()
   
-  ComboBox
+  ModernComboBox
     id: configSelector
     anchors.left: parent.left
     anchors.right: parent.right
@@ -34,7 +35,7 @@ MainWindow
       self:addOption(tr("Hotkeys config #5"))
     
 
-  VerticalScrollBar
+  ModernVerticalScrollBar
     id: currentHotkeysScrollBar
     height: 150
     anchors.top: prev.bottom
@@ -43,7 +44,7 @@ MainWindow
     step: 14
     pixels-scroll: true
 
-  TextList
+  ModernTextList
     id: currentHotkeys
     vertical-scrollbar: currentHotkeysScrollBar
     anchors.left: parent.left
@@ -52,7 +53,7 @@ MainWindow
     anchors.bottom: prev.bottom
     focusable: false
 
-  Button
+  ModernButton
     id: resetButton
     width: 96
     !text: tr('Reset All')
@@ -61,7 +62,7 @@ MainWindow
     @onClick: modules.game_hotkeys.reset()
     margin-right: 10
 
-  Button
+  ModernButton
     id: addHotkeyButton
     !text: tr('Add')
     width: 64
@@ -70,7 +71,7 @@ MainWindow
     margin-right: 5
     @onClick: modules.game_hotkeys.addHotkey()
 
-  Button
+  ModernButton
     id: removeHotkeyButton
     !text: tr('Remove')
     width: 64
@@ -80,7 +81,7 @@ MainWindow
     margin-top: 8
     @onClick: modules.game_hotkeys.removeHotkey()
 
-  HorizontalSeparator
+  ModernHorizontalSeparator
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
@@ -92,7 +93,7 @@ MainWindow
     margin-top: 10
     !text: tr('Extra action:')    
   
-  ComboBox
+  ModernComboBox
     id: action
     anchors.left: prev.right
     anchors.right: parent.right
@@ -102,7 +103,7 @@ MainWindow
     enabled: false
     @onOptionChange: modules.game_hotkeys.updateHotkeyAction()
 
-  HorizontalSeparator
+  ModernHorizontalSeparator
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
@@ -117,7 +118,7 @@ MainWindow
     anchors.top: prev.bottom
     margin-top: 6
 
-  TextEdit
+  ModernInput
     id: hotkeyText
     enabled: false
     anchors.left: parent.left
@@ -143,7 +144,7 @@ MainWindow
     margin-top: 10
     virtual: true
 
-  Button
+  ModernButton
     id: selectObjectButton
     !text: tr('Select object')
     width: 128
@@ -153,7 +154,7 @@ MainWindow
     margin-left: 10
     @onClick: modules.game_hotkeys.startChooseItem()
 
-  Button
+  ModernButton
     id: clearObjectButton
     !text: tr('Clear object')
     width: 128
@@ -164,7 +165,7 @@ MainWindow
     margin-top: 2
     @onClick: modules.game_hotkeys.clearObject()
 
-  ButtonBox
+  ModernButtonBox
     id: useOnSelf
     !text: tr('Use on yourself')
     width: 128
@@ -175,7 +176,7 @@ MainWindow
     checked: false
     margin-left: 10
 
-  ButtonBox
+  ModernButtonBox
     id: useOnTarget
     !text: tr('Use on target')
     width: 128
@@ -186,7 +187,7 @@ MainWindow
     checked: false
     margin-top: 2
 
-  ButtonBox
+  ModernButtonBox
     id: useWith
     !text: tr('With crosshair')
     width: 128
@@ -197,14 +198,14 @@ MainWindow
     checked: false
     margin-top: 2
 
-  HorizontalSeparator
+  ModernHorizontalSeparator
     id: separator
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: next.top
     margin-bottom: 5
 
-  Button
+  ModernButton
     id: okButton
     !text: tr('Ok')
     width: 64
@@ -213,7 +214,7 @@ MainWindow
     @onClick: modules.game_hotkeys.ok()
     margin-right: 10
 
-  Button
+  ModernButton
     id: cancelButton
     !text: tr('Cancel')
     width: 64
@@ -221,7 +222,7 @@ MainWindow
     anchors.bottom: parent.bottom
     @onClick: modules.game_hotkeys.cancel()
 
-HotkeyAssignWindow < MainWindow
+HotkeyAssignWindow < ModernMainWindow
   id: assignWindow
   !text: tr('Button Assign')
   size: 360 150
@@ -243,14 +244,14 @@ HotkeyAssignWindow < MainWindow
     margin-top: 10
     text-auto-resize: true
 
-  HorizontalSeparator
+  ModernHorizontalSeparator
     id: separator
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: next.top
     margin-bottom: 10
 
-  Button
+  ModernButton
     id: addButton
     !text: tr('Add')
     width: 64
@@ -259,7 +260,7 @@ HotkeyAssignWindow < MainWindow
     margin-right: 10
     @onClick: modules.game_hotkeys.hotkeyCaptureOk(self:getParent(), self:getParent():getChildById('comboPreview').keyCombo)
 
-  Button
+  ModernButton
     id: cancelButton
     !text: tr('Cancel')
     width: 64

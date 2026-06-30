@@ -1,6 +1,9 @@
 GameSidePanel < UIMiniWindowContainer
-  image-source: /images/ui/panel_side
-  image-border: 4
+  image-source:
+  image-border: 0
+  background-color: #101114
+  border-width: 1
+  border-color: #2f3135
   padding: 3
   padding-top: 0
   width: 198
@@ -15,8 +18,11 @@ GameSidePanel < UIMiniWindowContainer
 
 GameMapPanel < UIGameMap
   padding: 4
-  image-source: /images/ui/panel_map
-  image-border: 4
+  image-source:
+  image-border: 0
+  background-color: #0f0f10
+  border-width: 1
+  border-color: #2f3135
 
   $on:
     padding: 0
@@ -210,11 +216,14 @@ UIWidget
 
   Panel
     id: gameTopBar
-    image-source: /images/ui/panel_bottom2
+    image-source:
     anchors.top: parent.top
     anchors.left: gameBottomActionPanel.left
     anchors.right: gameBottomActionPanel.right
     focusable: false
+    background-color: #111214
+    border-width: 1
+    border-color: #2f3135
 
     $mobile:
       height: 0

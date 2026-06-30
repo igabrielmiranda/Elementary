@@ -1,12 +1,12 @@
 ConsoleLabel < UITextEdit
-  font: verdana-11px-antialised
-  height: 14
+  font: verdana-11px-rounded
+  height: 15
   color: yellow
-  margin-left: 2
+  margin-left: 4
   text-wrap: true
   text-auto-resize: true
-  selection-color: #111416
-  selection-background-color: #999999
+  selection-color: #0b0e11
+  selection-background-color: #aeb5bd
   change-cursor-image: false
   cursor-visible: false
   editable: false
@@ -15,16 +15,20 @@ ConsoleLabel < UITextEdit
   focusable: false
 
 ConsolePhantomLabel < UILabel
-  font: verdana-11px-antialised
-  height: 14
+  font: verdana-11px-rounded
+  height: 15
   color: yellow
+  margin-left: 4
   text-wrap: true
   text-auto-resize: true
-  selection-color: #111416
-  selection-background-color: #999999
+  selection-color: #0b0e11
+  selection-background-color: #aeb5bd
 
 ConsoleTabBar < MoveableTabBar
-  height: 28
+  height: 26
+  background-color: #0d1115
+  border-width: 1
+  border-color: #252d35
 
 ConsoleTabBarPanel < MoveableTabBarPanel
   id: consoleTab
@@ -32,18 +36,18 @@ ConsoleTabBarPanel < MoveableTabBarPanel
   ScrollablePanel
     id: consoleBuffer
     anchors.fill: parent
-    margin-right: 12
+    margin-right: 11
     vertical-scrollbar: consoleScrollBar
     layout:
       type: verticalBox
       align-bottom: true
     border-width: 1
-    border-color: #202327
-    background: #00000066
+    border-color: #252d35
+    background-color: #090c0f
     inverted-scroll: true
-    padding: 1
+    padding: 4
 
-  VerticalScrollBar
+  ModernVerticalScrollBar
     id: consoleScrollBar
     anchors.top: parent.top
     anchors.bottom: parent.bottom
@@ -52,12 +56,65 @@ ConsoleTabBarPanel < MoveableTabBarPanel
     pixels-scroll: true
 
 ConsoleTabBarButton < MoveableTabBarButton
-  height: 28
-  padding: 15
+  height: 26
+  padding: 8 14
+  font: verdana-11px-rounded
+  color: #aeb6bf
+  image-source:
+  image-border: 0
+  background-color: #11161b
+  border-width: 1
+  border-color: #29313a
+  text-align: center
+
+  $hover !checked:
+    color: #f1f3f5
+    background-color: #1a2026
+    border-color: #3a4652
+
+  $checked:
+    color: #ffffff
+    background-color: #202830
+    border-color: #617181
+
+  $on !checked:
+    color: #e2a95d
+
+ConsoleControlButton < TabButton
+  size: 20 20
+  image-source:
+  image-border: 0
+  image-color: #ffffff
+  icon-color: #b9c1c9
+  background-color: #11161b
+  border-width: 1
+  border-color: #29313a
+
+  $hover !disabled:
+    icon-color: #ffffff
+    background-color: #1c232a
+    border-color: #46525e
+
+  $pressed:
+    background-color: #252e37
+    border-color: #657382
+
+  $on:
+    icon-color: #ffffff
+    background-color: #202830
+    border-color: #617181
+
+  $disabled:
+    icon-color: #59616a
+    background-color: #0d1115
+    border-color: #20262c
 
 ConsolePanel < Panel
-  image-source: /images/ui/panel_bottom2
-  image-border: 4
+  image-source:
+  image-border: 0
+  background-color: #0b0e12
+  border-width: 1
+  border-color: #2a323a
   
   $first:
     anchors.fill: parent
@@ -68,83 +125,83 @@ ConsolePanel < Panel
     anchors.left: parent.left
     anchors.right: parent.right
 
-  CheckBox
+  ModernCheckBox
     id: toggleChat
     !tooltip: tr('Disable chat mode, allow to walk using WASD')
     anchors.left: parent.left
     anchors.top: parent.top
-    margin-left: 13
-    margin-top: 8
+    margin-left: 8
+    margin-top: 6
     @onCheckChange: toggleChat()
 
-  TabButton
+  ConsoleControlButton
     id: prevChannelButton
     icon: /images/game/console/leftarrow
     anchors.left: toggleChat.right
     anchors.top: parent.top
-    margin-left: 3
-    margin-top: 6
+    margin-left: 5
+    margin-top: 5
 
   ConsoleTabBar
     id: consoleTabBar
     anchors.left: prev.right
     anchors.top: parent.top
     anchors.right: next.left
-    margin-left: 5
-    margin-top: 3
-    margin-right: 5
-    tab-spacing: 2
+    margin-left: 6
+    margin-top: 2
+    margin-right: 6
+    tab-spacing: 3
     movable: true
 
-  TabButton
+  ConsoleControlButton
     id: nextChannelButton
     icon: /images/game/console/rightarrow
     anchors.right: next.left
     anchors.top: parent.top
-    margin-right: 5
-    margin-top: 6
+    margin-right: 4
+    margin-top: 5
 
-  TabButton
+  ConsoleControlButton
     id: closeChannelButton
     !tooltip: tr('Close this channel') .. ' (Ctrl+E)'
     icon: /images/game/console/closechannel
     anchors.right: next.left
     anchors.top: parent.top
     enabled: false
-    margin-right: 5
-    margin-top: 6
+    margin-right: 4
+    margin-top: 5
     @onClick: removeCurrentTab()
 
-  TabButton
+  ConsoleControlButton
     id: clearChannelButton
     !tooltip: tr('Clear current message window')
     icon: /images/game/console/clearchannel
     anchors.right: next.left
     anchors.top: parent.top
-    margin-right: 5
-    margin-top: 6
+    margin-right: 4
+    margin-top: 5
     @onClick: |
       local consoleTabBar = self:getParent():getChildById('consoleTabBar')
       clearChannel(consoleTabBar)
 
-  TabButton
+  ConsoleControlButton
     id: channelsButton
     !tooltip: tr('Open new channel') .. ' (Ctrl+O)'
     icon: /images/game/console/channels
     anchors.right: next.left
     anchors.top: parent.top
-    margin-right: 5
-    margin-top: 6
+    margin-right: 4
+    margin-top: 5
     @onClick: g_game.requestChannels()
 
-  TabButton
+  ConsoleControlButton
     id: ignoreButton
     !tooltip: tr('Ignore players')
     icon: /images/game/console/ignore
     anchors.right: parent.right
     anchors.top: parent.top
-    margin-right: 5
-    margin-top: 6
+    margin-right: 6
+    margin-top: 5
     @onClick: onClickIgnoreButton()
 
   Panel
@@ -155,25 +212,25 @@ ConsolePanel < Panel
     anchors.bottom: consoleTextEdit.top
     margin-left: 6
     margin-right: 6
-    margin-bottom: 4
-    margin-top: 4
-    padding: 1
+    margin-bottom: 5
+    margin-top: 5
+    padding: 0
     focusable: false
     phantom: true
 
-  TabButton
+  ConsoleControlButton
     id: sayModeButton
     icon: /images/game/console/say
     !tooltip: tr('Adjust volume')
     &sayMode: 2
-    size: 20 20
+    size: 24 24
     anchors.left: parent.left
     anchors.bottom: parent.bottom
     margin-left: 6
     margin-bottom: 6
     @onClick: sayModeChange()
 
-  TextEdit
+  ModernInput
     id: consoleTextEdit
     anchors.left: sayModeButton.right
     anchors.right: parent.right
@@ -181,6 +238,7 @@ ConsolePanel < Panel
     margin-right: 6
     margin-left: 6
     margin-bottom: 6
+    height: 24
     shift-navigation: true
     max-length: 255
     text-auto-submit: true
@@ -193,11 +251,12 @@ ConsolePanel < Panel
     margin-right: 6
     margin-left: 6
     margin-bottom: 6
-    height: 20
-    image-source: /images/ui/panel_flat
-    image-border: 1
-    image-color: #6a6a6a
-    background-color: #11111166
+    height: 24
+    image-source:
+    image-border: 0
+    background-color: #12161b
+    border-width: 1
+    border-color: #343d46
     visible: false
     focusable: true
     phantom: false
@@ -208,6 +267,7 @@ ConsolePanel < Panel
       margin-left: 6
       margin-right: 6
       text: Pressione Enter ou clique para conversar
-      color: #9f9f9f
+      font: verdana-11px-rounded
+      color: #87919b
       text-align: left
       phantom: true

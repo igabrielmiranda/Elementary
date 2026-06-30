@@ -35,12 +35,12 @@ local CATEGORY_ICON_CLIPS = {
   Utilidade = '40 0 20 20'
 }
 local SKILL_ENTRY_DEFAULT_STYLE = {
-  background = '#14181c',
-  border = '#2d3239'
+  background = '#12171c',
+  border = '#2d363f'
 }
 local SKILL_ENTRY_SELECTED_STYLE = {
-  background = '#222831',
-  border = '#677383'
+  background = '#202a2e',
+  border = '#4f806d'
 }
 local STATUS_STYLES = {
   liberada = {

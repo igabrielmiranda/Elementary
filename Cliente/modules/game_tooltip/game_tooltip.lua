@@ -289,7 +289,14 @@ m_TooltipFunction.addLabel = function(name, height, width, description, icon, co
 
 	if description then
 		widget:setText(description)
-		width = math.max(widget:getWidth() + 16, width)
+		if name == "LookItemIconAttribute" then
+			local lineCount = 1
+			for _ in description:gmatch("\n") do
+				lineCount = lineCount + 1
+			end
+			widget:setHeight(math.max(22, lineCount * 12 + 8))
+		end
+		width = math.max(widget:getWidth() + 24, width)
 	end
 	
 	if color then
@@ -366,8 +373,8 @@ m_TooltipFunction.open = function(list)
 	local itemWidget = m_TooltipList.window:getChildById("item")
 	itemWidget:setItemId(m_TooltipList.itemId)
 
-	local height = 48
-	local width = 40
+	local height = 60
+	local width = 440
 	local color = nil
 	local rarityId = m_TooltipList.rarityId or 0
 	local name = m_TooltipFunction.titleCase(m_TooltipFunction.getAttribute(list, m_TooltipFunction.TOOLTIP_ATTRIBUTE_NAME))
@@ -389,6 +396,9 @@ m_TooltipFunction.open = function(list)
 	end
 
 	g_game.updateRarityFrames(itemWidget, rarityId)
+	local accentColor = color or "#3a424c"
+	m_TooltipList.window:setBorderColor(accentColor)
+	itemWidget:setBorderColor(accentColor)
 
 	height, width, nameWidget = m_TooltipFunction.addLabel("LookItemName", height, width, name, nil, color)
 	height = m_TooltipFunction.addLabel("TooltipSeparator", height, width)
@@ -401,9 +411,9 @@ m_TooltipFunction.open = function(list)
 				height = m_TooltipFunction.addLabel("TooltipSeparator", height, width)
 				
 				if attributeValues.id == m_TooltipFunction.TOOLTIP_ATTRIBUTE_RARITY then
-					height, width = m_TooltipFunction.addLabel("LookItemName", height, width, "Rarity")
+					height, width = m_TooltipFunction.addLabel("TooltipSectionTitle", height, width, "RARIDADE")
 				else
-					height, width = m_TooltipFunction.addLabel("LookItemName", height, width, "Attributes")
+					height, width = m_TooltipFunction.addLabel("TooltipSectionTitle", height, width, "ATRIBUTOS")
 				end
 			end
 			
@@ -439,7 +449,24 @@ m_TooltipFunction.open = function(list)
 	end
 
 	m_TooltipList.window:setWidth(width)
-	m_TooltipList.window:setHeight(height)
+	local contentWidth = math.max(width - 20, 120)
+	for _, child in ipairs(m_TooltipList.list:getChildren()) do
+		child:setWidth(contentWidth)
+	end
+
+	local listLayout = m_TooltipList.list:getLayout()
+	if listLayout and listLayout.update then
+		listLayout:update()
+	end
+
+	local measuredHeight = 60
+	for index, child in ipairs(m_TooltipList.list:getChildren()) do
+		measuredHeight = measuredHeight + child:getHeight() + child:getMarginTop() + child:getMarginBottom()
+		if index > 1 then
+			measuredHeight = measuredHeight + 1
+		end
+	end
+	m_TooltipList.window:setHeight(math.max(height + 18, measuredHeight + 12))
 	
 	local pos = m_TooltipList.window:getPosition()
 	pos.x = m_TooltipList.position.x + pos.x + 16

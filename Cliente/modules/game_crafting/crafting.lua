@@ -6,6 +6,7 @@ local craftingButton = nil
 local categories = nil
 local craftPanel = nil
 local dismantlePanel = nil
+local refinePanel = nil
 local itemsList = nil
 local itemsListScrollbar = nil
 local searchPanel = nil
@@ -52,6 +53,14 @@ end
 
 local function isDismantleCategory()
   return selectedCategory == "dismantle"
+end
+
+local function isRefineCategory()
+  return selectedCategory == "refine"
+end
+
+local function isSpecialCategory()
+  return isDismantleCategory() or isRefineCategory()
 end
 
 local function getSelectedCraft()
@@ -490,11 +499,13 @@ local function applyDismantleSelection(selection)
 end
 
 local function setInterfaceMode(mode)
-  if not itemsList or not craftPanel or not dismantlePanel then
+  if not itemsList or not craftPanel or not dismantlePanel or not refinePanel then
     return
   end
 
-  local craftMode = mode ~= "dismantle"
+  local craftMode = mode == "craft"
+  local dismantleMode = mode == "dismantle"
+  local refineMode = mode == "refine"
 
   itemsList:setVisible(craftMode)
   if itemsListScrollbar then
@@ -511,7 +522,8 @@ local function setInterfaceMode(mode)
   end
 
   craftPanel:setVisible(craftMode)
-  dismantlePanel:setVisible(not craftMode)
+  dismantlePanel:setVisible(dismantleMode)
+  refinePanel:setVisible(refineMode)
 end
 
 local function resetCraftCollections()
@@ -522,7 +534,7 @@ local function resetCraftCollections()
   clearDismantleSelection()
 
   if categories then
-    for _, categoryId in ipairs({"herbalist", "woodcutting", "mining", "generalcrafting", "armorsmith", "weaponsmith", "jewelsmith", "dismantle"}) do
+    for _, categoryId in ipairs({"herbalist", "woodcutting", "mining", "generalcrafting", "armorsmith", "weaponsmith", "jewelsmith", "refine", "dismantle"}) do
       local button = categories:getChildById(categoryId .. "Cat")
       if button then
         button:setOn(false)
@@ -842,11 +854,16 @@ function create()
   categories = window:getChildById("categories")
   craftPanel = window:getChildById("craftPanel")
   dismantlePanel = window:getChildById("dismantlePanel")
+  refinePanel = window:getChildById("refinePanel")
   itemsList = window:getChildById("itemsList")
   itemsListScrollbar = window:getChildById("itemsListScrollbar")
   searchPanel = window:getChildById("searchPanel")
   searchSeparator = window:getChildById("searchSeparator")
   listDivider = window:getChildById("listDivider")
+
+  if modules.game_material_refining and modules.game_material_refining.bindPanel then
+    modules.game_material_refining.bindPanel(refinePanel)
+  end
 
   bindQualitySlots()
   bindDismantleSlot()
@@ -869,6 +886,7 @@ function destroy()
     categories = nil
     craftPanel = nil
     dismantlePanel = nil
+    refinePanel = nil
     itemsList = nil
     itemsListScrollbar = nil
     searchPanel = nil
@@ -950,7 +968,7 @@ function onExtendedOpcode(protocol, code, buffer)
       selectCategory("herbalist")
     end
 
-    if selectedCategory and not isDismantleCategory() then
+    if selectedCategory and not isSpecialCategory() then
       if selectedCraftId then
         selectItem(selectedCraftId)
       elseif #Crafts[selectedCategory] > 0 then
@@ -1020,7 +1038,7 @@ function onItemCrafted()
 end
 
 function onSearch()
-  if isDismantleCategory() then
+  if isSpecialCategory() then
     return
   end
 
@@ -1084,6 +1102,11 @@ function selectCategory(category)
     return
   end
 
+  if isRefineCategory() then
+    setInterfaceMode("refine")
+    return
+  end
+
   setInterfaceMode("craft")
 
   local categoryCrafts = Crafts[selectedCategory] or {}
@@ -1107,7 +1130,7 @@ function selectCategory(category)
 end
 
 function selectItem(id)
-  if isDismantleCategory() then
+  if isSpecialCategory() then
     return
   end
 
@@ -1138,7 +1161,7 @@ function selectItem(id)
 end
 
 function craftItem()
-  if isDismantleCategory() or not selectedCategory or not selectedCraftId then
+  if isSpecialCategory() or not selectedCategory or not selectedCraftId then
     return
   end
 
@@ -1192,13 +1215,16 @@ function dismantleSelectedItem()
 end
 
 function openRefine()
-  if modules.game_material_refining and modules.game_material_refining.show then
-    hide()
-    modules.game_material_refining.show()
+  showRefine()
+end
+
+function showRefine()
+  if not window or not refinePanel then
     return
   end
 
-  g_logger.error("[Crafting] Modulo de refino nao esta disponivel.")
+  show()
+  selectCategory("refine")
 end
 
 function show()

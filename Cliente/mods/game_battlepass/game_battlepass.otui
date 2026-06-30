@@ -1,6 +1,5 @@
-BattlePassPanel < Panel
-  image-source: /images/ui/menubox
-  image-border: 4
+BattlePassPanel < RefinedDarkPanel
+  padding: 8
 
 BattlePassLabel < Label
   anchors.top: prev.bottom
@@ -9,7 +8,8 @@ BattlePassLabel < Label
   height: 76
   text-align: center
   text-wrap: true
-  font: verdana-11px-antialised
+  font: verdana-11px-rounded
+  color: #f0f0f0
 
 BattlePassItem < Item
   virtual: true
@@ -19,15 +19,17 @@ BattlePassReward < UIWidget
   anchors.left: parent.left
   anchors.right: parent.right
   height: 88
-  image-source: /images/ui/item-blessed
-  image-border: 6
+  background-color: #111214
+  border-width: 1
+  border-color: #333333
   
   BattlePassPanel
     id: rewards
     anchors.horizontalcenter: parent.horizontalcenter
     anchors.verticalcenter: parent.verticalcenter
     margin-top: 2
-    image-source: /images/ui/item-blessed
+    background-color: #161719
+    border-color: #3a3a3a
     layout:
       type: grid
       cell-size: 34 34
@@ -77,33 +79,32 @@ BattlePassQuestLabel < Label
   height: 38
   text-align: left
   text-offset: 12 4
-  font: verdana-11px-antialised
-  color: #ffffff
+  font: verdana-11px-rounded
+  color: #f0f0f0
 
 BattlePassQuestEntry < BattlePassPanel
   height: 123
   margin-left: 4
   margin-right: 4
-  image-source: /images/ui/panel_side
   margin-top: 4
-  Button
+  background-color: #1b1c1f
+  border-color: #3a3a3a
+
+  RefinedDarkButton
     id: shuffle
     anchors.top: parent.top
     anchors.left: parent.left
     margin: 8
     text: Shuffle
-    font: verdana-11px-rounded
     size: 120 26
     @onClick: modules.game_battlepass.m_BattlepassFunctions.shuffleQuest(self:getParent())
 
-  Button
+  RefinedDarkPrimaryButton
     id: completed
     anchors.bottom: parent.bottom
     anchors.right: parent.right
     margin: 8
     text: Claim
-    color: #0dbb15
-    font: verdana-11px-rounded
     size: 120 26
     enabled: false
     @onClick: modules.game_battlepass.m_BattlepassFunctions.completeQuest(self:getParent())
@@ -115,15 +116,16 @@ BattlePassQuestEntry < BattlePassPanel
     anchors.right: prev.left
     margin-right: 13
     height: 28
-    image-source: /images/ui/progresbar_empty_pass
-    image-border: 2
+    background-color: #111214
+    border-width: 1
+    border-color: #3a3a3a
     
     UIWidget
       id: bar
       anchors.top: parent.top
       anchors.bottom: parent.bottom
       anchors.left: parent.left
-      image-source: images/battlepassquestprogress
+      background-color: #5a6a7c
       margin: 2
         
     Label
@@ -131,6 +133,7 @@ BattlePassQuestEntry < BattlePassPanel
       anchors.fill: parent
       text-align: center
       font: verdana-11px-rounded
+      color: #f0f0f0
 
   Label
     id: questName
@@ -140,8 +143,8 @@ BattlePassQuestEntry < BattlePassPanel
     margin-top: 8
     margin-left: 6
     height: 20
-    color: #ffffff
-    font: verdana-11px-antialised
+    color: #f0f0f0
+    font: verdana-11px-rounded
 
   Label
     id: questDescription
@@ -150,7 +153,7 @@ BattlePassQuestEntry < BattlePassPanel
     anchors.top: prev.bottom
     margin-top: 6
     height: 16
-    color: #ff0000
+    color: #c77b7b
     font: verdana-11px-rounded
     
   Label
@@ -161,7 +164,8 @@ BattlePassQuestEntry < BattlePassPanel
     margin-right: 12
     height: 26
     text-align: right
-    font: verdana-11px-antialised  
+    font: verdana-11px-rounded
+    color: #9b9b9b
     text: Reward
     
   Label
@@ -170,7 +174,8 @@ BattlePassQuestEntry < BattlePassPanel
     anchors.left: parent.left
     height: 26
     text-align: right
-    font: verdana-11px-antialised  
+    font: verdana-11px-rounded
+    color: #9b9b9b
     text: Battlepass experience points
     
   Label
@@ -179,9 +184,9 @@ BattlePassQuestEntry < BattlePassPanel
     anchors.right: prev.right
     anchors.left: parent.left
     height: 26
-    color: #0dbb15
+    color: #7db38d
     text-align: right
-    font: verdana-11px-antialised
+    font: verdana-11px-rounded
 
   UIWidget
     id: background
@@ -195,8 +200,9 @@ BattlePassQuestEntry < BattlePassPanel
     
 BattlePassRewardContainer < UIWidget
   width: 92
-  image-source: /images/ui/panel_side
-  image-border: 16
+  background-color: #161719
+  border-width: 1
+  border-color: #333333
 
   Label
     id: id
@@ -204,7 +210,8 @@ BattlePassRewardContainer < UIWidget
     anchors.horizontalcenter: parent.horizontalcenter
     margin-top: 6
     height: 24
-    font: verdana-11px-antialised
+    font: verdana-11px-rounded
+    color: #f0f0f0
 
   BattlePassReward
     id: freeReward
@@ -218,35 +225,31 @@ BattlePassRewardContainer < UIWidget
     anchors.left: parent.left
     anchors.right: parent.right
     height: 18
+    background-color: #111214
+    border-width: 1
+    border-color: #3a3a3a
     
     UIWidget
       id: bar
       anchors.top: parent.top
       anchors.bottom: parent.bottom
       anchors.left: parent.left
-      image-source: images/battlepass
+      background-color: #5a6a7c
       width: 1
       visible: false
     
-HorizontalSeparator < UIWidget
+HorizontalSeparator < RefinedDarkSeparator
   anchors.left: parent.left
   anchors.right: parent.right
   height: 14
-  phantom: true
     
-UIWindow
+RefinedDarkWindow
   id: battlepassWindow
   anchors.centerIn: parent
   size: 971 625
   phantom: false
   text: Battlepass
-  image-source: /images/ui/window
-  image-border: 6
-  image-border-top: 27
-  text-offset: 0 2
-  text-align: top
-  color: #ffffff
-  font: verdana-11px-antialised
+  text-offset: 0 4
   @onEscape: modules.game_battlepass.m_BattlepassFunctions.destroy()
 
   UIButton
@@ -254,9 +257,11 @@ UIWindow
     anchors.top: parent.top
     anchors.right: parent.right
     size: 14 14
-    margin: 2
+    margin-top: 6
+    margin-right: 6
     image-source: /images/ui/miniwindow_buttons
     image-clip: 28 0 14 14
+    image-color: #d8d8d8
     @onClick: modules.game_battlepass.m_BattlepassFunctions.toggleMinimize()
     $hover:
       image-clip: 28 14 14 14
@@ -268,9 +273,11 @@ UIWindow
     anchors.top: parent.top
     anchors.right: closeButton.left
     size: 14 14
-    margin: 2
+    margin-top: 6
+    margin-right: 4
     image-source: /images/ui/miniwindow_buttons
     image-clip: 0 0 14 14
+    image-color: #d8d8d8
     @onClick: modules.game_battlepass.m_BattlepassFunctions.toggleMinimize()
     $hover:
       image-clip: 14 0 14 14
@@ -286,13 +293,16 @@ UIWindow
     margin-left: 12
     margin-right: 12
     height: 220
+    background-color: #161719
+    border-color: #333333
 
     BattlePassPanel
       anchors.top: parent.top
       anchors.bottom: parent.bottom
       anchors.left: parent.left
       width: 208
-      image-source: /images/ui/panel_side
+      background-color: #111214
+      border-color: #333333
     
       BattlePassLabel
         anchors.top: parent.top
@@ -342,6 +352,9 @@ UIWindow
         margin-right: 8
 
     ScrollablePanel
+      background-color: #111214
+      border-width: 1
+      border-color: #333333
       id: rewards
       anchors.top: parent.top
       anchors.bottom: parent.bottom
@@ -354,7 +367,7 @@ UIWindow
       layout:
         type: horizontalBox
 
-    HorizontalScrollBar
+    RefinedDarkHorizontalScrollBar
       id: battlepassRewardsScrollBar
       anchors.bottom: prev.bottom
       anchors.right: prev.right
@@ -368,8 +381,9 @@ UIWindow
     anchors.left: prev.left
     anchors.right: prev.right
     margin-top: 8
-    image-source: /images/ui/panel_side
     height: 64
+    background-color: #161719
+    border-color: #333333
 
     BattlePassPanel
       id: level
@@ -377,7 +391,9 @@ UIWindow
       anchors.verticalcenter: parent.verticalcenter
       margin-left: 8
       size: 48 48
-      image-source: /images/ui/item-blessed
+      background-color: #111214
+      border-width: 1
+      border-color: #3a3a3a
       text-align: center
   
     UIWidget
@@ -387,8 +403,9 @@ UIWindow
       anchors.right: parent.right
       margin-left: 12
       margin-right: 60
-      image-source: /images/ui/progresbar_empty_pass
-      image-border: 8
+      background-color: #111214
+      border-width: 1
+      border-color: #3a3a3a
       height: 32
       
       UIWidget
@@ -396,8 +413,7 @@ UIWindow
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        image-source: /images/ui/battlepassbar
-        image-border: 4
+        background-color: #66798d
         width: 0
         
       Label
@@ -405,8 +421,9 @@ UIWindow
         anchors.fill: parent
         text-align: center
         font: verdana-11px-rounded
+        color: #f0f0f0
 
-  ScrollablePanel
+  RefinedDarkScrollablePanel
     id: questsPanel
     anchors.top: prev.bottom
     anchors.bottom: parent.bottom
@@ -417,13 +434,11 @@ UIWindow
     margin-right: 14
     padding-top: 4
     padding-bottom: 4
-    image-source: /images/ui/panel_side
-    image-border: 4
     vertical-scrollbar: battlepassQuestsScrollBar
     layout:
       type: verticalBox
 
-  VerticalScrollBar
+  RefinedDarkVerticalScrollBar
     id: battlepassQuestsScrollBar
     anchors.bottom: prev.bottom
     anchors.top: prev.top
@@ -431,7 +446,7 @@ UIWindow
     step: 44
     pixels-scroll: true
 
-  Button
+  RefinedDarkButton
     text: Close
     anchors.bottom: parent.bottom
     anchors.right: parent.right
@@ -440,34 +455,20 @@ UIWindow
     size: 160 26
     @onClick: modules.game_battlepass.m_BattlepassFunctions.toggleMinimize()
 
-  UIWidget
+  RefinedDarkPrimaryButton
     text: Premium Battlepass
     tooltip: If you already completed levels and you bought Premium you cannot receive the rewards of completed levels.
     anchors.bottom: prev.bottom
     anchors.right: prev.left
     margin-right: 6
     size: 160 26
-    color: #ffae00
-    image-source: /images/ui/button_top_blink
-    image-clip: 0 0 26 26
-    image-border: 2
-    image-color: #FFFFFF
-    change-cursor-image: true
-    cursor: pointer
     @onClick: modules.game_battlepass.m_BattlepassFunctions.buyPremium()
-    $hover:
-      image-clip: 26 0 26 26
-    $pressed:
-      image-clip: 52 0 26 26
-    $disabled:
-      image-clip: 52 0 26 26
-      image-color: #868686
   
   Label
     id: battlepassStatus
     anchors.verticalcenter: prev.verticalcenter
     anchors.left: questsPanel.left
     margin-left: 4
-    color: #ffffff
+    color: #9b9b9b
     $on:
-      color: #0dbb15
+      color: #7db38d

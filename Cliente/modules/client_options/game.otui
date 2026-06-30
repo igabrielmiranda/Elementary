@@ -142,7 +142,7 @@ OptionPanel
     height: 30
     margin-top: 10
 
-    Button
+    ModernButton
       id: changeLocale
       !text: tr('Change language')
       @onClick: modules.client_locales.createWindow()

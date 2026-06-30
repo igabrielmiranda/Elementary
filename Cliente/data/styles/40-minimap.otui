@@ -29,7 +29,7 @@ MinimapCross < UIWidget
   image: /images/game/minimap/cross
   size: 16 16
 
-MinimapFloorUpButton < Button
+MinimapFloorUpButton < ModernButton
   size: 20 20
   margin-right: 28
   margin-bottom: 28
@@ -42,7 +42,7 @@ MinimapFloorUpButton < Button
   $hover !pressed:
     icon-clip: 0 16 16 16
 
-MinimapFloorDownButton < Button
+MinimapFloorDownButton < ModernButton
   size: 20 20
   margin-right: 28
   margin-bottom: 4
@@ -55,7 +55,7 @@ MinimapFloorDownButton < Button
   $hover !pressed:
     icon-clip: 0 16 16 16
 
-MinimapZoomInButton < Button
+MinimapZoomInButton < ModernButton
   text: +
   size: 20 20
   margin-right: 4
@@ -64,7 +64,7 @@ MinimapZoomInButton < Button
   anchors.bottom: parent.bottom
   //icon-source: /images/game/minimap/zoom_in
 
-MinimapZoomOutButton < Button
+MinimapZoomOutButton < ModernButton
   text: -
   size: 20 20
   margin-right: 4
@@ -73,7 +73,7 @@ MinimapZoomOutButton < Button
   anchors.bottom: parent.bottom
   //icon-source: /images/game/minimap/zoom_out
 
-MinimapResetButton < Button
+MinimapResetButton < ModernButton
   !text: tr('Center')
   size: 44 20
   anchors.left: parent.left
@@ -130,7 +130,7 @@ MinimapFlagCheckBox < CheckBox
   $hover checked:
     image-clip: 52 0 26 26
 
-MinimapFlagWindow < MainWindow
+MinimapFlagWindow < ModernMainWindow
   !text: tr('Create Map Mark')
   size: 196 185
 
@@ -154,7 +154,7 @@ MinimapFlagWindow < MainWindow
     anchors.top: prev.bottom
     margin-top: 7
 
-  TextEdit
+  ModernInput
     id: description
     margin-top: 3
     anchors.left: parent.left
@@ -249,7 +249,7 @@ MinimapFlagWindow < MainWindow
     id: flag19
     icon-source: /images/game/minimap/flag19
 
-  Button
+  ModernButton
     id: okButton
     !text: tr('Ok')
     width: 64
@@ -257,14 +257,14 @@ MinimapFlagWindow < MainWindow
     anchors.bottom: parent.bottom
     margin-right: 10
 
-  Button
+  ModernButton
     id: cancelButton
     !text: tr('Cancel')
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
 
-MinimapWindow < MiniWindow
+MinimapWindow < ModernMiniWindow
   height: 150
 
   Label
@@ -277,7 +277,7 @@ MinimapWindow < MiniWindow
     margin-right: 3
     size: 14 14
 
-  MiniWindowContents
+  ModernMiniWindowContents
     Minimap
       id: minimap
       anchors.fill: parent

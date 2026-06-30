@@ -180,13 +180,19 @@ local function updateBaseButtons()
 			local indicator = widget:getChildById("indicator")
 			if base.enabled and state.selectedBase == base.base then
 				indicator:setText("*")
-				indicator:setColor("#f0c674")
+				indicator:setColor("#9fdbbd")
+				indicator:setBackgroundColor("#1c3328")
+				indicator:setBorderColor("#4f886d")
 			elseif base.enabled then
 				indicator:setText("o")
-				indicator:setColor("#d8d8d8")
+				indicator:setColor("#9aa5b1")
+				indicator:setBackgroundColor("#11161b")
+				indicator:setBorderColor("#39434e")
 			else
 				indicator:setText("x")
-				indicator:setColor("#8a8a8a")
+				indicator:setColor("#4f5862")
+				indicator:setBackgroundColor("#0b0e11")
+				indicator:setBorderColor("#20262c")
 			end
 		end
 	end
@@ -268,7 +274,8 @@ end
 local function clearSelection(message, tone)
 	state.selection = nil
 	state.selectedBase = chooseBase(nil)
-	materialDropArea:setBorderWidth(0)
+	materialDropArea:setBorderWidth(1)
+	materialDropArea:setBorderColor("#303943")
 	refreshUI()
 	setFeedback(message or DEFAULT_MESSAGE, tone)
 end
@@ -334,18 +341,20 @@ local function onMaterialDragEnter(widget, mousePos)
 	end
 
 	widget:setBorderWidth(1)
-	widget:setBorderColor("#c2953e")
+	widget:setBorderColor("#5d9b7d")
 	return true
 end
 
 local function onMaterialDragLeave(widget, droppedWidget, mousePos)
-	widget:setBorderWidth(0)
+	widget:setBorderWidth(1)
+	widget:setBorderColor("#303943")
 	return true
 end
 
 local function onMaterialDrop(widget, draggedWidget, mousePos)
 	local item = draggedWidget and draggedWidget.currentDragThing
-	widget:setBorderWidth(0)
+	widget:setBorderWidth(1)
+	widget:setBorderColor("#303943")
 
 	if not item or not item:isItem() then
 		return false
@@ -356,6 +365,8 @@ local function onMaterialDrop(widget, draggedWidget, mousePos)
 end
 
 function init()
+	g_ui.importStyle("/modules/game_material_refining/material_refining.otui")
+
 	connect(
 		g_game,
 		{
@@ -385,11 +396,17 @@ function terminate()
 end
 
 function create()
-	if window then
-		return
+	state.baseTemplate = buildBaseTemplate()
+	state.selection = nil
+	state.selectedBase = nil
+end
+
+function bindPanel(panel)
+	if not panel then
+		return false
 	end
 
-	window = g_ui.displayUI("material_refining")
+	window = panel
 	window:hide()
 
 	materialDropArea = window:recursiveGetChildById("materialDropArea")
@@ -422,10 +439,16 @@ function create()
 	materialDropArea.onDragEnter = onMaterialDragEnter
 	materialDropArea.onDragLeave = onMaterialDragLeave
 	materialDropArea.onDrop = onMaterialDrop
-	materialDropArea:setBorderWidth(0)
+	materialDropArea:setBorderWidth(1)
+	materialDropArea:setBorderColor("#303943")
 
-	state.baseTemplate = buildBaseTemplate()
-	clearSelection(DEFAULT_MESSAGE, "info")
+	if #state.baseTemplate == 0 then
+		state.baseTemplate = buildBaseTemplate()
+	end
+
+	refreshUI()
+	setFeedback(DEFAULT_MESSAGE, "info")
+	return true
 end
 
 function destroy()
@@ -436,9 +459,9 @@ function destroy()
 	baseButtons = {}
 
 	if window then
-		window:destroy()
-		window = nil
+		window:hide()
 	end
+	window = nil
 
 	materialDropArea = nil
 	materialPreview = nil
@@ -463,6 +486,11 @@ function destroy()
 end
 
 function show()
+	if modules.game_crafting and modules.game_crafting.showRefine then
+		modules.game_crafting.showRefine()
+		return
+	end
+
 	if not window then
 		return
 	end

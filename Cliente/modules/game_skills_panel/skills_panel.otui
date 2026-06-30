@@ -12,9 +12,9 @@ SkillPanelTabButton < ModernButton
     border-color: #4b545e
 
   $on:
-    background-color: #20262e
+    background-color: #1d2924
     color: #f2f5f8
-    border-color: #697584
+    border-color: #4f806d
 
 SkillCategoryFilterButton < ModernButton
   height: 26
@@ -30,15 +30,57 @@ SkillCategoryFilterButton < ModernButton
     border-color: #49515a
 
   $on:
-    background-color: #1f252d
+    background-color: #1c2722
     color: #f1f4f7
-    border-color: #64707f
+    border-color: #47745f
+
+SkillPanelSurface < ModernCard
+  image-source:
+  image-border: 0
+  background-color: #11151a
+  border-width: 1
+  border-color: #2d353e
+  padding: 10
+
+SkillPanelInset < ModernCard
+  image-source:
+  image-border: 0
+  background-color: #0c1014
+  border-width: 1
+  border-color: #28303a
+
+SkillPanelHint < Label
+  color: #9ca6b0
+  font: verdana-11px-monochrome
+  background-color: #0e1216
+  border-width: 1
+  border-color: #282f37
+  padding-left: 10
+  padding-right: 10
+  text-offset: 0 3
+
+SkillPanelPrimaryButton < ModernButtonPrimary
+  height: 26
+  background-color: #193127
+  border-color: #39765c
+  color: #effaf4
+
+  $hover !disabled:
+    background-color: #214132
+    border-color: #4d9677
+
+  $pressed:
+    background-color: #12241d
+    border-color: #62aa8b
 
 SkillCategoryHeader < ModernHeaderStrip
   height: 22
   margin-top: 8
-  anchors.left: parent.left
-  anchors.right: parent.right
+  margin-left: 6
+  margin-right: 6
+  background-color: #151b21
+  border-color: #303a45
+  color: #dfe6ed
 
 SkillEmptyLabel < ModernMutedText
   height: 52
@@ -47,8 +89,6 @@ SkillEmptyLabel < ModernMutedText
   margin-right: 6
   text-wrap: true
   text-align: center
-  anchors.left: parent.left
-  anchors.right: parent.right
 
 SkillBadge < ModernBadge
 
@@ -56,8 +96,11 @@ SkillStatChip < ModernChip
   width: 84
 
 SkillSectionCard < ModernCard
-  anchors.left: parent.left
-  anchors.right: parent.right
+  image-source:
+  image-border: 0
+  background-color: #0e1216
+  border-color: #29313a
+  padding: 10
 
 SkillSectionTitle < ModernTitle
   focusable: false
@@ -72,6 +115,10 @@ SkillDetailValue < ModernFieldValue
 
 SkillListEntry < ModernListEntry
   height: 84
+  image-source:
+  image-border: 0
+  background-color: #12171c
+  border-color: #2d363f
 
   UIWidget
     id: icon
@@ -83,6 +130,9 @@ SkillListEntry < ModernListEntry
     image-size: 40 40
     image-source: /images/game/spells/cooldowns
     image-clip: 40 0 20 20
+    background-color: #090c0f
+    border-width: 1
+    border-color: #37424d
     phantom: true
 
   Label
@@ -150,6 +200,9 @@ ModernWindow
   id: skillsPanelWindow
   text: Painel de Skills
   size: 1000 640
+  background-color: #0a0d11
+  border-color: #39424d
+  padding-top: 24
   @onEscape: modules.game_skills_panel.hide()
 
   ModernTitle
@@ -159,6 +212,7 @@ ModernWindow
     margin-top: 10
     margin-left: 14
     height: 20
+    color: #f0f3f6
     text: Grimorio de Skills
 
   ModernMutedText
@@ -169,6 +223,7 @@ ModernWindow
     margin-top: 2
     margin-right: 14
     height: 16
+    color: #8f99a4
     text: Catalogo visual com filtros por categoria, disponibilidade e preparo para arma equipada.
 
   SkillPanelTabButton
@@ -195,7 +250,7 @@ ModernWindow
     height: 1
     background-color: #282d34
 
-  ModernMutedText
+  SkillPanelHint
     id: tabHintLabel
     anchors.left: parent.left
     anchors.right: parent.right
@@ -207,7 +262,7 @@ ModernWindow
     text-wrap: true
     text: -
 
-  ModernCard
+  SkillPanelSurface
     id: listPanel
     anchors.left: parent.left
     anchors.top: tabHintLabel.bottom
@@ -240,7 +295,8 @@ ModernWindow
       height: 16
       width: 96
       text-align: left
-      text: Filtro visual
+      color: #8f99a4
+      text: FILTRO VISUAL
 
     SkillCategoryFilterButton
       id: filterAllCategories
@@ -280,11 +336,14 @@ ModernWindow
       anchors.left: parent.left
       anchors.right: parent.right
       margin-top: 10
-      height: 22
+      height: 26
+      background-color: #090c10
+      border-color: #34404b
+      padding-left: 8
       placeholder: Buscar skill ou palavra magica
       @onTextChange: modules.game_skills_panel.onSearchTextChange(self)
 
-    ModernCard
+    SkillPanelInset
       id: paginationPanel
       anchors.top: searchInput.bottom
       anchors.left: parent.left
@@ -292,8 +351,8 @@ ModernWindow
       margin-top: 10
       height: 30
       padding: 3
-      background-color: #12161a
-      border-color: #2e343b
+      background-color: #0c1014
+      border-color: #28303a
 
       ModernButton
         id: previousPageButton
@@ -345,12 +404,15 @@ ModernWindow
       anchors.bottom: parent.bottom
       margin-top: 10
       margin-right: 6
+      background-color: #080b0e
+      border-width: 1
+      border-color: #252d35
       vertical-scrollbar: skillsListScrollBar
       layout:
         type: verticalBox
         spacing: 2
 
-  ModernCard
+  SkillPanelSurface
     id: detailPanel
     anchors.left: listPanel.right
     anchors.right: parent.right
@@ -365,13 +427,29 @@ ModernWindow
       height: 18
       text: Detalhes e disponibilidade
 
-    Panel
-      id: detailContent
-      anchors.left: parent.left
-      anchors.right: parent.right
+    ModernScrollBar
+      id: detailScrollBar
       anchors.top: prev.bottom
+      anchors.right: parent.right
       anchors.bottom: parent.bottom
       margin-top: 8
+      pixels-scroll: true
+      step: 48
+
+    ModernList
+      id: detailContent
+      anchors.left: parent.left
+      anchors.right: detailScrollBar.left
+      anchors.top: detailScrollBar.top
+      anchors.bottom: parent.bottom
+      margin-right: 6
+      image-source:
+      image-border: 0
+      background-color: #080b0e
+      border-width: 1
+      border-color: #252d35
+      padding: 8
+      vertical-scrollbar: detailScrollBar
       layout:
         type: verticalBox
         spacing: 8
@@ -755,7 +833,7 @@ ModernWindow
     text-wrap: true
     text: Fonte: -
 
-  ModernButtonPrimary
+  SkillPanelPrimaryButton
     id: fixBarButton
     text: Fixar na barra
     width: 138

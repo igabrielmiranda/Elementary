@@ -1,19 +1,27 @@
-OptionCheckBox < CheckBox
+OptionCheckBox < ModernCheckBox
   @onCheckChange: modules.client_options.setOption(self:getId(), self:isChecked())
   height: 16
 
   $!first:
-    margin-top: 2
+    margin-top: 4
 
-OptionScrollbar < HorizontalScrollBar
+OptionScrollbar < ModernHorizontalScrollBar
   step: 1
   @onValueChange: modules.client_options.setOption(self:getId(), self:getValue())
   
-OptionPanel < Panel
+OptionPanel < ModernPanel
+  padding: 10
+  border-width: 0
+  background-color: alpha
   layout:
     type: verticalBox
+
+  Label
+    color: #d8d8d8
+    font: verdana-11px-rounded
+    text-wrap: true
     
-MainWindow
+ModernMainWindow
   id: optionsWindow
   !text: tr('Options')
   size: 490 500
@@ -23,13 +31,13 @@ MainWindow
   @onEnter: modules.client_options.hide()
   @onEscape: modules.client_options.hide()
 
-  TabBarVertical
+  ModernTabBarVertical
     id: optionsTabBar
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.bottom: parent.bottom
 
-  Panel
+  ModernPanel
     id: optionsTabContent
     anchors.top: optionsTabBar.top
     anchors.left: optionsTabBar.right
@@ -38,7 +46,7 @@ MainWindow
     margin-left: 10
     margin-top: 3
 
-  Button
+  ModernButton
     !text: tr('Ok')
     width: 64
     anchors.right: parent.right

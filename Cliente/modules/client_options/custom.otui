@@ -2,7 +2,7 @@ OptionPanel
   Label
     text: Client user features profile
 
-  ComboBox
+  ModernComboBox
     id: profile
     margin-top: 3
     @onOptionChange: modules.client_options.setOption(self:getId(), self.currentIndex)

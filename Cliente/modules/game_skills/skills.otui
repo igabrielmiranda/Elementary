@@ -3,13 +3,23 @@ SkillFirstWidget < UIWidget
 SkillButton < UIButton
   height: 21
   margin-bottom: 2
+  padding-left: 6
+  padding-right: 6
+  background-color: #17181b
+  border-width: 1
+  border-color: #2f3135
   &onClick: onSkillButtonClick
+
+  $hover:
+    background-color: #202124
+    border-color: #4a4a4a
 
 SmallSkillButton < SkillButton
   height: 14
 
 SkillNameLabel < GameLabel
   font: verdana-11px-monochrome
+  color: #d8d8d8
   anchors.left: parent.left
   anchors.top: parent.top
   anchors.bottom: parent.bottom
@@ -17,15 +27,15 @@ SkillNameLabel < GameLabel
 SkillValueLabel < GameLabel
   id: value
   font: verdana-11px-monochrome
+  color: #f0f0f0
   text-align: topright
   anchors.right: parent.right
   anchors.top: parent.top
   anchors.bottom: parent.bottom
   anchors.left: prev.left
 
-SkillPercentPanel < ProgressBar
+SkillPercentPanel < ModernProgressBar
   id: percent
-  background-color: green
   height: 5
   margin-top: 15
   anchors.left: parent.left
@@ -33,7 +43,7 @@ SkillPercentPanel < ProgressBar
   anchors.top: parent.top
   phantom: false
 
-MiniWindow
+ModernMiniWindow
   id: skillWindow
   !text: tr('Skills')
   height: 150
@@ -42,7 +52,7 @@ MiniWindow
   &save: true
   &autoOpen: false
 
-  MiniWindowContents
+  ModernMiniWindowContents
     padding-left: 5
     padding-right: 5
     layout: verticalBox

@@ -1,4 +1,14 @@
-ExperienceBar < ProgressBar
+HealthInfoBar < ModernProgressBar
+  height: 16
+  text-offset: 0 2
+
+HealthInfoHealthBar < HealthInfoBar
+  background-color: #4f8f5a
+
+HealthInfoManaBar < HealthInfoBar
+  background-color: #4d6fa8
+
+ExperienceBar < HealthInfoBar
   id: experienceBar
   background-color: #B6E866
   anchors.top: prev.bottom
@@ -10,7 +20,7 @@ ExperienceBar < ProgressBar
 SoulLabel < GameLabel
   id: soulLabel
   text-align: right
-  color: white
+  color: #f0f0f0
   font: verdana-11px-rounded
   anchors.bottom: parent.bottom
   anchors.right: parent.right
@@ -26,7 +36,7 @@ SoulLabel < GameLabel
 
 CapLabel < GameLabel
   id: capLabel
-  color: white
+  color: #f0f0f0
   font: verdana-11px-rounded
   anchors.bottom: parent.bottom
   anchors.left: parent.left
@@ -51,14 +61,14 @@ HealthOverlay < UIWidget
   anchors.fill: parent
   phantom: true
   
-  HealthBar
+  HealthInfoHealthBar
     id: topHealthBar
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.horizontalCenter
     phantom: true
 
-  ManaBar
+  HealthInfoManaBar
     id: topManaBar
     anchors.top: parent.top
     anchors.right: parent.right
@@ -107,13 +117,13 @@ HealthOverlay < UIWidget
     image-color: #0000FFFF
     phantom: true
   
-HealthInfoWindow < MiniWindow
+HealthInfoWindow < ModernMiniWindow
   icon: /images/topbuttons/healthinfo
   !text: tr('Health Info')
   height: 123
 
-  MiniWindowContents
-    HealthBar
+  ModernMiniWindowContents
+    HealthInfoHealthBar
       id: healthBar
       anchors.top: parent.top
       anchors.left: parent.left
@@ -121,7 +131,7 @@ HealthInfoWindow < MiniWindow
       margin: 2
       margin-top: 1
       
-    ManaBar
+    HealthInfoManaBar
       id: manaBar
       anchors.top: prev.bottom
       anchors.left: parent.left
@@ -140,8 +150,7 @@ HealthInfoWindow < MiniWindow
       anchors.left: parent.left
       anchors.right: parent.right
       border-width: 1
-      border-color: #00000077
-      background-color: #ffffff11
+      border-color: #343434
+      background-color: #17181b
     SoulLabel
     CapLabel
-

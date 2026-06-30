@@ -6,7 +6,7 @@ OptionPanel
     $mobile:
       visible: false
   
-  ComboBox
+  ModernComboBox
     id: layout
     margin-top: 3
     margin-right: 2
@@ -104,7 +104,7 @@ OptionPanel
       !text: tr("Container's panel")
       !tooltip: tr("Open new containers in selected panel")
 
-    ComboBox
+    ModernComboBox
       id: leftPanels
       anchors.left: leftPanelsLabel.left
       anchors.right: leftPanelsLabel.right
@@ -119,7 +119,7 @@ OptionPanel
         self:addOption("3")
         self:addOption("4")
 
-    ComboBox
+    ModernComboBox
       id: rightPanels
       anchors.left: rightPanelsLabel.left
       anchors.right: rightPanelsLabel.right
@@ -133,7 +133,7 @@ OptionPanel
         self:addOption("3")
         self:addOption("4")
 
-    ComboBox
+    ModernComboBox
       id: containerPanel
       anchors.left: backpackPanelLabel.left
       anchors.right: backpackPanelLabel.right
@@ -155,7 +155,7 @@ OptionPanel
     id: crosshairLabel
     !text: tr("Crosshair")
     
-  ComboBox
+  ModernComboBox
     id: crosshair
     margin-top: 3
     margin-right: 2

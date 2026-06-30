@@ -82,13 +82,21 @@ PurseButton < UIButton
   id: purseButton
   size: 34 12
   !tooltip: tr('Open purse')
+  image-source:
+  image-border: 0
+  background-color: #17181b
+  border-width: 1
+  border-color: #343434
   icon-source: /images/game/slots/purse
   icon-clip: 0 0 34 12
   
   $on:
+    background-color: #202124
+    border-color: #4a4a4a
     icon-clip: 0 12 34 12
 
   $pressed:
+    background-color: #252525
     icon-clip: 0 12 34 12
 
 CombatBox < UICheckBox
@@ -100,15 +108,15 @@ CombatBox < UICheckBox
     image-clip: 0 20 20 20
 
 
-InventoryButton < Button
-  font: verdana-11px-antialised
+InventoryButton < ModernButton
   height: 18
   margin-top: 2
   text-align: center
+  font: verdana-11px-rounded
 
 SoulCapLabel < GameLabel
   text-align: center
-  color: #FFFFFF
+  color: #f0f0f0
   font: cipsoftFont
   margin-top: 4
   text-offset: 0 3
@@ -130,7 +138,7 @@ SafeFightBox < CombatBox
 MountButton < CombatBox
   image-source: /images/game/combatmodes/mount    
 
-InventoryWindow < MiniWindow
+InventoryWindow < ModernMiniWindow
   icon: /images/topbuttons/login
   height: 200
   id: inventoryWindow
@@ -138,7 +146,7 @@ InventoryWindow < MiniWindow
   &save: true
   &autoOpen: 3
 
-  MiniWindowContents
+  ModernMiniWindowContents
     anchors.left: parent.left
         
     Panel
@@ -225,8 +233,8 @@ InventoryWindow < MiniWindow
         anchors.right: slot5.right
         margin-top: 4
         border-width: 1
-        border-color: #00000077
-        background-color: #ffffff22
+        border-color: #343434
+        background-color: #17181b
         
     Panel
       margin-top: 5
@@ -282,10 +290,15 @@ InventoryWindow < MiniWindow
         UIButton
           id: buttonPvp
           height: 20
+          background-color: #17181b
+          border-width: 1
+          border-color: #343434
           icon: /images/game/combatmodes/pvp
           icon-clip: 0 0 42 20
 
           $on:
+            background-color: #202124
+            border-color: #4a4a4a
             icon-clip: 0 20 42 20
         
         InventoryButton

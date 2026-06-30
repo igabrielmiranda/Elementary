@@ -1,17 +1,21 @@
-DungeonMenuItem < Panel
+DungeonMiniPanel < RefinedDarkTitledPanel
+  text-offset: 0 2
+  text-align: top
+  padding-top: 18
+  padding-left: 6
+  padding-right: 6
+  padding-bottom: 6
+
+DungeonVerticalDivider < UIWidget
+  width: 1
+  background-color: #333333
+  phantom: true
+  focusable: false
+
+DungeonMenuItem < RefinedDarkListEntry
   height: 60
-  image-color: #ababab
-  image-source: /images/ui/panel_flat
-  image-border: 1
-  image-color: #999999
   focusable: true
   phantom: false
-
-  $hover !disabled:
-    image-color: #dfdfdf
-
-  $focus:
-    image-color: #ffffff
 
   UICreature
     id: boss
@@ -30,7 +34,7 @@ DungeonMenuItem < Panel
     margin-top: 1
     margin-left: 3
     text: Dungeon Name
-    color: #dfdfdf
+    color: #f0f0f0
 
   Label
     id: level
@@ -48,25 +52,15 @@ DungeonMenuItem < Panel
     margin-top: 2
     margin-left: 3
 
-DifficultyButton < Panel
+DifficultyButton < RefinedDarkListEntry
   width: 162
-  image-color: #ababab
-  image-source: /images/ui/panel_flat
-  image-border: 1
-  image-color: #999999
-  color: #999999
+  color: #d8d8d8
   text-offset: 0 -35
   phantom: false
   clipping: true
 
-  $hover !disabled:
-    image-color: #dfdfdf
-
-  $focus:
-    image-color: #ffffff
-
   $disabled:
-    color: #ababab88
+    color: #8a8a8a
 
 DifficultyIcon < Panel
   anchors.top: parent.top
@@ -85,7 +79,7 @@ DifficultyInfo < Label
   anchors.bottom: parent.bottom
   margin-top: 20
   text-align: top
-  color: #ababab
+  color: #9b9b9b
 
 PlayersTableRow < TableRow
   height: 19
@@ -96,27 +90,23 @@ PlayersTableColumn < TableColumn
   text-align: center
 
 PlayersTableHeaderColumn < UIWidget
-  font: verdana-11px-antialised
-  color: #dfdfdf88
+  font: verdana-11px-rounded
+  color: #d8d8d8
   focusable: true
   text-offset: 0 0
-  image-source: /images/ui/panel_flat
-  image-color: #999999
-  image-border: 1
+  background-color: #161719
+  border-width: 1
+  border-color: #333333
   focusable: false
 
-ChallengesPanel < ScrollablePanel
+ChallengesPanel < RefinedDarkScrollablePanel
   text-offset: 0 2
   text-align: top
-  image-source: /images/ui/window
-  image-border: 4
-  image-border-top: 23
-  image-color: #999999
   padding: 4
   padding-top: 20
   padding-right: 18
 
-ChallengePanel < MiniPanel
+ChallengePanel < DungeonMiniPanel
   height: 84
   text-align: leftTop
   text-offset: 26 2
@@ -146,27 +136,24 @@ LootItem < UIItem
   color: white
   virtual: true
 
-MainWindow
+RefinedDarkMainWindow
   text: Dungeons
   size: 1219 720
 
-  ScrollablePanel
+  RefinedDarkScrollablePanel
     id: dungeonsMenu
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.bottom: separator.top
     width: 190
     margin-bottom: 10
-    image-source: /images/ui/panel_flat
-    image-border: 1
-    image-color: #999999
     padding: 1
     vertical-scrollbar: dungeonsScroll
     auto-focus: none
     layout:
       type: verticalBox
 
-  VerticalScrollBar
+  RefinedDarkVerticalScrollBar
     id: dungeonsScroll
     anchors.top: dungeonsMenu.top
     anchors.bottom: dungeonsMenu.bottom
@@ -174,7 +161,7 @@ MainWindow
     step: 24
     pixels-scroll: true
 
-  FlatPanel
+  RefinedDarkCard
     id: dungeonInfo
     anchors.top: prev.top
     anchors.left: prev.right
@@ -189,9 +176,9 @@ MainWindow
       anchors.left: parent.left
       anchors.right: parent.right
       height: 100
-      background: #555555
+      background: #161719
 
-    MiniPanel
+    DungeonMiniPanel
       id: difficulties
       anchors.top: parent.top
       anchors.left: parent.left
@@ -327,7 +314,7 @@ MainWindow
           image-source: /images/dungeons/difficulty_lock
           visible: false
 
-    MiniPanel
+    DungeonMiniPanel
       id: requirements
       anchors.top: prev.bottom
       anchors.left: parent.left
@@ -412,7 +399,7 @@ MainWindow
           text-auto-resize: true
           text: 100.000.000
 
-      MiniPanel
+      DungeonMiniPanel
         anchors.top: prev.bottom
         anchors.left: parent.left
         anchors.right: parent.right
@@ -432,7 +419,7 @@ MainWindow
           text-auto-resize: true
           text-wrap: true
       
-      MiniPanel
+      DungeonMiniPanel
         id: items
         anchors.top: prev.bottom
         anchors.left: parent.left
@@ -462,7 +449,7 @@ MainWindow
         LootItem
           id: item6
 
-    MiniPanel
+    DungeonMiniPanel
       id: bossLoot
       anchors.top: prev.top
       anchors.left: prev.right
@@ -502,7 +489,7 @@ MainWindow
       LootItem
       LootItem
 
-    MiniPanel
+    DungeonMiniPanel
       anchors.top: prev.top
       anchors.left: prev.right
       anchors.bottom: parent.bottom
@@ -542,7 +529,7 @@ MainWindow
         padding-top: 20
         vertical-scrollbar: soloTableScroll
 
-      VerticalScrollBar
+      RefinedDarkVerticalScrollBar
         id: soloTableScroll
         anchors.top: soloTableData.top
         anchors.bottom: soloTableData.bottom
@@ -550,7 +537,7 @@ MainWindow
         step: 20
         pixels-scroll: true
     
-    MiniPanel
+    DungeonMiniPanel
       anchors.top: prev.top
       anchors.left: prev.right
       anchors.bottom: parent.bottom
@@ -590,7 +577,7 @@ MainWindow
         padding-top: 20
         vertical-scrollbar: groupTableScroll
 
-      VerticalScrollBar
+      RefinedDarkVerticalScrollBar
         id: groupTableScroll
         anchors.top: groupTableData.top
         anchors.bottom: groupTableData.bottom
@@ -598,7 +585,7 @@ MainWindow
         step: 20
         pixels-scroll: true
 
-    MiniPanel
+    DungeonMiniPanel
       anchors.top: requirements.bottom
       anchors.left: parent.left
       anchors.right: requirements.right
@@ -642,14 +629,14 @@ MainWindow
           text: 00:00:00
           text-auto-resize: true
 
-      HorizontalSeparator
+      RefinedDarkSeparator
         anchors.top: prev.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         margin: 0 10
         margin-top: 10
 
-      HorizontalSeparator
+      RefinedDarkSeparator
         anchors.top: prev.bottom
         anchors.left: parent.left
         anchors.right: parent.right
@@ -677,7 +664,7 @@ MainWindow
         text: ------
         text-auto-resize: true
 
-      Button
+      RefinedDarkPrimaryButton
         id: queueButton
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
@@ -696,7 +683,7 @@ MainWindow
       layout:
         type: verticalBox
     
-    VerticalScrollBar
+    RefinedDarkVerticalScrollBar
       id: challengesScroll
       anchors.top: challenges.top
       anchors.bottom: challenges.bottom
@@ -707,14 +694,14 @@ MainWindow
       step: 24
       pixels-scroll: true
 
-  HorizontalSeparator
+  RefinedDarkSeparator
     id: separator
     anchors.bottom: parent.bottom
     anchors.left: parent.left
     anchors.right: parent.right
     margin-bottom: 35
 
-  Button
+  RefinedDarkButton
     anchors.bottom: parent.bottom
     anchors.right: parent.right
     text: Close

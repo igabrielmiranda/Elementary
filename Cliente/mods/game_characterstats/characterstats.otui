@@ -1,27 +1,85 @@
 StatsPanel < Panel
-  height: 32
+  height: 40
+  image-source:
+  image-border: 0
+  background-color: #11151a
+  border-width: 1
+  border-color: #2c343d
+  padding-left: 6
+  padding-right: 6
 
-StatsButton < Button
+StatsSummaryPanel < Panel
+  height: 30
+  image-source:
+  image-border: 0
+  background-color: #0d1115
+  border-width: 1
+  border-color: #2c343d
+  padding-left: 8
+  padding-right: 6
+
+StatsSeparator < UIWidget
+  height: 1
+  background-color: #252d35
+  phantom: true
+
+StatsButton < UIButton
   id: plusButton
   anchors.top: parent.top
   anchors.left: parent.left
-  size: 16 16
+  margin-top: 3
+  size: 18 18
   text: +
+  text-align: center
+  text-offset: 0 1
+  font: verdana-11px-rounded
+  color: #bce6cd
+  image-source:
+  image-border: 0
+  background-color: #183126
+  border-width: 1
+  border-color: #3d735b
+  change-cursor-image: true
+  cursor: pointer
+
+  $hover !disabled:
+    background-color: #214231
+    border-color: #559378
+
+  $pressed:
+    background-color: #10231a
+    border-color: #6ba98d
+
+  $disabled:
+    color: #66726c
+    background-color: #0c110f
+    border-color: #252e29
+    change-cursor-image: false
 
 StatName < Label
   anchors.top: parent.top
   anchors.left: prev.right
-  margin-left: 5
-  text-align: center
+  anchors.right: points.left
+  margin-top: 3
+  margin-left: 7
+  margin-right: 6
+  height: 16
+  text-align: left
+  color: #eef2f6
+  font: verdana-11px-rounded
 
 StatPoints < Label
   id: points
   anchors.top: parent.top
   anchors.right: parent.right
-  text-align: center
-  text-auto-resize: true
+  margin-top: 3
+  width: 30
+  height: 16
+  text-align: right
+  color: #a9d7bc
+  font: verdana-11px-monochrome
 
-StatsButtonMinus < Button
+StatsButtonMinus < UIButton
   id: minusButton
   anchors.top: parent.top
   anchors.left: parent.left
@@ -33,47 +91,59 @@ StatsButtonMinus < Button
 StatInfo < Label
   anchors.bottom: parent.bottom
   anchors.left: parent.left
-  text-auto-resize: true
-  margin-left: 20
+  anchors.right: value.left
+  margin-left: 25
+  margin-right: 6
+  margin-bottom: 4
+  height: 14
+  color: #8f99a4
+  font: verdana-11px-monochrome
 
 StatInfoValue < Label
   id: value
   anchors.bottom: parent.bottom
   anchors.right: parent.right
-  text-auto-resize: true
+  margin-bottom: 4
+  width: 46
+  height: 14
+  text-align: right
+  color: #78b596
+  font: verdana-11px-monochrome
 
-MiniWindow
+ModernMiniWindow
   id: characterStatsWindow
   !text: 'Character Stats'
   icon: /images/topbuttons/character_stats
   @onClose: modules.game_characterstats.onMiniWindowClose()
   &save: true
   &autoOpen: 4
-  height: 200
+  height: 360
 
-  MiniWindowContents
-    padding-left: 5
-    padding-right: 5
+  ModernMiniWindowContents
+    padding-left: 6
+    padding-right: 6
+    padding-top: 4
+    padding-bottom: 6
     layout: verticalBox
-      spacing: 5
+      spacing: 4
     
-    Panel
-      margin-top: 5
-      height: 16
+    StatsSummaryPanel
       Label
         id: remainingPoints
-        anchors.top: parent.top
         anchors.left: parent.left
-        text-auto-resize: true
+        anchors.verticalCenter: parent.verticalCenter
+        color: #dce2e8
+        font: verdana-11px-rounded
         !text: 'Points: 10'
-      Button
-        anchors.top: parent.top
+
+      ModernButton
         anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
         text: Reset
-        size: 60 16
+        size: 58 22
         @onClick: modules.game_characterstats.resetStats()
 
-    HorizontalSeparator
+    StatsSeparator
 
     StatsPanel
       id: strength
@@ -88,7 +158,7 @@ MiniWindow
       StatInfoValue
         !text: '+10%'
 
-    HorizontalSeparator
+    StatsSeparator
 
     StatsPanel
       id: intelligence
@@ -103,7 +173,7 @@ MiniWindow
       StatInfoValue
         !text: '+10%'
 
-    HorizontalSeparator
+    StatsSeparator
 
     StatsPanel
       id: dexterity
@@ -118,7 +188,7 @@ MiniWindow
       StatInfoValue
         !text: '+15%'
 
-    HorizontalSeparator
+    StatsSeparator
 
     StatsPanel
       id: vitality
@@ -133,7 +203,7 @@ MiniWindow
       StatInfoValue
         !text: '+10%'
 
-    HorizontalSeparator
+    StatsSeparator
 
     StatsPanel
       id: spirit
@@ -148,7 +218,7 @@ MiniWindow
       StatInfoValue
         !text: '+10%'
 
-    HorizontalSeparator
+    StatsSeparator
 
     StatsPanel
       id: wisdom

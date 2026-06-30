@@ -9,7 +9,7 @@ OptionPanel
     @onSetup: |
       self:setText(tr("Version: ") .. g_graphics.getVersion())      
 
-  HorizontalSeparator
+  ModernHorizontalSeparator
     id: separator
     margin: 5 5 5 5
 
@@ -40,7 +40,7 @@ OptionPanel
     id: optimizationLevelLabel
     !text: tr("Optimization level")
     
-  ComboBox
+  ModernComboBox
     id: optimizationLevel
     margin-top: 3
     margin-right: 2
