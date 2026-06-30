@@ -54,18 +54,6 @@ local defaultOptions = {
 
   topBar = true,
 
-  actionbar1 = true,
-  actionbar2 = false,
-  actionbar3 = false,
-  actionbar4 = false,
-  actionbar5 = false,
-  actionbar6 = false,
-  actionbar7 = false,
-  actionbar8 = false,
-  actionbar9 = false,
-
-  actionbarLock = false,
-
   profile = 1,
   
   antialiasing = true
@@ -408,8 +396,6 @@ function setOption(key, value, force)
   
   if key == 'classicView' or key == 'rightPanels' or key == 'leftPanels' or key == 'cacheMap' or key == 'stretchGameMap' then
     modules.game_interface.refreshViewMode()    
-  elseif key:find("actionbar") then
-    modules.game_actionbar.show()
   end
 
   if key == 'topBar' then
