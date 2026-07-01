@@ -403,6 +403,12 @@ class Creature : virtual public Thing
 		bool isMovementBlocked() const {
 			return movementBlocked;
 		}
+		void blockSpellCasts(uint32_t durationMs) {
+			spellBlockEnd = std::max<int64_t>(spellBlockEnd, OTSYS_TIME() + durationMs);
+		}
+		bool isSpellCastBlocked() const {
+			return spellBlockEnd > OTSYS_TIME();
+		}
 
 		//creature script events
 		bool registerCreatureEvent(const std::string& name);
@@ -535,6 +541,7 @@ class Creature : virtual public Thing
 		bool hiddenHealth = false;
 		bool canUseDefense = true;
 		bool movementBlocked = false;
+		int64_t spellBlockEnd = 0;
 
 		//creature script events
 		bool hasEventRegistered(CreatureEventType_t event) const {

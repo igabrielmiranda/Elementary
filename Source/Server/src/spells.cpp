@@ -278,6 +278,10 @@ bool CombatSpell::loadScriptCombat()
 
 bool CombatSpell::castSpell(Creature* creature)
 {
+	if (creature->isSpellCastBlocked()) {
+		return false;
+	}
+
 	if (scripted) {
 		LuaVariant var;
 		var.type = VARIANT_POSITION;
@@ -304,6 +308,10 @@ bool CombatSpell::castSpell(Creature* creature)
 
 bool CombatSpell::castSpell(Creature* creature, Creature* target)
 {
+	if (creature->isSpellCastBlocked()) {
+		return false;
+	}
+
 	if (scripted) {
 		LuaVariant var;
 
@@ -553,6 +561,12 @@ bool Spell::configureSpell(const pugi::xml_node& node)
 bool Spell::playerSpellCheck(Player* player) const
 {
 	if (player->hasFlag(PlayerFlag_CannotUseSpells)) {
+		return false;
+	}
+
+	if (player->isSpellCastBlocked()) {
+		player->sendCancelMessage(RETURNVALUE_YOUAREEXHAUSTED);
+		g_game.addMagicEffect(player->getPosition(), CONST_ME_POFF);
 		return false;
 	}
 
@@ -1019,6 +1033,10 @@ bool InstantSpell::canThrowSpell(const Creature* creature, const Creature* targe
 
 bool InstantSpell::castSpell(Creature* creature)
 {
+	if (creature->isSpellCastBlocked()) {
+		return false;
+	}
+
 	LuaVariant var;
 
 	if (casterTargetOrDirection) {
@@ -1047,6 +1065,10 @@ bool InstantSpell::castSpell(Creature* creature)
 
 bool InstantSpell::castSpell(Creature* creature, Creature* target)
 {
+	if (creature->isSpellCastBlocked()) {
+		return false;
+	}
+
 	if (needTarget) {
 		LuaVariant var;
 		var.type = VARIANT_NUMBER;
@@ -1088,6 +1110,10 @@ bool InstantSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 bool InstantSpell::canCast(const Player* player) const
 {
 	if (player->hasFlag(PlayerFlag_CannotUseSpells)) {
+		return false;
+	}
+
+	if (player->isSpellCastBlocked()) {
 		return false;
 	}
 
@@ -1223,6 +1249,10 @@ bool RuneSpell::executeUse(Player* player, Item* item, const Position&, Thing* t
 
 bool RuneSpell::castSpell(Creature* creature)
 {
+	if (creature->isSpellCastBlocked()) {
+		return false;
+	}
+
 	LuaVariant var;
 	var.type = VARIANT_NUMBER;
 	var.number = creature->getID();
@@ -1231,6 +1261,10 @@ bool RuneSpell::castSpell(Creature* creature)
 
 bool RuneSpell::castSpell(Creature* creature, Creature* target)
 {
+	if (creature->isSpellCastBlocked()) {
+		return false;
+	}
+
 	LuaVariant var;
 	var.type = VARIANT_NUMBER;
 	var.number = target->getID();

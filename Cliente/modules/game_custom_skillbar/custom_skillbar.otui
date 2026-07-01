@@ -1,6 +1,6 @@
 CustomSkillBarWindow < ModernPanel
   id: customSkillBar
-  size: 412 104
+  size: 510 148
   padding: 6
   visible: false
   focusable: false
@@ -43,7 +43,7 @@ CustomSkillBarWindow < ModernPanel
     anchors.right: parent.right
     anchors.top: titleLabel.bottom
     margin-top: 6
-    height: 76
+    height: 116
     clipping: true
     focusable: false
 
@@ -52,7 +52,7 @@ CustomSkillBarWindow < ModernPanel
       anchors.left: parent.left
       anchors.right: parent.right
       anchors.top: parent.top
-      height: 36
+      height: 56
       focusable: false
       clipping: false
       layout:
@@ -65,7 +65,7 @@ CustomSkillBarWindow < ModernPanel
       anchors.right: parent.right
       anchors.top: topRow.bottom
       margin-top: 4
-      height: 36
+      height: 56
       focusable: false
       clipping: false
       layout:
@@ -73,55 +73,81 @@ CustomSkillBarWindow < ModernPanel
         spacing: 4
 
 CustomSkillBarSlot < ModernSlot
+  size: 46 56
   clipping: true
+  font: verdana-11px-rounded
+  color: #eef2f6
+  text-align: center
+  text-offset: 0 -6
 
   UIWidget
     id: icon
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: parent.top
-    margin-top: 4
-    size: 24 24
-    image-size: 24 24
+    margin-top: 6
+    size: 32 32
+    image-size: 32 32
     image-source: /images/game/spells/cooldowns
     image-clip: 40 0 20 20
     phantom: true
 
-  Label
-    id: slotNumber
+  UIWidget
+    id: cooldownShade
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.bottom: parent.bottom
-    margin-bottom: 2
-    height: 11
-    color: #eef1f4
-    font: verdana-11px-monochrome
-    text-align: center
+    anchors.top: parent.top
+    margin-left: 1
+    margin-right: 1
+    margin-top: 1
+    height: 37
+    background-color: #06080ab8
+    visible: false
     phantom: true
 
   Label
-    id: hotkeyLabel
-    anchors.top: parent.top
+    id: cooldownShadowLabel
+    anchors.left: parent.left
     anchors.right: parent.right
-    margin-top: 2
-    margin-right: 2
-    height: 11
-    padding-left: 2
-    padding-right: 2
-    color: #d9dde2
-    font: verdana-11px-monochrome
-    background-color: #0b0d10dd
+    anchors.top: parent.top
+    margin-top: 9
+    height: 22
+    color: #020304
+    font: terminus-14px-bold
+    text-align: center
+    text-offset: 1 2
     visible: false
     phantom: true
 
   Label
     id: cooldownLabel
-    anchors.horizontalCenter: parent.horizontalCenter
-    anchors.verticalCenter: parent.verticalCenter
-    margin-top: -1
-    height: 12
-    color: #f4f7fb
-    font: verdana-11px-monochrome
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: parent.top
+    margin-top: 8
+    height: 22
+    color: #fff4c9
+    font: terminus-14px-bold
     text-align: center
+    text-offset: 0 2
+    visible: false
+    phantom: true
+
+  Label
+    id: hotkeyLabel
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-left: 1
+    margin-right: 1
+    margin-bottom: 1
+    height: 14
+    color: #f0f3f6
+    font: verdana-9px-bold
+    text-align: center
+    text-offset: 0 1
+    background-color: #090c10f1
+    border-width: 1
+    border-color: #26303a
     visible: false
     phantom: true
 

@@ -2479,6 +2479,7 @@ void LuaScriptInterface::registerFunctions()
 	registerMethod("Creature", "getSpeed", LuaScriptInterface::luaCreatureGetSpeed);
 	registerMethod("Creature", "getBaseSpeed", LuaScriptInterface::luaCreatureGetBaseSpeed);
 	registerMethod("Creature", "changeSpeed", LuaScriptInterface::luaCreatureChangeSpeed);
+	registerMethod("Creature", "blockSpellCasts", LuaScriptInterface::luaCreatureBlockSpellCasts);
 
 	registerMethod("Creature", "setDropLoot", LuaScriptInterface::luaCreatureSetDropLoot);
 	registerMethod("Creature", "setSkillLoss", LuaScriptInterface::luaCreatureSetSkillLoss);
@@ -8282,6 +8283,22 @@ int LuaScriptInterface::luaCreatureChangeSpeed(lua_State* L)
 
 	int32_t delta = getNumber<int32_t>(L, 2);
 	g_game.changeSpeed(creature, delta);
+	pushBoolean(L, true);
+	return 1;
+}
+
+int LuaScriptInterface::luaCreatureBlockSpellCasts(lua_State* L)
+{
+	// creature:blockSpellCasts(durationMs)
+	Creature* creature = getCreature(L, 1);
+	if (!creature) {
+		reportErrorFunc(L, getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		pushBoolean(L, false);
+		return 1;
+	}
+
+	uint32_t durationMs = getNumber<uint32_t>(L, 2);
+	creature->blockSpellCasts(durationMs);
 	pushBoolean(L, true);
 	return 1;
 }

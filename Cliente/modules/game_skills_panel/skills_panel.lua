@@ -733,7 +733,6 @@ local function resolveSpellIcon(spell)
   local clientId = nil
   local lookup = panelState.iconLookup
   local spellId = tonumber(spell.spellId)
-
   if lookup.byWords[normalizeWords(spell.words)] then
     clientId = lookup.byWords[normalizeWords(spell.words)]
   elseif lookup.byName[normalizeToken(spell.name)] then

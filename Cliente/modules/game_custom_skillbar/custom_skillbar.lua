@@ -1,7 +1,8 @@
 local MODULE_TAG = '[CustomSkillBar]'
 local SLOT_COUNT = 20
 local SLOTS_PER_ROW = 10
-local SLOT_SIZE = 36
+local SLOT_SIZE = 46
+local SLOT_HEIGHT = 56
 local SLOT_SPACING = 4
 local BAR_POSITION_X = 20
 local BAR_POSITION_BOTTOM_OFFSET = 190
@@ -896,6 +897,19 @@ local function getSlotCooldownDuration(slotData)
   return 0
 end
 
+local function getNetworkSpellCooldownId(spellInfo)
+  if type(spellInfo) ~= 'table' then
+    return nil
+  end
+
+  local spellId = tonumber(spellInfo.id)
+  if not spellId then
+    return nil
+  end
+
+  return spellId % 256
+end
+
 local function findSlotsBySpellId(spellId)
   local matchingSlots = {}
   spellId = tonumber(spellId)
@@ -907,7 +921,9 @@ local function findSlotsBySpellId(spellId)
     local slotData = slotSettings[slotIndex]
     if slotData then
       local spellInfo = getRawSpellInfo(slotData.name) or getRawSpellInfoByWords(slotData.words)
-      if spellInfo and tonumber(spellInfo.id) == spellId then
+      local rawSpellId = spellInfo and tonumber(spellInfo.id) or nil
+      local networkSpellId = getNetworkSpellCooldownId(spellInfo)
+      if rawSpellId == spellId or networkSpellId == spellId then
         table.insert(matchingSlots, slotIndex)
       end
     end
@@ -1207,7 +1223,11 @@ local function applySkillIconToWidget(widget, iconData, skillName, resolvedFrom,
   local imageWidget = widget.getChildById and widget:getChildById('image') or nil
   local targetWidget = imageWidget or widget
   targetWidget:setImageSource(resolvedIcon.source or PLACEHOLDER_ICON.source)
-  targetWidget:setImageClip(resolvedIcon.clip or PLACEHOLDER_ICON.clip)
+  if resolvedIcon.clip then
+    targetWidget:setImageClip(resolvedIcon.clip)
+  else
+    targetWidget:setImageClip('')
+  end
   logTargetSkillIcon(skillName, resolvedIcon, resolvedFrom, context)
 end
 
@@ -1428,14 +1448,6 @@ local function getSlotHotkeyBadgeText(slotIndex, slotData)
   return sanitizeHotkey(slotData.hotkey)
 end
 
-local function getSlotPrimaryLabel(slotIndex, slotData)
-  if hasConfiguredHotkey(slotData) then
-    return sanitizeHotkey(slotData.hotkey)
-  end
-
-  return ''
-end
-
 updateSlotWidget = function(slotIndex)
   local slotWidget = slotWidgets[slotIndex]
   if not slotWidget then
@@ -1443,41 +1455,64 @@ updateSlotWidget = function(slotIndex)
   end
 
   local slotData = slotSettings[slotIndex]
-  local slotLabel = getSlotPrimaryLabel(slotIndex, slotData)
   local hotkeyBadgeText = getSlotHotkeyBadgeText(slotIndex, slotData)
   local cooldownRemaining = getSlotCooldownRemaining(slotIndex)
   local cooldownActive = cooldownRemaining > 0
 
-  if slotWidget.slotNumberLabel then
-    slotWidget.slotNumberLabel:setText(slotLabel)
-  end
-
   if slotWidget.hotkeyLabelWidget then
     slotWidget.hotkeyLabelWidget:setText(hotkeyBadgeText)
-    slotWidget.hotkeyLabelWidget:hide()
+    if hotkeyBadgeText ~= '' then
+      slotWidget.hotkeyLabelWidget:show()
+    else
+      slotWidget.hotkeyLabelWidget:hide()
+    end
   end
 
   if slotData then
+    slotWidget:setText('')
     slotWidget:setTooltip(buildSlotTooltip(slotData))
     local available = getSkillAvailability(slotData)
     if cooldownActive then
-      slotWidget:setBackgroundColor(available and '#11161b' or '#101317')
+      slotWidget:setBackgroundColor(available and '#12171d' or '#101317')
     else
       slotWidget:setBackgroundColor(available and '#1a1f25' or '#14181c')
     end
     slotWidget:setBorderColor(available and '#627080' or '#313740')
     if slotWidget.iconWidget and available then
       applySkillIconToWidget(slotWidget.iconWidget, slotData.icon, slotData.name, slotData.iconResolvedFrom, 'slot')
+      slotWidget.iconWidget:setOpacity(cooldownActive and 0.68 or 1.0)
       slotWidget.iconWidget:show()
     elseif slotWidget.iconWidget then
+      slotWidget.iconWidget:setOpacity(1.0)
       slotWidget.iconWidget:hide()
     end
   else
+    slotWidget:setText('+')
     slotWidget:setTooltip(buildEmptySlotTooltip(slotIndex))
     slotWidget:setBackgroundColor('#14181c')
     slotWidget:setBorderColor('#2f343b')
     if slotWidget.iconWidget then
+      slotWidget.iconWidget:setOpacity(1.0)
       slotWidget.iconWidget:hide()
+    end
+  end
+
+  if slotWidget.cooldownShade then
+    if cooldownActive then
+      slotWidget.cooldownShade:show()
+      slotWidget.cooldownShade:raise()
+    else
+      slotWidget.cooldownShade:hide()
+    end
+  end
+
+  if slotWidget.cooldownShadowLabel then
+    if cooldownActive then
+      slotWidget.cooldownShadowLabel:setText(formatCooldownSeconds(cooldownRemaining))
+      slotWidget.cooldownShadowLabel:show()
+      slotWidget.cooldownShadowLabel:raise()
+    else
+      slotWidget.cooldownShadowLabel:hide()
     end
   end
 
@@ -1489,6 +1524,10 @@ updateSlotWidget = function(slotIndex)
     else
       slotWidget.cooldownLabel:hide()
     end
+  end
+
+  if slotWidget.hotkeyLabelWidget then
+    slotWidget.hotkeyLabelWidget:raise()
   end
 
 end
@@ -1698,10 +1737,6 @@ local function doCastSlot(slotIndex, source, hotkey)
   end
 
   g_game.talk(slotData.words)
-  local cooldownDuration = getSlotCooldownDuration(slotData)
-  if cooldownDuration > 0 then
-    startSlotCooldown(slotIndex, cooldownDuration)
-  end
   logInfo(string.format('cast slot %s: %s', getSlotDisplayLabel(slotIndex), slotData.words))
   return true
 end
@@ -2399,14 +2434,19 @@ local function createSlotButton(slotIndex, parentWidget)
   local slotWidget = g_ui.createWidget('CustomSkillBarSlot', parentWidget or slotsPanelWidget or customSkillBar)
   slotWidget.slotIndex = slotIndex
   slotWidget.iconWidget = slotWidget:getChildById('icon')
-  slotWidget.slotNumberLabel = slotWidget:getChildById('slotNumber')
   slotWidget.hotkeyLabelWidget = slotWidget:getChildById('hotkeyLabel')
+  slotWidget.cooldownShade = slotWidget:getChildById('cooldownShade')
+  slotWidget.cooldownShadowLabel = slotWidget:getChildById('cooldownShadowLabel')
   slotWidget.cooldownLabel = slotWidget:getChildById('cooldownLabel')
-  if slotWidget.slotNumberLabel then
-    slotWidget.slotNumberLabel:setText(getSlotDisplayLabel(slotIndex))
-  end
+  slotWidget:setSize({ width = SLOT_SIZE, height = SLOT_HEIGHT })
   if slotWidget.iconWidget then
     slotWidget.iconWidget:hide()
+  end
+  if slotWidget.cooldownShade then
+    slotWidget.cooldownShade:hide()
+  end
+  if slotWidget.cooldownShadowLabel then
+    slotWidget.cooldownShadowLabel:hide()
   end
   if slotWidget.cooldownLabel then
     slotWidget.cooldownLabel:hide()
