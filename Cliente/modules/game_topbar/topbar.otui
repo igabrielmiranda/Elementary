@@ -1,133 +1,167 @@
-StatsPanel < Panel
-  height: 16
-  anchors.left: parent.left
-  anchors.right: parent.right
-
-  ProgressBar
-    id: health
-    anchors.left: parent.left
-    anchors.right: states.left
-    anchors.top: states.top
-    anchors.bottom: states.bottom   
-    height: 14
-    margin-right: 4
-    text-offset: 0 1
-
-  ProgressBar
-    id: mana
-    anchors.left: states.right
-    anchors.right: parent.right
-    anchors.top: states.top
-    anchors.bottom: states.bottom
-    height: 14
-    margin-left: 4
-    background-color: #0060d5
-    text-offset: 0 1
-
-  FlatPanel
-    id: states
-    padding: 1
-    size: 122 14
-    anchors.horizontalCenter: parent.horizontalCenter
-    anchors.top: parent.top
-
-    Panel
-      id: box
-      image-source: /images/ui/dark_background
-      anchors.fill: parent
-      layout:
-        type: horizontalBox
-
-SkillPanel < Panel
-  height: 16
-  anchors.left: parent.left
-  anchors.right: parent.right
-
-  UIWidget
-    id: level
-    anchors.left: parent.left
-    anchors.verticalCenter: parent.verticalCenter
-    text: 999
-    font: verdana-11px-antialised
-    text-align: center
-    margin-left: 4
-
-  UIWidget
-    id: icon
-    anchors.left: prev.right
-    anchors.verticalCenter: parent.verticalCenter
-    image-source: /images/game/topbar/icons
-    size: 9 9
-    image-clip: 0 0 9 9
-    margin-left: 4
-
-  ProgressBar
-    id: progress
-    anchors.left: prev.right
-    margin-left: 4
-    anchors.right: next.left
-    margin-right: 4
-    anchors.verticalCenter: parent.verticalCenter
-    background-color: #c00000
-    height: 6
-    border: 1 black
-    text-offset: 0 0
-
-  UIWidget
-    id: shop
-    anchors.right: parent.right
-    anchors.verticalCenter: parent.verticalCenter    
-    image-source: /images/game/topbar/boost
-    size: 68 12
-    @onClick: modules.game_shop.show()
-    image-clip: 0 0 76 14
-
-    $pressed:
-      image-clip: 0 14 76 14
-  
-  VerticalSeparator
-    id: left
-    anchors.top: progress.top
-    margin-top: -1
-    anchors.bottom: progress.bottom
-    margin-bottom: -1
-    anchors.right: progress.horizontalCenter
-
-  VerticalSeparator
-    id: middle
-    anchors.top: progress.top
-    margin-top: -1
-    anchors.bottom: progress.bottom
-    margin-bottom: -1
-    anchors.right: progress.horizontalCenter  
-
-  VerticalSeparator
-    id: right
-    anchors.top: progress.top
-    margin-top: -1
-    anchors.bottom: progress.bottom
-    margin-bottom: -1
-    anchors.right: progress.right  
-
-Panel
-  id: topbar
+TopBarRoot < Panel
   focusable: false
-  width: 420
-  padding-top: 1
-  padding-left: 4
-  padding-right: 4
-  layout:
-    type: verticalBox
-    fit-children: true
+  phantom: false
+  width: 620
+  height: 30
+  image-source: /images/ui/panel_flat
+  image-border: 1
+  background-color: #11100fee
+  padding: 4
 
-  StatsPanel
-    id: stats
+TopBarSection < Panel
+  height: 22
+  border-width: 1
+  border-color: #4a463e
+  background-color: #1b1a18
 
-  Panel
-    id: skills
+TopBarText < GameLabel
+  color: #ddd8ce
+  font: verdana-11px-rounded
+  text-auto-resize: true
+  text-wrap: false
+
+TopBarProgress < ProgressBar
+  height: 14
+  border-width: 1
+  border-color: #050505
+  background-color: #1a1a1a
+  font: verdana-11px-rounded
+  color: #ffffff
+  text-align: center
+  text-auto-resize: false
+  text-wrap: false
+  text-offset: 0 1
+  clipping: true
+
+TopBarRoot
+  id: topbar
+
+  TopBarSection
+    id: healthPanel
     anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    width: 202
+
+    UIWidget
+      id: healthIcon
+      anchors.left: parent.left
+      anchors.verticalCenter: parent.verticalCenter
+      margin-left: 5
+      size: 14 14
+      image-source: /images/game/states/poisoned
+
+    TopBarText
+      id: healthTitle
+      anchors.left: healthIcon.right
+      anchors.verticalCenter: parent.verticalCenter
+      margin-left: 4
+      text: HP
+
+    TopBarProgress
+      id: healthBar
+      anchors.left: healthTitle.right
+      anchors.right: parent.right
+      anchors.verticalCenter: parent.verticalCenter
+      margin-left: 6
+      margin-right: 5
+      background-color: #00b000
+
+  TopBarSection
+    id: manaPanel
+    anchors.left: healthPanel.right
+    anchors.verticalCenter: parent.verticalCenter
+    margin-left: 4
+    width: 202
+
+    UIWidget
+      id: manaIcon
+      anchors.left: parent.left
+      anchors.verticalCenter: parent.verticalCenter
+      margin-left: 5
+      size: 14 14
+      image-source: /images/game/states/magic_shield
+
+    TopBarText
+      id: manaTitle
+      anchors.left: manaIcon.right
+      anchors.verticalCenter: parent.verticalCenter
+      margin-left: 4
+      text: MANA
+
+    TopBarProgress
+      id: manaBar
+      anchors.left: manaTitle.right
+      anchors.right: parent.right
+      anchors.verticalCenter: parent.verticalCenter
+      margin-left: 6
+      margin-right: 5
+      background-color: #1265d7
+
+  TopBarSection
+    id: xpPanel
+    anchors.left: manaPanel.right
     anchors.right: parent.right
-    layout:
-      type: grid
-      num-columns: 2
-      fit-children: true
+    anchors.verticalCenter: parent.verticalCenter
+    margin-left: 4
+
+    UIWidget
+      id: xpIcon
+      anchors.left: parent.left
+      anchors.verticalCenter: parent.verticalCenter
+      margin-left: 5
+      size: 9 9
+      image-source: /images/game/topbar/icons
+      image-clip: 72 0 9 9
+
+    TopBarText
+      id: xpTitle
+      anchors.left: xpIcon.right
+      anchors.verticalCenter: parent.verticalCenter
+      margin-left: 4
+      text: XP
+
+    TopBarProgress
+      id: xpTextBar
+      anchors.left: xpTitle.right
+      anchors.right: parent.right
+      anchors.verticalCenter: parent.verticalCenter
+      margin-left: 6
+      margin-right: 5
+      background-color: #d6a619
+
+  // Compatibility-only widgets. Their ids existed in the previous layout and
+  // remain available to Lua, but the unused second row is intentionally hidden.
+  Panel
+    id: compatibilityWidgets
+    visible: false
+    size: 0 0
+
+    ProgressBar
+      id: experienceBar
+      visible: false
+      size: 0 0
+
+    GameLabel
+      id: levelValue
+      visible: false
+      size: 0 0
+
+    GameLabel
+      id: experienceValue
+      visible: false
+      size: 0 0
+
+    GameLabel
+      id: capValue
+      visible: false
+      size: 0 0
+
+    GameLabel
+      id: soulValue
+      visible: false
+      size: 0 0
+
+    GameLabel
+      id: staminaValue
+      visible: false
+      size: 0 0
