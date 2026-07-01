@@ -758,8 +758,10 @@ local function applySkillIconToWidget(widget, iconData, skillName, resolvedFrom,
   end
 
   local resolvedIcon = iconData or PLACEHOLDER_ICON
-  widget:setImageSource(resolvedIcon.source or PLACEHOLDER_ICON.source)
-  widget:setImageClip(resolvedIcon.clip or PLACEHOLDER_ICON.clip)
+  local imageWidget = widget.getChildById and widget:getChildById('image') or nil
+  local targetWidget = imageWidget or widget
+  targetWidget:setImageSource(resolvedIcon.source or PLACEHOLDER_ICON.source)
+  targetWidget:setImageClip(resolvedIcon.clip or PLACEHOLDER_ICON.clip)
   logTargetSkillIcon(skillName, resolvedIcon, resolvedFrom, context)
 end
 

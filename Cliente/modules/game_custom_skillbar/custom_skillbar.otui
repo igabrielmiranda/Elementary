@@ -195,19 +195,29 @@ CustomSkillChoiceEntry < UIButton
     id: icon
     anchors.left: parent.left
     anchors.top: parent.top
+    margin-left: 8
+    margin-top: 8
     size: 42 42
-    image-size: 32 32
-    image-source: /images/game/spells/cooldowns
     background-color: #0c0f13
     border-width: 1
     border-color: #333b45
+    clipping: true
     phantom: true
+
+    UIWidget
+      id: image
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.verticalCenter: parent.verticalCenter
+      size: 32 32
+      image-size: 32 32
+      image-source: /images/game/spells/cooldowns
+      phantom: true
 
   Label
     id: nameLabel
     anchors.left: icon.right
     anchors.right: parent.right
-    anchors.top: parent.top
+    anchors.top: icon.top
     margin-left: 10
     margin-right: 118
     height: 16
@@ -242,7 +252,7 @@ CustomSkillChoiceEntry < UIButton
   CustomSkillChoiceBadge
     id: statusLabel
     width: 104
-    anchors.top: parent.top
+    anchors.top: icon.top
     anchors.right: parent.right
     margin-top: 1
     phantom: true
@@ -399,13 +409,23 @@ CustomSkillChoiceWindow < ModernWindow
           id: detailIcon
           anchors.left: parent.left
           anchors.top: parent.top
+          margin-left: 10
+          margin-top: 10
           size: 52 52
-          image-size: 40 40
-          image-source: /images/game/spells/cooldowns
-          image-clip: 40 0 20 20
           background-color: #0b0e12
           border-width: 1
           border-color: #3b4652
+          clipping: true
+
+          UIWidget
+            id: image
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            size: 40 40
+            image-size: 40 40
+            image-source: /images/game/spells/cooldowns
+            image-clip: 40 0 20 20
+            phantom: true
 
         ModernTitle
           id: detailName
