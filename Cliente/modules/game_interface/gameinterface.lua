@@ -190,10 +190,8 @@ end
 
 function load()
   local settings = g_settings.getNode('game_interface')
-  if settings then
-    if settings.splitterMarginBottom then
-      bottomSplitter:setMarginBottom(settings.splitterMarginBottom)
-    end
+  if settings and settings.splitterMarginBottom then
+    bottomSplitter:setMarginBottom(settings.splitterMarginBottom)
   end
 end
 
@@ -1255,15 +1253,15 @@ function setupLeftActions()
   end  
   if not gameLeftActions.chat then return end
   gameLeftActions.chat.onClick = function()
-    if gameBottomPanel:getHeight() <= 5 then
-      gameBottomPanel:setHeight(90)
+    if not gameBottomPanel:isVisible() then
+      gameBottomPanel:show()
       if modules.game_console and modules.game_console.activateChat then
         modules.game_console.activateChat()
       end
     elseif modules.game_console and modules.game_console.isChatEnabled and not modules.game_console.isChatEnabled() then
       modules.game_console.activateChat()
     else
-      gameBottomPanel:setHeight(0)    
+      gameBottomPanel:hide()
     end
   end
 end
@@ -1285,7 +1283,7 @@ function getLeftAction()
 end
 
 function isChatVisible()
-  return gameBottomPanel:getHeight() >= 5
+  return gameBottomPanel:isVisible()
 end
 
 function updateTextEdit(self)

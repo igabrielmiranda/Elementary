@@ -166,10 +166,10 @@ UIWidget
     focusable: false
 
     $!mobile:
-      anchors.left: bottomSplitter.left
-      anchors.right: bottomSplitter.right
-      anchors.top: bottomSplitter.top
-      margin-top: 3
+      anchors.left: gameLeftPanels.right
+      anchors.right: gameRightPanels.left
+      anchors.bottom: parent.bottom
+      height: 0
 
     $mobile:
       anchors.left: gameLeftPanels.right
@@ -181,17 +181,26 @@ UIWidget
       fit-children: true
     
   Panel
-    id: gameBottomPanel    
+    id: gameBottomPanel
+    visible: true
+    focusable: true
+    phantom: false
+
     $!mobile:
-      anchors.left: gameBottomActionPanel.left
-      anchors.right: gameBottomActionPanel.right
-      anchors.top: gameBottomActionPanel.bottom
+      anchors.left: gameLeftPanels.right
       anchors.bottom: parent.bottom
+      margin-left: 8
+      margin-bottom: 8
+      width: 460
+      height: 190
 
     $mobile:
       anchors.left: gameLeftPanels.right
-      anchors.right: gameRightPanels.left
       anchors.bottom: parent.bottom
+      margin-left: 4
+      margin-bottom: 4
+      width: 360
+      height: 160
 
   UIWidget
     id: actionBar

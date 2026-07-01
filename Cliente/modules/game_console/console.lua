@@ -280,10 +280,24 @@ function enableChat(temporarily)
   if not temporarily then
     modules.client_options.setOption("wsadWalking", false)
   end
+
+  local bottomPanel = modules.game_interface.getBottomPanel()
+  if bottomPanel and not bottomPanel:isVisible() then
+    bottomPanel:show()
+  end
+
   setToggleChatChecked(false)
 
   setChatInputMode(true)
+  consolePanel:focus()
   consoleTextEdit:focus()
+  scheduleEvent(function()
+    if consolePanel and consoleTextEdit and consoleTextEdit:isVisible() then
+      consolePanel:focus()
+      consoleTextEdit:focus()
+      consoleTextEdit:setCursorPos(-1)
+    end
+  end, 1)
 
   local gameRootPanel = modules.game_interface.getRootPanel()
   g_keyboard.unbindKeyDown("Enter", gameRootPanel)

@@ -1,12 +1,12 @@
 ConsoleLabel < UITextEdit
   font: verdana-11px-antialised
-  height: 14
-  color: yellow
+  height: 15
+  color: #ddd7e4
   margin-left: 2
   text-wrap: true
   text-auto-resize: true
-  selection-color: #111416
-  selection-background-color: #999999
+  selection-color: #120f17
+  selection-background-color: #d4c6e2
   change-cursor-image: false
   cursor-visible: false
   editable: false
@@ -16,15 +16,18 @@ ConsoleLabel < UITextEdit
 
 ConsolePhantomLabel < UILabel
   font: verdana-11px-antialised
-  height: 14
-  color: yellow
+  height: 15
+  color: #ddd7e4
   text-wrap: true
   text-auto-resize: true
-  selection-color: #111416
-  selection-background-color: #999999
+  selection-color: #120f17
+  selection-background-color: #d4c6e2
 
 ConsoleTabBar < MoveableTabBar
   height: 22
+  background-color: #00000000
+  border-width: 1
+  border-color: #4d3e58aa
 
 ConsoleTabBarPanel < MoveableTabBarPanel
   id: consoleTab
@@ -38,10 +41,10 @@ ConsoleTabBarPanel < MoveableTabBarPanel
       type: verticalBox
       align-bottom: true
     border-width: 1
-    border-color: #202327
-    background: #00000066
+    border-color: #5b476acc
+    background: #08060bd8
     inverted-scroll: true
-    padding: 1
+    padding: 4
 
   VerticalScrollBar
     id: consoleScrollBar
@@ -54,10 +57,33 @@ ConsoleTabBarPanel < MoveableTabBarPanel
 ConsoleTabBarButton < MoveableTabBarButton
   height: 22
   padding: 5
+  color: #908797
+  image-source:
+  image-border: 0
+  background-color: #1b1621f0
+  border-width: 1
+  border-color: #5d4d65
+
+  $hover !checked:
+    color: #f2e6ff
+    background-color: #2a2231
+    border-color: #8b7692
+
+  $checked:
+    color: #ffd58b
+    background-color: #382c2f
+    border-color: #c69a58
+
+  $on !checked:
+    color: #5fdcf4
 
 ConsolePanel < Panel
-  image-source: /images/ui/panel_bottom2
-  image-border: 4
+  image-source:
+  image-border: 0
+  background-color: #06040acc
+  border-width: 1
+  border-color: #624f73
+  focusable: true
   
   $first:
     anchors.fill: parent
@@ -150,6 +176,10 @@ ConsolePanel < Panel
     anchors.left: parent.left
     anchors.bottom: parent.bottom
     margin-left: 6
+    icon-color: #f5d2ff
+    background-color: #261a31ee
+    border-width: 1
+    border-color: #755991
     @onClick: sayModeChange()
 
   TextEdit
@@ -160,6 +190,14 @@ ConsolePanel < Panel
     height: 22
     margin-right: 6
     margin-left: 6
+    color: #f3b4ff
+    image-source:
+    image-border: 0
+    background-color: #120a18f0
+    border-width: 1
+    border-color: #714d86
+    selection-color: #180f1e
+    selection-background-color: #d7b0ea
     shift-navigation: true
     max-length: 255
     text-auto-submit: true
