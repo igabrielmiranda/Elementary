@@ -46,25 +46,37 @@ UIWidget
   image-fixed-ratio: true
   margin-top: 1
 
-  UILabel
-    id: clientVersionLabel
-    background-color: #00000099
-    anchors.right: parent.right
+  Panel
+    id: topOverlay
     anchors.top: parent.top
-    text-align: center
-    text-auto-resize: false
-    width: 220
-    height: 90
-    padding: 2
-    color: #ffffff
-    font: terminus-14px-bold
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 34
+    background-color: #091018d8
+    border-width: 0
 
   Panel
-    id: dailyMonsters
-    anchors.bottom: parent.bottom
-    anchors.horizontalcenter: parent.horizontalcenter
-    margin-bottom: 40
-    height: 144
-    layout:
-      type: horizontalBox
-      spacing: 4
+    id: topOverlayBorder
+    anchors.top: topOverlay.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 1
+    background-color: #273241cc
+
+  UILabel
+    id: clientVersionLabel
+    background-color: #0d131bdd
+    border-width: 1
+    border-color: #2a3442
+    anchors.right: parent.right
+    anchors.top: parent.top
+    margin-top: 5
+    margin-right: 10
+    text-align: right
+    text-auto-resize: false
+    width: 220
+    height: 24
+    padding-right: 10
+    color: #f0f4f8
+    font: verdana-11px-rounded
+    text-offset: 0 4

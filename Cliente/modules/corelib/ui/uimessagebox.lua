@@ -10,7 +10,7 @@ function UIMessageBox.display(title, message, buttons, onEnterCallback, onEscape
   local messageBox = UIMessageBox.internalCreate()
   rootWidget:addChild(messageBox)
 
-  messageBox:setStyle('MainWindow')
+  messageBox:setStyle('ModernMessageBoxWindow')
   messageBox:setText(title)
 
   local messageLabel = g_ui.createWidget('MessageBoxLabel', messageBox)

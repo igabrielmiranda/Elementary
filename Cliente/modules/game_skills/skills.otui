@@ -1,66 +1,78 @@
 SkillFirstWidget < UIWidget
 
 SkillButton < UIButton
-  height: 21
-  margin-bottom: 2
-  padding-left: 6
-  padding-right: 6
-  background-color: #17181b
+  height: 23
+  margin-bottom: 4
+  padding-left: 8
+  padding-right: 8
+  background-color: #14171b
   border-width: 1
-  border-color: #2f3135
+  border-color: #30353b
+  color: #f0f0f0
   &onClick: onSkillButtonClick
 
   $hover:
-    background-color: #202124
-    border-color: #4a4a4a
+    background-color: #1b2026
+    border-color: #4a535d
 
 SmallSkillButton < SkillButton
-  height: 14
+  height: 17
+  margin-bottom: 3
 
 SkillNameLabel < GameLabel
-  font: verdana-11px-monochrome
-  color: #d8d8d8
+  font: verdana-11px-rounded
+  color: #c9d0d7
   anchors.left: parent.left
   anchors.top: parent.top
   anchors.bottom: parent.bottom
+  text-offset: 0 1
 
 SkillValueLabel < GameLabel
   id: value
-  font: verdana-11px-monochrome
+  font: verdana-11px-rounded
   color: #f0f0f0
   text-align: topright
   anchors.right: parent.right
   anchors.top: parent.top
   anchors.bottom: parent.bottom
   anchors.left: prev.left
+  text-offset: 0 1
 
 SkillPercentPanel < ModernProgressBar
   id: percent
   height: 5
-  margin-top: 15
+  margin-top: 16
   anchors.left: parent.left
   anchors.right: parent.right
   anchors.top: parent.top
   phantom: false
+  background-color: #3f6b4c
+  border-width: 1
+  border-color: #2b3138
 
 ModernMiniWindow
   id: skillWindow
   !text: tr('Skills')
-  height: 150
+  height: 182
   icon: /images/topbuttons/skills
   @onClose: modules.game_skills.onMiniWindowClose()
   &save: true
   &autoOpen: false
 
+  miniwindowTopBar.background-color: #15181c
+  miniwindowTopBar.border-color: #2e343b
+
   ModernMiniWindowContents
-    padding-left: 5
-    padding-right: 5
+    padding-left: 6
+    padding-right: 6
+    padding-top: 4
     layout: verticalBox
+    background-color: #101215
 
     SkillButton
-      margin-top: 5
+      margin-top: 4
       id: experience
-      height: 15
+      height: 17
       SkillNameLabel
         !text: tr('Experience')
       SkillValueLabel
@@ -71,39 +83,38 @@ ModernMiniWindow
         !text: tr('Level')
       SkillValueLabel
       SkillPercentPanel
-        background-color: red
 
     SkillButton
       id: health
-      height: 15
+      height: 17
       SkillNameLabel
         !text: tr('Hit Points')
       SkillValueLabel
 
     SkillButton
       id: mana
-      height: 15
+      height: 17
       SkillNameLabel
         !text: tr('Mana')
       SkillValueLabel
 
     SkillButton
       id: soul
-      height: 15
+      height: 17
       SkillNameLabel
         !text: tr('Soul Points')
       SkillValueLabel
 
     SkillButton
       id: capacity
-      height: 15
+      height: 17
       SkillNameLabel
         !text: tr('Capacity')
       SkillValueLabel
 
     SkillButton
       id: speed
-      height: 15
+      height: 17
       SkillNameLabel
         !text: tr('Speed')
       SkillValueLabel
@@ -134,7 +145,6 @@ ModernMiniWindow
         !text: tr('Magic Level')
       SkillValueLabel
       SkillPercentPanel
-        background-color: red
 
     SkillButton
       id: skillId0
@@ -184,7 +194,7 @@ ModernMiniWindow
         !text: tr('Fishing')
       SkillValueLabel
       SkillPercentPanel
-    
+
     SmallSkillButton
       id: skillId7
       SkillNameLabel

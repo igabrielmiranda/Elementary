@@ -274,9 +274,9 @@ function onSkillButtonClick(button)
   if percentBar then
     percentBar:setVisible(not percentBar:isVisible())
     if percentBar:isVisible() then
-      button:setHeight(21)
+      button:setHeight(23)
     else
-      button:setHeight(21 - 6)
+      button:setHeight(17)
     end
   end
 end

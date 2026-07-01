@@ -356,7 +356,6 @@ function EnterGame.init()
 
   scheduleEvent(function()
     EnterGame.show()
-    dailyMonsterRequest()
   end, 100)
 end
 

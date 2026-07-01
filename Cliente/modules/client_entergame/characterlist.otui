@@ -1,8 +1,8 @@
 CharacterWidget < FlatPanel
-  padding: 7
-  padding-top: 3
+  padding: 12
   border-width: 1
-  border-color: alpha
+  border-color: #343434
+  background-color: #1a1a1cf2
   &updateOnStates: |
     function(self)
       local children = self:getChildren()
@@ -14,31 +14,39 @@ CharacterWidget < FlatPanel
   @onSetup: self:updateOnStates()
 
   $focus:
-    border-width: 3
-    border-color: #FFFFFF
+    border-width: 1
+    border-color: #596270
+    background-color: #202124
+
+  $hover:
+    border-color: #474b53
+    background-color: #1d1d20
 
   Label
     id: name
     anchors.top: parent.top
-    anchors.horizontalCenter: parent.horizontalCenter
-    margin-top: 3
-    height: 21
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: 1
+    height: 20
     text-align: center
-    color: #FFFFFF
+    color: #f0f0f0
+    font: verdana-11px-rounded
 
   Panel
     id: outfit
-    image-source: /images/ui/panel_side
-    image-border: 1
+    background-color: #121214
+    border-width: 1
+    border-color: #2b2c30
     anchors.top: prev.bottom
     anchors.bottom: next.top
     anchors.left: parent.left
     anchors.right: parent.right
-    margin-top: 1
-    margin-bottom: 1
+    margin-top: 10
+    margin-bottom: 10
 
     UILabel
-      image-source: /images/ui/panel_side
+      image-source:
       anchors.left: parent.left
       anchors.bottom: parent.bottom
       anchors.right: parent.right
@@ -55,29 +63,163 @@ CharacterWidget < FlatPanel
     anchors.bottom: parent.bottom
     anchors.left: parent.left
     anchors.right: parent.right
-    height: 36
+    height: 48
+    background-color: #17181b
+    border-width: 1
+    border-color: #303136
 
     Label
       id: vocation
       anchors.top: parent.top
-      anchors.horizontalCenter: parent.horizontalCenter
-      margin-top: 4
-      color: #FFFFFF
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-top: 6
+      text-align: center
+      color: #a0a0a0
+      font: verdana-11px-monochrome
 
     Label
       id: level
       anchors.top: vocation.bottom
-      anchors.horizontalCenter: parent.horizontalCenter
-      margin-top: 1
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-top: 2
       &baseText: 'Level: %s'
-      color: #FFFFFF
+      text-align: center
+      color: #f0f0f0
+      font: verdana-11px-rounded
+
+CharacterListActionButton < Button
+  height: 30
+  font: verdana-11px-rounded
+  color: #f0f0f0
+  text-offset: 0 1
+  image-source:
+  image-border: 0
+  background-color: #1c1d21
+  border-width: 1
+  border-color: #3a3a3a
+
+  $hover !disabled:
+    background-color: #23252a
+    border-color: #50545c
+
+  $pressed:
+    background-color: #15161a
+    border-color: #666d78
+
+  $disabled:
+    color: #777b82
+    background-color: #121316
+    border-color: #2b2d31
+
+CharacterListStatusButton < CharacterListActionButton
+  text-align: center
+
+  $!on:
+    !text: tr('Auto reconnect: Off')
+    background-color: #1b1718
+    border-color: #433437
+    color: #d5c7ca
+
+  $on:
+    !text: tr('Auto reconnect: On')
+    background-color: #162018
+    border-color: #33533d
+    color: #dff2e3
+
+CharacterListLabel < Label
+  font: verdana-11px-monochrome
+  color: #a0a0a0
+
+CharacterListValue < Label
+  font: verdana-11px-rounded
+  color: #f0f0f0
+
+CharacterListScrollBar < VerticalScrollBar
+  width: 12
+  image-source:
+  image-border: 0
+  background-color: #121214
+  border-width: 1
+  border-color: #2f3034
+  pixels-scroll: true
+
+  UIButton
+    id: decrementButton
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 10
+    image-source:
+    image-border: 0
+    background-color: #1a1b1e
+    border-width: 0
+
+    $hover:
+      background-color: #23252a
+
+    $pressed:
+      background-color: #141519
+
+  UIButton
+    id: incrementButton
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 10
+    image-source:
+    image-border: 0
+    background-color: #1a1b1e
+    border-width: 0
+
+    $hover:
+      background-color: #23252a
+
+    $pressed:
+      background-color: #141519
+
+  UIButton
+    id: sliderButton
+    anchors.centerIn: parent
+    size: 8 24
+    image-source:
+    image-border: 0
+    background-color: #2d3138
+    border-width: 1
+    border-color: #50545c
+
+    $hover:
+      background-color: #383d45
+      border-color: #666d78
+
+    $pressed:
+      background-color: #23262c
+      border-color: #7a8390
+
+  Label
+    id: valueLabel
+    anchors.fill: parent
+    color: #00000000
+    text-align: center
 
 StaticMainWindow
   id: charactersWindow
   !text: tr('Character List')
-  image-source: /images/ui/window
+  image-source:
+  image-border: 0
+  background-color: #0f0f10ee
+  border-width: 1
+  border-color: #3a3a3a
+  padding-top: 16
+  padding-left: 16
+  padding-right: 16
+  padding-bottom: 16
+  color: #f0f0f0
+  font: verdana-11px-rounded
+  text-offset: 0 4
   visible: false
-  size: 800 600
+  size: 820 580
   $mobile:
     size: 600 400
   @onEnter: CharacterList.doLogin()
@@ -94,85 +236,79 @@ StaticMainWindow
     anchors.left: parent.left
     anchors.right: scrollBar.left
     anchors.bottom: separator.top
-    margin-bottom: 1
-    border: 1 #0E0F11
-    padding: 1
+    margin-right: 10
+    margin-bottom: 12
+    border-width: 1
+    border-color: #343434
+    background-color: #1a1a1c
+    padding: 14
     focusable: false
     auto-focus: first
     layout:
       type: grid
-      cell-size: 185 215
+      cell-size: 196 236
       flow: true
-      cell-spacing: 2
+      cell-spacing: 12
     vertical-scrollbar: scrollBar
 
-  VerticalScrollBar
+  CharacterListScrollBar
     id: scrollBar
     anchors.top: parent.top
     anchors.bottom: separator.top
     anchors.right: parent.right
-    margin-bottom: 5
+    margin-bottom: 12
     step: 50
     pixels-scroll: true
 
-  Label
+  CharacterListLabel
     id: accountStatusCaption
     !text: tr('Account Status') .. ':'
-    anchors.left: autoReconnect.right
     anchors.top: separator.bottom
     anchors.horizontalCenter: separator.horizontalCenter
-    margin-top: 7
-    color: #FFFFFF
+    margin-top: 8
 
-  Label
+  CharacterListValue
     id: accountStatusLabel
     !text: tr('Free Account')
     anchors.top: accountStatusCaption.bottom
     anchors.horizontalCenter: accountStatusCaption.horizontalCenter
     text-auto-resize: true
-    color: #009E12
+    color: #71bf87
 
     $on:
-      color: #FF0000
+      color: #d69191
 
-  HorizontalSeparator
+  Panel
     id: separator
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: next.top
-    margin-bottom: 5
+    margin-bottom: 12
+    height: 1
+    background-color: #303136
 
-  Button
+  CharacterListStatusButton
     id: autoReconnect
-    width: 145
+    width: 154
     anchors.left: parent.left
     anchors.bottom: parent.bottom
-    margin-bottom: 2
-    margin-left: 1
-    
-    $!on:
-      image-color: red    
-      !text: tr('Auto reconnect: Off')
+    margin-bottom: 0
 
-    $on:
-      !text: tr('Auto reconnect: On')
-      image-color: green
-
-  Button
+  CharacterListActionButton
     id: buttonOk
     !text: tr('Enter Game')
-    width: 80
+    width: 116
     anchors.right: next.left
     anchors.bottom: parent.bottom
     margin-right: 10
-    margin-bottom: 2
+    margin-bottom: 0
     @onClick: CharacterList.doLogin()
 
-  Button
+  CharacterListActionButton
     id: buttonCancel
     !text: tr('Cancel')
-    width: 70
+    width: 92
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    margin-bottom: 2
+    margin-bottom: 0
     @onClick: CharacterList.hide(true)

@@ -1,15 +1,62 @@
+ModernMessageBoxWindow < MainWindow
+  image-source:
+  image-border: 0
+  background-color: #0f0f10ee
+  border-width: 1
+  border-color: #3a3a3a
+  padding-top: 16
+  padding-left: 16
+  padding-right: 16
+  padding-bottom: 16
+  color: #f0f0f0
+  font: verdana-11px-rounded
+  text-offset: 0 4
+
+  $dragging:
+    opacity: 0.96
+
 MessageBoxLabel < Label
   id: messageBoxLabel
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.top: parent.top
+  text-align: center
   text-wrap: true
   text-auto-resize: true
+  color: #f0f0f0
+  font: verdana-11px-rounded
 
 MessageBoxButtonHolder < UIWidget
   id: buttonHolder
-  margin-top: 10
+  margin-top: 14
   anchors.bottom: parent.bottom
 
-MessageBoxButton < Button
+MessageBoxButton < UIButton
   margin-left: 10
-  width: 80
+  width: 90
+  height: 30
+  font: verdana-11px-rounded
+  color: #f0f0f0
+  text-offset: 0 1
+  image-source:
+  image-border: 0
+  background-color: #1c1d21
+  border-width: 1
+  border-color: #3a3a3a
+  padding: 5 12 5 12
+  change-cursor-image: true
+  cursor: pointer
+
+  $hover !disabled:
+    background-color: #23252a
+    border-color: #50545c
+
+  $pressed:
+    background-color: #15161a
+    border-color: #666d78
+    text-offset: 0 1
+
+  $disabled:
+    color: #777b82
+    background-color: #121316
+    border-color: #2b2d31
+    change-cursor-image: false

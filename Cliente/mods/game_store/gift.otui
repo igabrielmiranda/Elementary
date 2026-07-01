@@ -1,24 +1,99 @@
 MainWindow
-  size: 200 110
-  !text: 'Enter player name'
+  size: 220 124
+  !text: 'Gift Purchase'
+  color: #f0f0f0
+  font: verdana-11px-rounded
+  image-source:
+  image-border: 0
+  background-color: #0f0f10
+  border-width: 1
+  border-color: #343434
+  padding-top: 28
+  padding-left: 12
+  padding-right: 12
+  padding-bottom: 12
+  text-offset: 0 4
   @onEnter: modules.game_store.confirmGift()
 
-  TextEdit
-    id: targetName
+  Label
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
+    height: 18
+    text: Player name
+    color: #d0d2d5
+    font: verdana-11px-rounded
+    text-offset: 0 2
+
+  TextEdit
+    id: targetName
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: 6
+    height: 24
+    font: verdana-11px-rounded
+    color: #f0f0f0
+    text-offset: 0 4
+    padding: 4
+    image-source:
+    image-border: 0
+    background-color: #121214
+    border-width: 1
+    border-color: #343434
+    selection-color: #121214
+    selection-background-color: #c6c6c6
+
+    $hover !disabled:
+      border-color: #4a4a4a
+
+    $focus:
+      border-color: #5f6670
 
   Button
     anchors.bottom: parent.bottom
     anchors.right: parent.right
     !text: 'Confirm'
-    width: 64
+    width: 84
+    height: 26
+    font: verdana-11px-rounded
+    color: #eff8f2
+    text-offset: 0 1
+    image-source:
+    image-border: 0
+    background-color: #183225
+    border-width: 1
+    border-color: #3f6f58
     @onClick: modules.game_store.confirmGift()
+
+    $hover !disabled:
+      background-color: #214131
+      border-color: #529174
+
+    $pressed:
+      background-color: #12241b
+      border-color: #68aa89
 
   Button
     anchors.bottom: parent.bottom
     anchors.left: parent.left
     !text: 'Cancel'
-    width: 64
+    width: 84
+    height: 26
+    font: verdana-11px-rounded
+    color: #f0f0f0
+    text-offset: 0 1
+    image-source:
+    image-border: 0
+    background-color: #1a1a1c
+    border-width: 1
+    border-color: #343434
     @onClick: modules.game_store.cancelGift()
+
+    $hover !disabled:
+      background-color: #202124
+      border-color: #4a4a4a
+
+    $pressed:
+      background-color: #252525
+      border-color: #5a5a5a

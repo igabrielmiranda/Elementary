@@ -1,65 +1,84 @@
 TopButton < UIButton
-  size: 26 26
-  image-source: /images/ui/button_top
-  image-clip: 0 0 26 26
-  image-border: 3
-  image-color: #ffffffff
-  icon-color: #ffffffff
+  size: 22 22
+  image-source:
+  image-border: 0
+  background-color: #121821ee
+  border-width: 1
+  border-color: #2d3744
+  icon-color: #dbe6f2
 
   $on:
-    image-source: /images/ui/button_top_blink
+    background-color: #1b2430
+    border-color: #627287
 
   $hover !disabled:
-    image-color: #ffffff99
-    image-clip: 26 0 26 26
+    background-color: #18212b
+    border-color: #4c5a6c
+    icon-color: #f3f7fb
 
   $pressed:
-    image-clip: 52 0 26 26
+    background-color: #0f151d
+    border-color: #73839a
 
   $disabled:
-    image-color: #ffffff44
-    icon-color: #ffffff44
+    background-color: #0d1218aa
+    border-color: #222a33
+    icon-color: #7d8896
 
 TopToggleButton < UIButton
-  size: 26 26
-  image-source: /images/ui/button_top
-  image-clip: 0 0 26 26
-  image-color: #ffffffff
-  image-border: 3
-  icon-color: #ffffffff
+  size: 22 22
+  image-source:
+  image-border: 0
+  background-color: #121821ee
+  border-width: 1
+  border-color: #2d3744
+  icon-color: #dbe6f2
+
+  $on:
+    background-color: #1b2430
+    border-color: #627287
+    icon-color: #ffffff
 
   $hover !disabled:
-    image-color: #ffffff99
-    image-clip: 26 0 26 26
+    background-color: #18212b
+    border-color: #4c5a6c
+    icon-color: #f3f7fb
 
   $pressed:
-    image-clip: 52 0 26 26
+    background-color: #0f151d
+    border-color: #73839a
 
   $disabled:
-    image-color: #ffffff44
-    icon-color: #ffffff44
+    background-color: #0d1218aa
+    border-color: #222a33
+    icon-color: #7d8896
     
 TopMenuButtonsPanel < Panel
   layout:
     type: horizontalBox
-    spacing: 4
+    spacing: 6
     fit-children: true
-  padding: 6 4
+  padding: 6 8
 
 TopMenuPanel < Panel
-  height: 36
-  image-source: /images/ui/panel_top
-  image-repeated: true
+  height: 34
+  image-source:
+  background-color: #0a0f15ee
+  border-bottom-width: 1
+  border-bottom-color: #26313f
   focusable: false
 
 TopMenuFrameCounterLabel < Label
-  font: verdana-11px-rounded
-  color: white
-  margin-top: 4
-  margin-left: 5
+  font: verdana-11px-monochrome
+  color: #9aa7b6
+  margin-top: 5
+  margin-left: 8
 
 TopMenuPingLabel < Label
-  font: verdana-11px-rounded
+  font: verdana-11px-monochrome
+  color: #8090a3
+  margin-top: 1
+  margin-left: 8
 
 TopMenu < TopMenuPanel
   id: topMenu
@@ -85,9 +104,9 @@ TopMenu < TopMenuPanel
     text-auto-resize: true
     anchors.top: parent.top
     anchors.left: leftGameButtonsPanel.right
+    margin-left: 10
 
   TopMenuPingLabel
-    color: white
     id: pingLabel
     text-auto-resize: true
     anchors.top: fpsLabel.bottom
@@ -98,7 +117,8 @@ TopMenu < TopMenuPanel
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     anchors.horizontalCenter: parent.horizontalCenter
-    font: verdana-11px-antialised
+    font: verdana-11px-monochrome
+    color: #c7d1dc
     text-align: center
     text-auto-resize: true
 

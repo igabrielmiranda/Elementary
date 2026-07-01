@@ -12,7 +12,7 @@ function init()
   dailyMonstersPanel = background:getChildById("dailyMonsters")
 
   clientVersionLabel = background:getChildById('clientVersionLabel')
-  clientVersionLabel:setText('\n\n\nHellgrave Exodus\n Discord:')
+  clientVersionLabel:setText('Hellgrave Exodus / Discord')
   
   if not g_game.isOnline() then
     addEvent(function() g_effects.fadeIn(clientVersionLabel, 1500) end)
@@ -114,6 +114,10 @@ function onHoverChange(self, hovered)
 end
 
 function updateDailyMonsters(dailyMonsters)
+  if not dailyMonstersPanel then
+    return
+  end
+
   for i = 1, #dailyMonsters do
     local widget = g_ui.createWidget("DailyMonster", dailyMonstersPanel)
     widget:getChildById("creature"):setOutfit(dailyMonsters[i][2])

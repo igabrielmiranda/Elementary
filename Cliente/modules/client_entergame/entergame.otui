@@ -1,168 +1,307 @@
+LoginCard < Panel
+  background-color: #11161dcc
+  border-width: 1
+  border-color: #2d3642
+
+LoginHeaderStrip < Panel
+  height: 24
+  background-color: #171d25cc
+  border-width: 1
+  border-color: #232b35
+
+LoginDivider < Panel
+  height: 1
+  background-color: #2b3440
+
+LoginSectionLabel < MenuLabel
+  font: verdana-11px-rounded
+  color: #c9d0d8
+  text-auto-resize: true
+
+LoginMutedLabel < Label
+  font: verdana-11px-monochrome
+  color: #8792a0
+
+LoginTextField < TextEdit
+  height: 26
+  padding-left: 10
+  padding-right: 10
+  padding-top: 4
+  padding-bottom: 4
+  font: verdana-11px-rounded
+  color: #eef2f7
+  text-offset: 0 3
+  image-source:
+  image-border: 0
+  background-color: #0b0f14ee
+  border-width: 1
+  border-color: #2d3642
+  selection-color: #101317
+  selection-background-color: #c4ccd6
+
+  $hover !disabled:
+    border-color: #445063
+
+  $focus:
+    border-color: #708097
+
+LoginPasswordField < PasswordTextEdit
+  height: 26
+  padding-left: 10
+  padding-right: 10
+  padding-top: 4
+  padding-bottom: 4
+  font: verdana-11px-rounded
+  color: #eef2f7
+  text-offset: 0 3
+  image-source:
+  image-border: 0
+  background-color: #0b0f14ee
+  border-width: 1
+  border-color: #2d3642
+  selection-color: #101317
+  selection-background-color: #c4ccd6
+
+  $hover !disabled:
+    border-color: #445063
+
+  $focus:
+    border-color: #708097
+
+LoginComboBox < ComboBox
+  height: 26
+  font: verdana-11px-rounded
+  color: #e6ebf1
+  text-offset: 8 2
+  text-align: left
+  image-source:
+  image-border: 0
+  background-color: #10151bee
+  border-width: 1
+  border-color: #2d3642
+
+  $hover !disabled:
+    border-color: #445063
+    background-color: #151b22
+
+  $on:
+    border-color: #708097
+    background-color: #1a2129
+
+LoginButton < Button
+  height: 28
+  font: verdana-11px-rounded
+  color: #eef2f7
+  text-offset: 0 2
+  image-source:
+  image-border: 0
+  background-color: #202833
+  border-width: 1
+  border-color: #667384
+
+  $hover !disabled:
+    background-color: #293341
+    border-color: #8391a2
+
+  $pressed:
+    background-color: #171e27
+    border-color: #9ca8b6
+
+  $disabled:
+    color: #8b95a1
+    background-color: #12171d
+    border-color: #2a313a
+
+LoginCheckBox < CheckBox
+  size: 18 18
+  text-offset: 24 2
+  color: #d8dee6
+  image-color: #eef2f7
+
+  $hover !disabled:
+    color: #ffffff
+
 EnterGameWindow
   id: enterGame
   @onEnter: EnterGame.doLogin()
 
+  LoginCard
+    id: loginCard
+    anchors.fill: parent
+
+  LoginHeaderStrip
+    anchors.top: loginCard.top
+    anchors.left: loginCard.left
+    anchors.right: loginCard.right
+    margin-top: 10
+    margin-left: 10
+    margin-right: 10
+
+  LoginSectionLabel
+    !text: tr('Account Access')
+    anchors.left: prev.left
+    anchors.verticalCenter: prev.verticalCenter
+    margin-left: 8
+
+  LoginMutedLabel
+    !text: tr('Hellgrave Exodus')
+    anchors.right: loginCard.right
+    anchors.verticalCenter: prev.verticalCenter
+    margin-right: 18
 
   Panel
     id: adPanel
-    anchors.top: parent.top
-    anchors.left: parent.left
-    anchors.right: parent.right
-    margin-top: -4
-    size: 180 95
-    image-source: /images/ent
-    border: 1 #000000
-
-  MenuLabel
-    !text: tr('Account Name')
-    anchors.horizontalCenter: parent.horizontalCenter
-    anchors.top: parent.top
-    margin-top: 100
-    text-auto-resize: true
-    text-align: center
-    font: verdana-11px-rounded
-    color: #FFFFFF
-
-  TextEdit
-    id: accountNameTextEdit
-    anchors.left: parent.left
-    anchors.right: parent.right
     anchors.top: prev.bottom
-    margin-top: 2
-    text-align: center
-    font: verdana-11px-rounded
-    color: #FFFFFF
+    anchors.left: loginCard.left
+    anchors.right: loginCard.right
+    margin-top: 10
+    margin-left: 14
+    margin-right: 14
+    height: 92
+    image-source: /images/ent
+    image-smooth: true
+    image-fixed-ratio: true
+    background-color: #0b0e13dd
+    border-width: 1
+    border-color: #242c36
 
-  MenuLabel
+  LoginSectionLabel
+    !text: tr('Account Name')
+    anchors.left: loginCard.left
+    anchors.right: loginCard.right
+    anchors.top: adPanel.bottom
+    margin-top: 12
+    margin-left: 18
+
+  LoginTextField
+    id: accountNameTextEdit
+    anchors.left: loginCard.left
+    anchors.right: loginCard.right
+    anchors.top: prev.bottom
+    margin-top: 4
+    margin-left: 18
+    margin-right: 18
+    text-align: left
+
+  LoginSectionLabel
     !text: tr('Password')
-    anchors.horizontalCenter: prev.horizontalCenter
+    anchors.left: prev.left
+    anchors.right: prev.right
     anchors.top: prev.bottom
     margin-top: 8
-    text-auto-resize: true
-    text-align: center
-    font: verdana-11px-rounded
-    color: #FFFFFF
 
-  PasswordTextEdit
+  LoginPasswordField
     id: accountPasswordTextEdit
-    anchors.left: parent.left
-    anchors.right: parent.right
+    anchors.left: loginCard.left
+    anchors.right: loginCard.right
     anchors.top: prev.bottom
-    margin-top: 2
-    text-align: center
-    font: verdana-11px-rounded
-    color: #FFFFFF
+    margin-top: 4
+    margin-left: 18
+    margin-right: 18
+    text-align: left
     
-  MenuLabel
+  LoginSectionLabel
     !text: tr('Token')
-    anchors.left: prev.left
+    anchors.left: accountPasswordTextEdit.left
+    anchors.right: accountPasswordTextEdit.right
     anchors.top: prev.bottom
-    text-auto-resize: true
     margin-top: 8
     visible: false
     enable: false
 
-  TextEdit
+  LoginTextField
     id: accountTokenTextEdit
-    anchors.left: parent.left
-    anchors.right: parent.right
+    anchors.left: accountPasswordTextEdit.left
+    anchors.right: accountPasswordTextEdit.right
     anchors.top: prev.bottom
-    margin-top: 2
+    margin-top: 4
     visible: false
     enable: false
 
   Panel
     id: serverSelectorPanel
-    anchors.left: parent.left
-    anchors.right: parent.right
+    anchors.left: accountPasswordTextEdit.left
+    anchors.right: accountPasswordTextEdit.right
     anchors.top: accountPasswordTextEdit.bottom
-    height: 1
+    height: 50
     on: true
     focusable: false
     
     $on:
       visible: true
-      margin-top: 0
+      margin-top: 8
     
     $!on:
       visible: false
       margin-top: -52
       
-    HorizontalSeparator
+    LoginDivider
       anchors.left: parent.left
       anchors.right: parent.right
       anchors.top: parent.top
-      margin-top: 10
 
-    MenuLabel
+    LoginSectionLabel
       id: serverLabel
       !text: tr('Server')
       anchors.left: parent.left
       anchors.top: prev.bottom
-      text-auto-resize: true    
       margin-top: 5
 
-    ComboBox
+    LoginComboBox
       id: serverSelector
       anchors.left: prev.left
       anchors.right: parent.right
       anchors.top: serverLabel.bottom
-      margin-top: 2
-      margin-right: 3
+      margin-top: 3
       menu-scroll: true
       menu-height: 125
       menu-scroll-step: 25
-      text-offset: 5 2
       @onOptionChange: EnterGame.onServerChange()
     
   Panel
     id: customServerSelectorPanel
-    anchors.left: parent.left
-    anchors.right: parent.right
+    anchors.left: accountPasswordTextEdit.left
+    anchors.right: accountPasswordTextEdit.right
     anchors.top: prev.bottom
-    height: 52
+    height: 54
     on: true
     focusable: true
     
     $on:
-      visible: true
-      margin-top: 0
+      visible: true      
     
     $!on:
       visible: false
       margin-top: -52
     
-    HorizontalSeparator
+    LoginDivider
       anchors.left: parent.left
       anchors.right: parent.right
       anchors.top: parent.top
-      margin-top: 8
 
-    MenuLabel
+    LoginSectionLabel
       id: serverLabel
       !text: tr('IP:PORT or URL')
       anchors.left: prev.left
       anchors.top: prev.bottom
-      margin-top: 8
-      text-auto-resize: true
+      margin-top: 5
 
-    TextEdit
+    LoginTextField
       id: serverHostTextEdit
       !tooltip: tr('Make sure that your client uses\nthe correct game client version')
       anchors.left: parent.left
       anchors.top: serverLabel.bottom
-      margin-top: 2
+      margin-top: 3
       width: 150
 
-    MenuLabel
+    LoginSectionLabel
       id: clientLabel
       !text: tr('Version')
       anchors.left: serverHostTextEdit.right
       anchors.top: serverLabel.top
-      text-auto-resize: true
       margin-left: 10
 
-    ComboBox
+    LoginComboBox
       id: clientVersionSelector
       anchors.top: serverHostTextEdit.top
       anchors.bottom: serverHostTextEdit.bottom
@@ -171,46 +310,43 @@ EnterGameWindow
       menu-scroll: true
       menu-height: 125
       menu-scroll-step: 25
-      margin-right: 3
       
-  HorizontalSeparator
-    anchors.left: parent.left
-    anchors.right: parent.right
+  LoginDivider
+    anchors.left: accountPasswordTextEdit.left
+    anchors.right: accountPasswordTextEdit.right
     anchors.top: prev.bottom
-    margin-top: 10
+    margin-top: 8
 
-  CheckBox
+  LoginCheckBox
     id: rememberPasswordBox
     !text: tr('Remember Password')
     !tooltip: tr('Remember account and password when starts client')
-    anchors.left: parent.left
-    anchors.right: parent.right
+    anchors.left: accountPasswordTextEdit.left
+    anchors.right: accountPasswordTextEdit.right
     anchors.top: prev.bottom
-    margin-top: 9
-    font: verdana-11px-rounded
-    color: #009E12
+    margin-top: 7
 
-  HorizontalSeparator
-    anchors.left: parent.left
-    anchors.right: parent.right
+  LoginDivider
+    anchors.left: accountPasswordTextEdit.left
+    anchors.right: accountPasswordTextEdit.right
     anchors.top: prev.bottom
-    margin-top: 9
+    margin-top: 7
 
-  Button
+  LoginButton
     !text: tr('Login')
-    anchors.left: parent.left
-    anchors.right: parent.right
+    anchors.left: accountPasswordTextEdit.left
+    anchors.right: accountPasswordTextEdit.right
     anchors.top: prev.bottom
     margin-top: 10
-    margin-left: 50
-    margin-right: 50
+    margin-left: 28
+    margin-right: 28
     @onClick: EnterGame.doLogin()
 
   Label
     id: serverInfoLabel
-    font: verdana-11px-rounded
-    anchors.top: prev.top
-    anchors.left: parent.left
-    margin-top: 5
-    color: green
+    font: verdana-11px-monochrome
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: prev.horizontalCenter
+    margin-top: 6
+    color: #7e8a98
     text-auto-resize: true
