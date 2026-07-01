@@ -639,8 +639,13 @@ void Creature::updateWalk()
     // needed for paralyze effect
     m_walkedPixels = std::max<uint8>(m_walkedPixels, totalPixelsWalked);
     uint8 walkedPixelsInNextFrame = std::max<uint8>(m_walkedPixels, totalPixelsWalkedInNextFrame);
-    const uint8 visualWalkedPixels = getSmoothedWalkPixels(m_walkedPixels);
-    const uint8 visualWalkedPixelsInNextFrame = getSmoothedWalkPixels(walkedPixelsInNextFrame);
+    // Easing every tile makes a slow local player visibly decelerate to a stop
+    // and accelerate again at each step boundary. Keep local movement linear so
+    // chained steps have constant visual velocity; remote creatures can still
+    // use the optional smoothing to soften network-driven movement.
+    const bool smoothPosition = !isLocalPlayer();
+    const uint8 visualWalkedPixels = smoothPosition ? getSmoothedWalkPixels(m_walkedPixels) : m_walkedPixels;
+    const uint8 visualWalkedPixelsInNextFrame = smoothPosition ? getSmoothedWalkPixels(walkedPixelsInNextFrame) : walkedPixelsInNextFrame;
 
     // update walk animation and offsets
     updateWalkAnimation(totalPixelsWalked);
