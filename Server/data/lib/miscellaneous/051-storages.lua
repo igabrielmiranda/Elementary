@@ -1005,3 +1005,4 @@ GlobalStorage = {
 	NaginataStone = 50058,
 	SwordOfFury = 5635
 }
+STORAGEVALUE_STONEWALL_DAMAGE_TAKEN = 985321

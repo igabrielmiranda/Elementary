@@ -6,7 +6,9 @@ local TAB_AVAILABLE = 'available'
 local CATEGORY_FILTER_ALL = 'all'
 local PAGE_SIZE = 30
 local DEBUG_FROZEN_ARROW_VALIDATION = false
+local DEBUG_WEAPON_REQUIREMENT_VALIDATION = true
 local FROZEN_ARROW_WORDS = 'flecha congelante'
+local STONE_WALL_WORDS = 'muralha de pedra'
 
 local CATEGORY_ORDER = { 'Ofensiva', 'Defensiva', 'Utilidade' }
 local CATEGORY_HEADER_LABELS = {
@@ -36,6 +38,8 @@ local CATEGORY_ICON_CLIPS = {
   Defensiva = '20 0 20 20',
   Utilidade = '40 0 20 20'
 }
+local STONE_WALL_ICON_SOURCE = '/images/game/spells/defaultspells'
+local STONE_WALL_ICON_CLIP = '256 352 32 32'
 local SKILL_ENTRY_DEFAULT_STYLE = {
   background = '#12171c',
   border = '#2d363f'
@@ -103,8 +107,18 @@ local SPELL_REQUIREMENT_OVERRIDES = {
     requiredWeaponType = 'bow',
     requiredItemName = 'Bow',
     description = 'Dispara uma flecha congelante que nao causa dano, mas congela/stuna o alvo por 2 segundos.'
+  },
+  ['muralha de pedra'] = {
+    needWeapon = true,
+    requiredWeaponType = 'axe',
+    requiredItemName = 'Machado',
+    description = 'Cria uma muralha de pedra ao redor do conjurador por 7 segundos, prende criaturas na area e faz inimigos presos receberem 20% a mais de dano.'
   }
 }
+
+local function isAllowedCustomSpellName(spellName)
+  return Spells and Spells.isCustomVisualSpell and Spells.isCustomVisualSpell(spellName)
+end
 
 local KNOWN_BOW_SERVER_IDS = {
   [3350] = true,
@@ -155,6 +169,151 @@ local KNOWN_BOW_SERVER_IDS = {
   [28131] = true
 }
 
+local KNOWN_AXE_SERVER_IDS = {
+  [3274] = true,
+  [2378] = true,
+  [2380] = true,
+  [2381] = true,
+  [2386] = true,
+  [2387] = true,
+  [2388] = true,
+  [2405] = true,
+  [2414] = true,
+  [2415] = true,
+  [2418] = true,
+  [2425] = true,
+  [2426] = true,
+  [2427] = true,
+  [2428] = true,
+  [2429] = true,
+  [2430] = true,
+  [2431] = true,
+  [2432] = true,
+  [2435] = true,
+  [2440] = true,
+  [2441] = true,
+  [2443] = true,
+  [2447] = true,
+  [2454] = true,
+  [2550] = true,
+  [2559] = true,
+  [3962] = true,
+  [3964] = true,
+  [6553] = true,
+  [7380] = true,
+  [7388] = true,
+  [7389] = true,
+  [7411] = true,
+  [7412] = true,
+  [7413] = true,
+  [7419] = true,
+  [7420] = true,
+  [7433] = true,
+  [7434] = true,
+  [7435] = true,
+  [7436] = true,
+  [7453] = true,
+  [7454] = true,
+  [7455] = true,
+  [7456] = true,
+  [7749] = true,
+  [7750] = true,
+  [7751] = true,
+  [7752] = true,
+  [7753] = true,
+  [7768] = true,
+  [7769] = true,
+  [7770] = true,
+  [7771] = true,
+  [7772] = true,
+  [7859] = true,
+  [7860] = true,
+  [7861] = true,
+  [7862] = true,
+  [7863] = true,
+  [7874] = true,
+  [7875] = true,
+  [7876] = true,
+  [7877] = true,
+  [7878] = true,
+  [8293] = true,
+  [8601] = true,
+  [8924] = true,
+  [8925] = true,
+  [8926] = true,
+  [10061] = true,
+  [10301] = true,
+  [11305] = true,
+  [11309] = true,
+  [11323] = true,
+  [15404] = true,
+  [15451] = true,
+  [15454] = true,
+  [15492] = true,
+  [18451] = true,
+  [20131] = true,
+  [22404] = true,
+  [22405] = true,
+  [22406] = true,
+  [22407] = true,
+  [22408] = true,
+  [22409] = true,
+  [23545] = true,
+  [23547] = true,
+  [23551] = true,
+  [24828] = true,
+  [25383] = true,
+  [25415] = true,
+  [25881] = true,
+  [25882] = true,
+  [25891] = true,
+  [25901] = true,
+  [25911] = true,
+  [25927] = true,
+  [25928] = true,
+  [25929] = true,
+  [25930] = true,
+  [25967] = true,
+  [25968] = true,
+  [25969] = true,
+  [25970] = true,
+  [26239] = true,
+  [26240] = true,
+  [26241] = true,
+  [26262] = true,
+  [26263] = true,
+  [26267] = true,
+  [26280] = true,
+  [26282] = true,
+  [26284] = true,
+  [26588] = true,
+  [26589] = true,
+  [26590] = true,
+  [26591] = true,
+  [26592] = true,
+  [27205] = true,
+  [27216] = true,
+  [27285] = true,
+  [27379] = true,
+  [27380] = true,
+  [27404] = true,
+  [27462] = true,
+  [27463] = true,
+  [27468] = true,
+  [27469] = true,
+  [27643] = true,
+  [27658] = true,
+  [27659] = true,
+  [27682] = true,
+  [27733] = true,
+  [27739] = true,
+  [27745] = true,
+  [28025] = true,
+  [28103] = true,
+  [28129] = true,
+  [28135] = true
+}
+
 local ui = {}
 local panelState = {
   activeTab = TAB_ALL,
@@ -197,6 +356,12 @@ local printSkillsPanel = function(message)
   print(message)
 end
 local lastFrozenArrowDebugSignature = nil
+local getHandItemDisplayName
+local getItemClientId
+local getItemServerId
+local getEquippedWeaponEntries
+local getAllEquippedInventoryEntries
+local equippedItemMatchesSkillRequirement
 
 local function normalizeToken(value)
   value = tostring(value or ''):lower():trim()
@@ -210,8 +375,52 @@ local function normalizeWords(value)
   return value
 end
 
+local function itemNameContainsAxeWeapon(value)
+  local words = normalizeWords(value)
+  if words:find('pickaxe', 1, true) or words:find('axe ring', 1, true) or words:find('axe chest', 1, true) or words:find('pile of axe', 1, true) then
+    return false
+  end
+
+  return words:find('axe', 1, true) ~= nil or words:find('machado', 1, true) ~= nil
+end
+
+local function getInferredRequiredWeaponType(skill)
+  local requiredWeaponType = normalizeToken(skill and skill.requiredWeaponType or '')
+  if requiredWeaponType ~= '' then
+    return requiredWeaponType
+  end
+
+  local requiredItemName = normalizeToken(skill and skill.requiredItemName or '')
+  if requiredItemName == 'axe' or requiredItemName == 'machado' then
+    return 'axe'
+  end
+
+  if requiredItemName == 'bow' or requiredItemName == 'arco' then
+    return 'bow'
+  end
+
+  if requiredItemName == 'crossbow' or requiredItemName == 'besta' then
+    return 'crossbow'
+  end
+
+  return ''
+end
+
 local function isFrozenArrowSkill(skill)
   return skill and normalizeWords(skill.words or '') == FROZEN_ARROW_WORDS
+end
+
+local function isWeaponRequirementDebugSkill(skill)
+  if not DEBUG_WEAPON_REQUIREMENT_VALIDATION and not DEBUG_FROZEN_ARROW_VALIDATION then
+    return false
+  end
+
+  local words = normalizeWords(skill and skill.words or '')
+  if DEBUG_WEAPON_REQUIREMENT_VALIDATION and words == STONE_WALL_WORDS then
+    return true
+  end
+
+  return DEBUG_FROZEN_ARROW_VALIDATION and words == FROZEN_ARROW_WORDS
 end
 
 local function hasEquippedVisibleBow2456()
@@ -248,9 +457,14 @@ local function detectWeaponTypeFromItem(item)
   local itemServerId = getItemServerId(item)
   local itemClientId = getItemClientId(item)
   local itemName = normalizeToken(getHandItemDisplayName(item))
+  local itemDisplayName = getHandItemDisplayName(item)
 
   if (itemServerId and KNOWN_BOW_SERVER_IDS[itemServerId]) or (itemClientId and KNOWN_BOW_SERVER_IDS[itemClientId]) then
     return 'bow'
+  end
+
+  if (itemServerId and KNOWN_AXE_SERVER_IDS[itemServerId]) or (itemClientId and KNOWN_AXE_SERVER_IDS[itemClientId]) then
+    return 'axe'
   end
 
   if itemName:find('crossbow', 1, true) then
@@ -259,6 +473,10 @@ local function detectWeaponTypeFromItem(item)
 
   if itemName:find('bow', 1, true) then
     return 'bow'
+  end
+
+  if itemNameContainsAxeWeapon(itemDisplayName) then
+    return 'axe'
   end
 
   return 'unknown'
@@ -292,12 +510,12 @@ local function buildFrozenArrowEntryDebug(entry, skill)
 end
 
 local function logFrozenArrowValidation(skill, contextLabel, availability, reason, equippedWeapon)
-  if not DEBUG_FROZEN_ARROW_VALIDATION or not isFrozenArrowSkill(skill) then
+  if not isWeaponRequirementDebugSkill(skill) then
     return
   end
 
   local entries = getEquippedWeaponEntries(equippedWeapon)
-  if equippedWeapon and equippedWeapon.player then
+  if equippedWeapon and equippedWeapon.player and getInferredRequiredWeaponType(skill) == '' then
     for _, entry in ipairs(getAllEquippedInventoryEntries(equippedWeapon.player)) do
       local alreadyListed = false
       for _, handEntry in ipairs(entries) do
@@ -314,8 +532,9 @@ local function logFrozenArrowValidation(skill, contextLabel, availability, reaso
   end
 
   printSkillsPanel(string.format(
-    '[FrozenArrow][SkillsPanel][%s] requiredWeapon=%s availability=%s reason=%s',
+    '[WeaponRequirement][SkillsPanel][%s] skill=%s requiredWeaponType=%s availability=%s reason=%s',
     tostring(contextLabel or 'validation'),
+    tostring(skill.name or skill.words or '-'),
     tostring(skill.requiredWeaponType or '-'),
     availability and 'available' or 'unavailable',
     tostring(reason or '-')
@@ -323,15 +542,16 @@ local function logFrozenArrowValidation(skill, contextLabel, availability, reaso
 
   if #entries == 0 then
     printSkillsPanel(string.format(
-      '[FrozenArrow][SkillsPanel][%s] requiredWeapon=%s slot=- itemId=- serverId=- itemName=- weaponType=none result=unavailable reason=nenhum slot de arma encontrado',
+      '[WeaponRequirement][SkillsPanel][%s] skill=%s requiredWeaponType=%s slot=- itemId=- serverId=- itemName=- weaponType=none result=unavailable reason=nenhum slot de arma encontrado',
       tostring(contextLabel or 'validation'),
+      tostring(skill.name or skill.words or '-'),
       tostring(skill.requiredWeaponType or '-')
     ))
     return
   end
 
   for _, entry in ipairs(entries) do
-    printSkillsPanel(string.format('[FrozenArrow][SkillsPanel][%s] %s', tostring(contextLabel or 'validation'), buildFrozenArrowEntryDebug(entry, skill)))
+    printSkillsPanel(string.format('[WeaponRequirement][SkillsPanel][%s] skill=%s %s', tostring(contextLabel or 'validation'), tostring(skill.name or skill.words or '-'), buildFrozenArrowEntryDebug(entry, skill)))
   end
 end
 
@@ -730,6 +950,13 @@ end
 local function resolveSpellIcon(spell)
   ensureIconLookup()
 
+  if normalizeWords(spell and spell.words or '') == STONE_WALL_WORDS then
+    spell.iconSource = STONE_WALL_ICON_SOURCE
+    spell.iconClip = STONE_WALL_ICON_CLIP
+    spell.iconGeneric = false
+    return
+  end
+
   local clientId = nil
   local lookup = panelState.iconLookup
   local spellId = tonumber(spell.spellId)
@@ -759,6 +986,10 @@ end
 
 local function buildSpellFromXmlBlock(block)
   local attributes = block.attributes
+  if not isAllowedCustomSpellName(attributes.name) then
+    return nil
+  end
+
   local groupName = tostring(attributes.group or ''):lower()
   local scriptPath = attributes.script or ''
   local scriptFolder = scriptPath:match('^([^/]+)/') or ''
@@ -906,6 +1137,7 @@ local function buildFallbackSpellData()
   end
 
   for spellName, info in pairs(SpellInfo.Default) do
+    if isAllowedCustomSpellName(spellName) then
     local primaryGroupId = nil
     if info.group then
       for groupId, _ in pairs(info.group) do
@@ -980,6 +1212,7 @@ local function buildFallbackSpellData()
     resolveSpellIcon(spell)
     finalizeSpellPresentation(spell)
     table.insert(spells, spell)
+    end
   end
 
   return spells
@@ -1071,7 +1304,7 @@ local function ensureSkillsLoaded(forceReload)
   invalidateValidationCache()
 end
 
-local function getHandItemDisplayName(item)
+getHandItemDisplayName = function(item)
   if not item then
     return 'Nenhum'
   end
@@ -1128,7 +1361,7 @@ local function getSkillRequiredClientItemIds(skill)
   return {}
 end
 
-local function getItemClientId(item)
+getItemClientId = function(item)
   if not item then
     return nil
   end
@@ -1144,7 +1377,7 @@ local function getItemClientId(item)
   return tonumber(itemId) or itemId
 end
 
-local function getItemServerId(item)
+getItemServerId = function(item)
   if not item or not item.getServerId then
     return nil
   end
@@ -1221,7 +1454,7 @@ local function getInventoryItemFromSlot(player, slot)
   return nil
 end
 
-local function getEquippedWeaponEntries(equippedWeapon)
+getEquippedWeaponEntries = function(equippedWeapon)
   local entries = {}
   if not equippedWeapon then
     return entries
@@ -1249,7 +1482,7 @@ local function getEquippedWeaponEntries(equippedWeapon)
   return entries
 end
 
-local function getAllEquippedInventoryEntries(player)
+getAllEquippedInventoryEntries = function(player)
   local entries = {}
   if not player then
     return entries
@@ -1315,10 +1548,17 @@ local function equippedItemMatchesWeaponType(item, requiredWeaponType)
     return itemName:find('crossbow', 1, true) ~= nil
   end
 
+  if normalizedType == 'axe' or normalizedType == 'machado' then
+    if (itemServerId and KNOWN_AXE_SERVER_IDS[itemServerId]) or (itemClientId and KNOWN_AXE_SERVER_IDS[itemClientId]) then
+      return true
+    end
+    return itemNameContainsAxeWeapon(getHandItemDisplayName(item))
+  end
+
   return itemName:find(normalizedType, 1, true) ~= nil
 end
 
-local function equippedItemMatchesSkillRequirement(item, skill)
+equippedItemMatchesSkillRequirement = function(item, skill)
   if not item or not skill then
     return false
   end
@@ -1342,13 +1582,18 @@ local function equippedItemMatchesSkillRequirement(item, skill)
     end
   end
 
-  if skill.requiredWeaponType and skill.requiredWeaponType ~= '' then
-    if equippedItemMatchesWeaponType(item, skill.requiredWeaponType) then
+  local requiredWeaponType = getInferredRequiredWeaponType(skill)
+  if requiredWeaponType ~= '' then
+    if equippedItemMatchesWeaponType(item, requiredWeaponType) then
       return true
     end
   end
 
   return false
+end
+
+local function shouldSearchAllEquippedSlotsForSkill(skill)
+  return getInferredRequiredWeaponType(skill) == ''
 end
 
 local function getMatchingEquippedWeapon(skill, equippedWeapon)
@@ -1362,10 +1607,12 @@ local function getMatchingEquippedWeapon(skill, equippedWeapon)
     end
   end
 
-  local player = equippedWeapon.player
-  for _, entry in ipairs(getAllEquippedInventoryEntries(player)) do
-    if entry.item and equippedItemMatchesSkillRequirement(entry.item, skill) then
-      return entry.item, entry.handLabel
+  if shouldSearchAllEquippedSlotsForSkill(skill) then
+    local player = equippedWeapon.player
+    for _, entry in ipairs(getAllEquippedInventoryEntries(player)) do
+      if entry.item and equippedItemMatchesSkillRequirement(entry.item, skill) then
+        return entry.item, entry.handLabel
+      end
     end
   end
 

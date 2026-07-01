@@ -4,7 +4,7 @@ SpelllistSettings = {
     iconSize = {width = 32, height = 32},
     spellListWidth = 210,
     spellWindowWidth = 550,
-    spellOrder = {'Animate Dead', 'Annihilation', 'Avalanche', 'Berserk', 'Blood Rage', 'Brutal Strike', 'Cancel Invisibility', 'Challenge', 'Chameleon', 'Charge', 'Conjure Arrow', 'Conjure Bolt', 'Conjure Explosive Arrow', 'Conjure Piercing Bolt', 'Conjure Poisoned Arrow', 'Conjure Power Bolt', 'Conjure Sniper Arrow', 'Convince Creature', 'Creature Illusion', 'Cure Bleeding', 'Cure Burning', 'Cure Curse', 'Cure Electrification', 'Cure Poison', 'Cure Poison Rune', 'Curse', 'Death Strike', 'Desintegrate', 'Destroy Field', 'Divine Caldera', 'Divine Healing', 'Divine Missile', 'Electrify', 'Enchant Party', 'Enchant Spear', 'Enchant Staff', 'Energy Beam', 'Energy Field', 'Energy Strike', 'Energy Wall', 'Energy Wave', 'Energybomb', 'Envenom', 'Eternal Winter', 'Ethereal Spear', 'Explosion', 'Fierce Berserk', 'Find Person', 'Fire Field', 'Fire Tornado', 'Flecha Congelante', 'Fire Wall', 'Fire Wave', 'Fireball', 'Firebomb', 'Flame Strike', 'Food', 'Front Sweep', 'Great Energy Beam', 'Great Fireball', 'Great Light', 'Groundshaker', 'Haste', 'Heal Friend', 'Heal Party', 'Heavy Magic Missile', 'Hells Core', 'Holy Flash', 'Holy Missile', 'Ice Strike', 'Ice Wave', 'Icicle', 'Ignite', 'Inflict Wound', 'Intense Healing', 'Intense Healing Rune', 'Intense Recovery', 'Intense Wound Cleansing', 'Invisibility', 'Levitate', 'Light', 'Light Healing', 'Light Magic Missile', 'Lightning', 'Magic Rope', 'Magic Shield', 'Magic Wall', 'Mass Healing', 'Paralyze', 'Physical Strike', 'Poison Bomb', 'Poison Field', 'Poison Wall', 'Protect Party', 'Protector', 'Rage of the Skies', 'Recovery', 'Salvation', 'Sharpshooter', 'Soulfire', 'Stalagmite', 'Stone Shower', 'Strong Energy Strike', 'Strong Ethereal Spear', 'Strong Flame Strike', 'Strong Haste', 'Strong Ice Strike', 'Strong Ice Wave', 'Strong Terra Strike', 'Sudden Death', 'Summon Creature', 'Swift Foot', 'Terra Strike', 'Terra Wave', 'Thunderstorm', 'Train Party', 'Ultimate Energy Strike', 'Ultimate Flame Strike', 'Ultimate Healing', 'Ultimate Healing Rune', 'Ultimate Ice Strike', 'Ultimate Light', 'Ultimate Terra Strike', 'Whirlwind Throw', 'Wild Growth', 'Wound Cleansing', 'Wrath of Nature'}
+    spellOrder = {'Fire Tornado', 'Flecha Congelante', 'Muralha de Pedra'}
   }--[[,
 
   ['Sample'] =  {
@@ -26,6 +26,7 @@ SpellInfo = {
     ['Whirlwind Throw'] =          {id = 107, words = 'exori hur',             exhaustion = 6000,  premium = true,  type = 'Instant', icon = 'whirlwindthrow',         mana = 40,     level = 28, soul = 0, group = {[1] = 2000},               vocations = {4, 8}},
     ['Fire Wave'] =                {id = 19,  words = 'exevo flam hur',        exhaustion = 4000,  premium = false, type = 'Instant', icon = 'firewave',               mana = 25,     level = 18, soul = 0, group = {[1] = 2000},               vocations = {1, 5}},
     ['Fire Tornado'] =             {id = 265, words = 'fire tornado',          exhaustion = 10000, premium = false, type = 'Instant', icon = 'firewave',               mana = 80,     level = 30, soul = 0, group = {[1] = 2000},               vocations = {}, needWeapon = true, requiredItemId = 2189, requiredItemIds = {2189}, requiredClientItemId = 3073, requiredClientItemIds = {3073}, requiredItemName = 'Orbe Elemental', requiredRecipeKey = 'elemental_orb', description = 'Invoca um tornado de fogo que causa dano em area ao redor do conjurador.', selfTarget = true, aggressive = true},
+    ['Muralha de Pedra'] =         {id = 268, words = 'muralha de pedra',      exhaustion = 30000, premium = false, type = 'Instant', icon = 141,                      mana = 80,     level = 20, soul = 0, group = {[1] = 2000},               vocations = {}, needWeapon = true, requiredWeaponType = 'axe', requiredItemName = 'Machado', description = 'Cria uma muralha de pedra ao redor do conjurador por 7 segundos, prende criaturas na area e faz inimigos presos receberem 20% a mais de dano.', selfTarget = true, aggressive = true},
     ['Flecha Congelante'] =        {id = 269, words = 'flecha congelante',     exhaustion = 10000, premium = false, type = 'Instant', icon = 140,                      mana = 20,     level = 1,  soul = 0, group = {[1] = 2000},               vocations = {1, 2, 3, 4, 5, 6, 7, 8}, needWeapon = true, requiredWeaponType = 'bow', requiredItemName = 'Bow', description = 'Dispara uma flecha congelante que nao causa dano, mas congela/stuna o alvo por 2 segundos.', range = 7, aggressive = true},
     ['Ethereal Spear'] =           {id = 111, words = 'exori con',             exhaustion = 2000,  premium = true,  type = 'Instant', icon = 'etherealspear',          mana = 25,     level = 23, soul = 0, group = {[1] = 2000},               vocations = {3, 7}},
     ['Strong Ethereal Spear'] =    {id = 57,  words = 'exori gran con',        exhaustion = 8000,  premium = true,  type = 'Instant', icon = 'strongetherealspear',    mana = 55,     level = 90, soul = 0, group = {[1] = 2000},               vocations = {3, 7}},
@@ -346,6 +347,15 @@ SpellGroups = {
 }
 
 Spells = {}
+local CUSTOM_VISUAL_SPELL_NAMES = {
+  ['fire tornado'] = true,
+  ['flecha congelante'] = true,
+  ['muralha de pedra'] = true
+}
+
+function Spells.isCustomVisualSpell(spellName)
+  return CUSTOM_VISUAL_SPELL_NAMES[tostring(spellName or ''):lower():trim()] == true
+end
 
 function Spells.getClientId(spellName)
   local profile = Spells.getSpellProfileByName(spellName)
