@@ -164,6 +164,7 @@ public:
 
     virtual bool isPreWalking() { return false; }
     virtual Position getPrewalkingPosition(bool beforePrewalk = false) { return m_position; }
+    virtual bool isVisualAutoWalkActive() { return false; }
 
     TilePtr getWalkingTileOrTile() {
         return m_walkingTile ? m_walkingTile : getTile();
@@ -207,6 +208,9 @@ protected:
     virtual void nextWalkUpdate();
     virtual void updateWalk();
     virtual void terminateWalk();
+    Otc::Direction getDrawDirection();
+    bool shouldSmoothWalkDirectionChange(Otc::Direction previousStepDirection, Otc::Direction previousRenderDirection);
+    void updateDrawDirection(uint8 totalPixelsWalked);
 
     void updateOutfitColor(Color color, Color finalColor, Color delta, int duration);
     void updateJump();
@@ -217,6 +221,8 @@ protected:
     int8 m_manaPercent;
     Otc::Direction m_direction;
     Otc::Direction m_walkDirection;
+    Otc::Direction m_drawDirection;
+    Otc::Direction m_pendingDrawDirection;
     Outfit m_outfit;
     Light m_light;
     uint16 m_speed;

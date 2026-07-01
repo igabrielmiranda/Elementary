@@ -10,6 +10,7 @@ local defaultOptions = {
   classicControl = not g_app.isMobile(),
   smartWalk = false,
   dash = false,
+  smoothCreatureMovement = true,
   autoChaseOverride = true,
   displayPartyMembers = true,
   showStatusMessagesInConsole = true,

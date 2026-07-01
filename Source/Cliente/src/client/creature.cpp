@@ -35,6 +35,7 @@
 #include <framework/graphics/graphics.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/clock.h>
+#include <framework/core/configmanager.h>
 #include <framework/core/graphicalapplication.h>
 
 #include <framework/graphics/paintershaderprogram.h>
@@ -47,6 +48,29 @@
 
 std::array<double, Otc::LastSpeedFormula> Creature::m_speedFormula = { -1,-1,-1 };
 
+namespace {
+    bool isSmoothCreatureMovementEnabled()
+    {
+        const auto settings = g_configs.getSettings();
+        if (!settings)
+            return false;
+
+        const std::string value = settings->getValue("smoothCreatureMovement");
+        return value.empty() || (value != "false" && value != "0");
+    }
+
+    uint8 getSmoothedWalkPixels(uint8 totalPixelsWalked)
+    {
+        if (!isSmoothCreatureMovementEnabled() || totalPixelsWalked == 0 || totalPixelsWalked >= g_sprites.spriteSize())
+            return totalPixelsWalked;
+
+        const float progress = totalPixelsWalked / static_cast<float>(g_sprites.spriteSize());
+        const float smoothProgress = progress * progress * (3.f - 2.f * progress);
+        const int smoothedPixels = stdext::round(smoothProgress * g_sprites.spriteSize());
+        return std::max<uint8>(1, std::min<uint8>(static_cast<uint8>(smoothedPixels), static_cast<uint8>(g_sprites.spriteSize() - 1)));
+    }
+}
+
 Creature::Creature() : Thing()
 {
     m_id = 0;
@@ -55,6 +79,8 @@ Creature::Creature() : Thing()
     m_speed = 200;
     m_direction = Otc::South;
     m_walkDirection = Otc::South;
+    m_drawDirection = Otc::South;
+    m_pendingDrawDirection = Otc::InvalidDirection;
     m_walkAnimationPhase = 0;
     m_walkedPixels = 0;
     m_skull = Otc::SkullNone;
@@ -84,10 +110,11 @@ void Creature::draw(const Point& dest, bool animate, LightView* lightView)
     if (!canBeSeen())
         return;
 
+    const Otc::Direction drawDirection = getDrawDirection();
     const int sprSize = g_sprites.spriteSize();
     Point jumpOffset = Point(m_jumpOffset.x, m_jumpOffset.y);
     Point creatureCenter = dest - jumpOffset + m_walkOffset - getDisplacement() + Point(sprSize / 2, sprSize / 2);
-    drawBottomWidgets(creatureCenter, m_walking ? m_walkDirection : m_direction);
+    drawBottomWidgets(creatureCenter, drawDirection);
 
     Point animationOffset = animate ? m_walkOffset : Point(0, 0);
 
@@ -104,12 +131,12 @@ void Creature::draw(const Point& dest, bool animate, LightView* lightView)
 
     size_t drawQueueSize = g_drawQueue->size();
 	m_outfit.setWingsOffset(getWingsOffset());
-    m_outfit.draw(dest - jumpOffset + animationOffset, m_walking ? m_walkDirection : m_direction, m_walkAnimationPhase, true, lightView);
+    m_outfit.draw(dest - jumpOffset + animationOffset, drawDirection, m_walkAnimationPhase, true, lightView);
     if (m_marked) {
         g_drawQueue->setMark(drawQueueSize, updatedMarkedColor());
     }
 
-    drawTopWidgets(creatureCenter, m_walking ? m_walkDirection : m_direction);
+    drawTopWidgets(creatureCenter, drawDirection);
 
     Light light = rawGetThingType()->getLight();
     if (m_light.intensity != light.intensity || m_light.color != light.color)
@@ -328,6 +355,9 @@ void Creature::walk(const Position& oldPos, const Position& newPos)
     if (oldPos == newPos)
         return;
 
+    const Otc::Direction previousWalkDirection = m_walkDirection;
+    const Otc::Direction previousDrawDirection = getDrawDirection();
+
     // get walk direction
     m_lastStepDirection = oldPos.getDirectionFromPosition(newPos);
     m_lastStepFromPosition = oldPos;
@@ -336,6 +366,13 @@ void Creature::walk(const Position& oldPos, const Position& newPos)
     // set current walking direction
     setDirection(m_lastStepDirection);
     m_walkDirection = m_direction;
+    if (shouldSmoothWalkDirectionChange(previousWalkDirection, previousDrawDirection)) {
+        m_drawDirection = previousDrawDirection;
+        m_pendingDrawDirection = m_walkDirection;
+    } else {
+        m_drawDirection = m_walkDirection;
+        m_pendingDrawDirection = Otc::InvalidDirection;
+    }
 
     // starts counting walk
     m_walking = true;
@@ -602,11 +639,14 @@ void Creature::updateWalk()
     // needed for paralyze effect
     m_walkedPixels = std::max<uint8>(m_walkedPixels, totalPixelsWalked);
     uint8 walkedPixelsInNextFrame = std::max<uint8>(m_walkedPixels, totalPixelsWalkedInNextFrame);
+    const uint8 visualWalkedPixels = getSmoothedWalkPixels(m_walkedPixels);
+    const uint8 visualWalkedPixelsInNextFrame = getSmoothedWalkPixels(walkedPixelsInNextFrame);
 
     // update walk animation and offsets
     updateWalkAnimation(totalPixelsWalked);
-    updateWalkOffset(m_walkedPixels);
-    updateWalkOffset(walkedPixelsInNextFrame, true);
+    updateDrawDirection(visualWalkedPixels);
+    updateWalkOffset(visualWalkedPixels);
+    updateWalkOffset(visualWalkedPixelsInNextFrame, true);
     updateWalkingTile();
 
     // terminate walk
@@ -631,6 +671,8 @@ void Creature::terminateWalk()
     m_walkedPixels = 0;
     m_walkOffset = Point(0, 0);
     m_walkOffsetInNextFrame = Point(0, 0);
+    m_drawDirection = m_direction;
+    m_pendingDrawDirection = Otc::InvalidDirection;
 
     // reset walk animation states
     if (!m_walkFinishAnimEvent) {
@@ -640,6 +682,46 @@ void Creature::terminateWalk()
             self->m_walkAnimationPhase = 0;
             self->m_walkFinishAnimEvent = nullptr;
         }, 50);
+    }
+}
+
+Otc::Direction Creature::getDrawDirection()
+{
+    if (m_walking)
+        return m_drawDirection;
+    return m_direction;
+}
+
+bool Creature::shouldSmoothWalkDirectionChange(Otc::Direction previousStepDirection, Otc::Direction previousRenderDirection)
+{
+    if (!isLocalPlayer())
+        return false;
+
+    if (!isVisualAutoWalkActive())
+        return false;
+
+    if (previousStepDirection == Otc::InvalidDirection || previousRenderDirection == Otc::InvalidDirection)
+        return false;
+
+    if (previousStepDirection == m_walkDirection || previousRenderDirection == m_walkDirection)
+        return false;
+
+    return true;
+}
+
+void Creature::updateDrawDirection(uint8 totalPixelsWalked)
+{
+    if (m_pendingDrawDirection == Otc::InvalidDirection) {
+        if (m_walking)
+            m_drawDirection = m_walkDirection;
+        return;
+    }
+
+    const uint8 spriteSize = g_sprites.spriteSize();
+    const uint8 minPixelsBeforeTurn = std::max<uint8>(2, spriteSize / 4);
+    if (totalPixelsWalked >= minPixelsBeforeTurn || totalPixelsWalked + 1 >= spriteSize) {
+        m_drawDirection = m_pendingDrawDirection;
+        m_pendingDrawDirection = Otc::InvalidDirection;
     }
 }
 

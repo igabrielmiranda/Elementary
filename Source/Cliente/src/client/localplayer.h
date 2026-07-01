@@ -110,6 +110,7 @@ public:
     bool isKnown() { return m_known; }
     bool isAutoWalking() { return m_autoWalkDestination.isValid(); }
     bool isServerWalking() override { return m_serverWalking; }
+    bool isVisualAutoWalkActive() override { return m_autoWalkDestination.isValid(); }
     bool isPremium() { return m_premium; }
     bool isPendingGame() { return m_pending; }
 
