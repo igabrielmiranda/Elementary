@@ -204,6 +204,30 @@ function changeWalkDir(dir, pop)
       end
     end
   end
+
+  if not pop then
+    requestManualWalkDir()
+  end
+end
+
+function requestManualWalkDir()
+  if g_keyboard.getModifiers() ~= KeyboardNoModifier then
+    return
+  end
+
+  local dir = smartWalkDir
+  if dir == nil then
+    return
+  end
+
+  local player = g_game.getLocalPlayer()
+  if not player or g_game.isDead() or player:isDead() then
+    return
+  end
+
+  if #smartWalkDirs > 1 or player:isWalking() or player:isServerWalking() or player:isAutoWalking() then
+    walk(dir, 0)
+  end
 end
 
 function smartWalk(dir, ticks)
@@ -299,7 +323,9 @@ function walk(dir, ticks)
     if dash then 
       ignoredCanWalk = true
     else
-      if ticksToNextWalk < 500 and (lastWalkDir ~= dir or ticks == 0) then
+      if lastWalkDir ~= dir then
+        nextWalkDir = dir
+      elseif ticksToNextWalk < 500 and ticks == 0 then
         nextWalkDir = dir
       end
       if ticksToNextWalk < 30 and lastFinishedStep + 400 > g_clock.millis() and nextWalkDir == nil then -- clicked walk 20 ms too early, try to execute again as soon possible to keep smooth walking
@@ -313,7 +339,8 @@ function walk(dir, ticks)
   --  print("Cancel " .. nextWalkDir)
   --  nextWalkDir = nil
   --end
-  if nextWalkDir ~= nil and nextWalkDir ~= lastWalkDir then 
+  local queuedTurn = nextWalkDir ~= nil and nextWalkDir ~= lastWalkDir
+  if queuedTurn then
     dir = nextWalkDir
   end
 
@@ -394,7 +421,7 @@ function walk(dir, ticks)
   end
   g_game.walk(dir, preWalked)  
   
-  if not firstStep and lastWalkDir ~= dir then
+  if not firstStep and lastWalkDir ~= dir and not queuedTurn then
     walkLock = g_clock.millis() + g_settings.getNumber('walkTurnDelay')    
   end
   

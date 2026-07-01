@@ -5,6 +5,8 @@ local TAB_ALL = 'all'
 local TAB_AVAILABLE = 'available'
 local CATEGORY_FILTER_ALL = 'all'
 local PAGE_SIZE = 30
+local DEBUG_FROZEN_ARROW_VALIDATION = false
+local FROZEN_ARROW_WORDS = 'flecha congelante'
 
 local CATEGORY_ORDER = { 'Ofensiva', 'Defensiva', 'Utilidade' }
 local CATEGORY_HEADER_LABELS = {
@@ -95,7 +97,62 @@ local SPELL_REQUIREMENT_OVERRIDES = {
     requiredItemName = 'Orbe Elemental',
     requiredRecipeKey = 'elemental_orb',
     description = 'Invoca um tornado de fogo que causa dano em area ao redor do conjurador.'
+  },
+  ['flecha congelante'] = {
+    needWeapon = true,
+    requiredWeaponType = 'bow',
+    requiredItemName = 'Bow',
+    description = 'Dispara uma flecha congelante que nao causa dano, mas congela/stuna o alvo por 2 segundos.'
   }
+}
+
+local KNOWN_BOW_SERVER_IDS = {
+  [3350] = true,
+  [2456] = true,
+  [7438] = true,
+  [8854] = true,
+  [8855] = true,
+  [8856] = true,
+  [8857] = true,
+  [8858] = true,
+  [10295] = true,
+  [13873] = true,
+  [15643] = true,
+  [18454] = true,
+  [21696] = true,
+  [22416] = true,
+  [22417] = true,
+  [22418] = true,
+  [23798] = true,
+  [25522] = true,
+  [25885] = true,
+  [25895] = true,
+  [25906] = true,
+  [25915] = true,
+  [26251] = true,
+  [26253] = true,
+  [26254] = true,
+  [26285] = true,
+  [26286] = true,
+  [26288] = true,
+  [26306] = true,
+  [26307] = true,
+  [26308] = true,
+  [26758] = true,
+  [26765] = true,
+  [27199] = true,
+  [27230] = true,
+  [27395] = true,
+  [27471] = true,
+  [27472] = true,
+  [27646] = true,
+  [27661] = true,
+  [27662] = true,
+  [27735] = true,
+  [27741] = true,
+  [27747] = true,
+  [28116] = true,
+  [28131] = true
 }
 
 local ui = {}
@@ -139,6 +196,7 @@ local consoleCommandFilter = nil
 local printSkillsPanel = function(message)
   print(message)
 end
+local lastFrozenArrowDebugSignature = nil
 
 local function normalizeToken(value)
   value = tostring(value or ''):lower():trim()
@@ -150,6 +208,131 @@ local function normalizeWords(value)
   value = tostring(value or ''):lower():trim()
   value = value:gsub('%s+', ' ')
   return value
+end
+
+local function isFrozenArrowSkill(skill)
+  return skill and normalizeWords(skill.words or '') == FROZEN_ARROW_WORDS
+end
+
+local function hasEquippedVisibleBow2456()
+  local panel = rawget(_G, 'inventoryPanel')
+  if not panel then
+    return false
+  end
+
+  for slot = InventorySlotOther, InventorySlotAmmo do
+    local itemWidget = panel:getChildById('slot' .. slot)
+    if itemWidget and itemWidget.getItem then
+      local okItem, item = pcall(function()
+        return itemWidget:getItem()
+      end)
+
+      if okItem and item then
+        local clientId = getItemClientId(item)
+        local serverId = getItemServerId(item)
+        if clientId == 2456 or serverId == 2456 then
+          return true
+        end
+      end
+    end
+  end
+
+  return false
+end
+
+local function detectWeaponTypeFromItem(item)
+  if not item then
+    return 'none'
+  end
+
+  local itemServerId = getItemServerId(item)
+  local itemClientId = getItemClientId(item)
+  local itemName = normalizeToken(getHandItemDisplayName(item))
+
+  if (itemServerId and KNOWN_BOW_SERVER_IDS[itemServerId]) or (itemClientId and KNOWN_BOW_SERVER_IDS[itemClientId]) then
+    return 'bow'
+  end
+
+  if itemName:find('crossbow', 1, true) then
+    return 'crossbow'
+  end
+
+  if itemName:find('bow', 1, true) then
+    return 'bow'
+  end
+
+  return 'unknown'
+end
+
+local function buildFrozenArrowEntryDebug(entry, skill)
+  local item = entry and entry.item or nil
+  local requiredWeapon = tostring(skill and skill.requiredWeaponType or '-')
+  local result = item and equippedItemMatchesSkillRequirement(item, skill) or false
+  local reason = 'slot vazio'
+
+  if item then
+    if result then
+      reason = 'item atende ao requisito por tipo/nome/id'
+    else
+      reason = 'item equipado nao corresponde ao requisito da skill'
+    end
+  end
+
+  return string.format(
+    'requiredWeapon=%s slot=%s itemId=%s serverId=%s itemName=%s weaponType=%s result=%s reason=%s',
+    requiredWeapon,
+    tostring(entry and entry.debugLabel or '-'),
+    tostring(item and getItemClientId(item) or '-'),
+    tostring(item and getItemServerId(item) or '-'),
+    tostring(item and getHandItemDisplayName(item) or '-'),
+    detectWeaponTypeFromItem(item),
+    result and 'available' or 'unavailable',
+    reason
+  )
+end
+
+local function logFrozenArrowValidation(skill, contextLabel, availability, reason, equippedWeapon)
+  if not DEBUG_FROZEN_ARROW_VALIDATION or not isFrozenArrowSkill(skill) then
+    return
+  end
+
+  local entries = getEquippedWeaponEntries(equippedWeapon)
+  if equippedWeapon and equippedWeapon.player then
+    for _, entry in ipairs(getAllEquippedInventoryEntries(equippedWeapon.player)) do
+      local alreadyListed = false
+      for _, handEntry in ipairs(entries) do
+        if handEntry.item == entry.item then
+          alreadyListed = true
+          break
+        end
+      end
+
+      if not alreadyListed then
+        table.insert(entries, entry)
+      end
+    end
+  end
+
+  printSkillsPanel(string.format(
+    '[FrozenArrow][SkillsPanel][%s] requiredWeapon=%s availability=%s reason=%s',
+    tostring(contextLabel or 'validation'),
+    tostring(skill.requiredWeaponType or '-'),
+    availability and 'available' or 'unavailable',
+    tostring(reason or '-')
+  ))
+
+  if #entries == 0 then
+    printSkillsPanel(string.format(
+      '[FrozenArrow][SkillsPanel][%s] requiredWeapon=%s slot=- itemId=- serverId=- itemName=- weaponType=none result=unavailable reason=nenhum slot de arma encontrado',
+      tostring(contextLabel or 'validation'),
+      tostring(skill.requiredWeaponType or '-')
+    ))
+    return
+  end
+
+  for _, entry in ipairs(entries) do
+    printSkillsPanel(string.format('[FrozenArrow][SkillsPanel][%s] %s', tostring(contextLabel or 'validation'), buildFrozenArrowEntryDebug(entry, skill)))
+  end
 end
 
 local function normalizeSearchText(value)
@@ -400,6 +583,10 @@ end
 local function getSpellWeaponRequirementText(spell)
   if spell.requiredItemName and spell.requiredItemName ~= '' then
     return spell.requiredItemName
+  end
+
+  if spell.requiredWeaponType and spell.requiredWeaponType ~= '' then
+    return humanizeToken(spell.requiredWeaponType)
   end
 
   if not spell.needWeapon then
@@ -890,6 +1077,15 @@ local function getHandItemDisplayName(item)
     return 'Nenhum'
   end
 
+  if item.getName then
+    local okName, itemName = pcall(function()
+      return item:getName()
+    end)
+    if okName and type(itemName) == 'string' and itemName:len() > 0 then
+      return itemName
+    end
+  end
+
   local tooltip = item:getTooltip()
   if tooltip and tooltip:len() > 0 then
     local firstLine = tooltip:match('([^\r\n]+)')
@@ -988,18 +1184,42 @@ end
 
 local function getInventoryItemFromSlot(player, slot)
   if not player or slot == nil then
+    player = nil
+  end
+
+  local item = nil
+  if player then
+    local ok, resolvedItem = pcall(function()
+      return player:getInventoryItem(slot)
+    end)
+
+    if ok and resolvedItem then
+      item = resolvedItem
+    end
+  end
+
+  if item then
+    return item
+  end
+
+  local panel = rawget(_G, 'inventoryPanel')
+  if not panel then
     return nil
   end
 
-  local ok, item = pcall(function()
-    return player:getInventoryItem(slot)
+  local itemWidget = panel:getChildById('slot' .. slot)
+  if not itemWidget or not itemWidget.getItem then
+    return nil
+  end
+
+  local okWidgetItem, widgetItem = pcall(function()
+    return itemWidget:getItem()
   end)
-
-  if not ok then
-    return nil
+  if okWidgetItem and widgetItem then
+    return widgetItem
   end
 
-  return item
+  return nil
 end
 
 local function getEquippedWeaponEntries(equippedWeapon)
@@ -1030,6 +1250,26 @@ local function getEquippedWeaponEntries(equippedWeapon)
   return entries
 end
 
+local function getAllEquippedInventoryEntries(player)
+  local entries = {}
+  if not player then
+    return entries
+  end
+
+  for slot = InventorySlotOther, InventorySlotAmmo do
+    local item = getInventoryItemFromSlot(player, slot)
+    if item then
+      table.insert(entries, {
+        item = item,
+        handLabel = 'slot ' .. tostring(slot),
+        debugLabel = 'inventory slot ' .. tostring(slot)
+      })
+    end
+  end
+
+  return entries
+end
+
 local function equippedItemMatchesRequirement(item, requiredItemId, requiredItemName)
   if not item then
     return false
@@ -1053,6 +1293,30 @@ local function equippedItemMatchesRequirement(item, requiredItemId, requiredItem
   end
 
   return getItemComparisonId(item) == requiredItemId
+end
+
+local function equippedItemMatchesWeaponType(item, requiredWeaponType)
+  if not item or not requiredWeaponType or requiredWeaponType == '' then
+    return false
+  end
+
+  local normalizedType = normalizeToken(requiredWeaponType)
+  local itemServerId = getItemServerId(item)
+  local itemClientId = getItemClientId(item)
+  local itemName = normalizeToken(getHandItemDisplayName(item))
+
+  if normalizedType == 'bow' then
+    if (itemServerId and KNOWN_BOW_SERVER_IDS[itemServerId]) or (itemClientId and KNOWN_BOW_SERVER_IDS[itemClientId]) then
+      return true
+    end
+    return itemName:find('bow', 1, true) ~= nil and itemName:find('crossbow', 1, true) == nil
+  end
+
+  if normalizedType == 'crossbow' then
+    return itemName:find('crossbow', 1, true) ~= nil
+  end
+
+  return itemName:find(normalizedType, 1, true) ~= nil
 end
 
 local function equippedItemMatchesSkillRequirement(item, skill)
@@ -1079,6 +1343,12 @@ local function equippedItemMatchesSkillRequirement(item, skill)
     end
   end
 
+  if skill.requiredWeaponType and skill.requiredWeaponType ~= '' then
+    if equippedItemMatchesWeaponType(item, skill.requiredWeaponType) then
+      return true
+    end
+  end
+
   return false
 end
 
@@ -1088,6 +1358,13 @@ local function getMatchingEquippedWeapon(skill, equippedWeapon)
   end
 
   for _, entry in ipairs(getEquippedWeaponEntries(equippedWeapon)) do
+    if entry.item and equippedItemMatchesSkillRequirement(entry.item, skill) then
+      return entry.item, entry.handLabel
+    end
+  end
+
+  local player = equippedWeapon.player
+  for _, entry in ipairs(getAllEquippedInventoryEntries(player)) do
     if entry.item and equippedItemMatchesSkillRequirement(entry.item, skill) then
       return entry.item, entry.handLabel
     end
@@ -1182,17 +1459,18 @@ local function spellMatchesPlayerVocation(spell, player)
 end
 
 local function isSkillAvailableByWeapon(skill, equippedWeapon)
-  if not skill.needWeapon and not skill.requiredItemId and not skill.requiredItemName then
+  local requiredClientItemIds = getSkillRequiredClientItemIds(skill)
+  if not skill.needWeapon and not skill.requiredItemId and not skill.requiredItemName and not skill.requiredWeaponType and #requiredClientItemIds == 0 then
     return true, 'Validacao de arma nao necessaria para esta skill.'
   end
 
-  if skill.requiredItemId or skill.requiredItemName then
+  if skill.requiredItemId or skill.requiredItemName or skill.requiredWeaponType or #requiredClientItemIds > 0 then
     local rightItem = equippedWeapon and equippedWeapon.rightItem or nil
     local leftItem = equippedWeapon and equippedWeapon.leftItem or nil
     local matchedItem, handLabel = getMatchingEquippedWeapon(skill, equippedWeapon)
-    local requiredClientItemIds = getSkillRequiredClientItemIds(skill)
+    local requiredWeaponLabel = skill.requiredItemName or (skill.requiredWeaponType and humanizeToken(skill.requiredWeaponType)) or 'a arma correta'
 
-    printSkillsPanel(string.format('[SkillsPanel] skill required item: server=%s client=%s / %s', tostring(skill.requiredItemId or '-'), #requiredClientItemIds > 0 and table.concat(requiredClientItemIds, ',') or '-', tostring(skill.requiredItemName or '-')))
+    printSkillsPanel(string.format('[SkillsPanel] skill required item: server=%s client=%s / %s', tostring(skill.requiredItemId or '-'), #requiredClientItemIds > 0 and table.concat(requiredClientItemIds, ',') or '-', tostring(requiredWeaponLabel)))
     printSkillsPanel(string.format('[SkillsPanel] right hand item: %s', formatEquippedItemDebug(rightItem)))
     printSkillsPanel(string.format('[SkillsPanel] left hand item: %s', formatEquippedItemDebug(leftItem)))
     if equippedWeapon and equippedWeapon.otherItem and equippedWeapon.otherItem ~= rightItem and equippedWeapon.otherItem ~= leftItem then
@@ -1201,11 +1479,14 @@ local function isSkillAvailableByWeapon(skill, equippedWeapon)
 
     if matchedItem then
       printSkillsPanel('[SkillsPanel] availability result: Liberada')
-      return true, string.format('%s equipada na %s.', skill.requiredItemName or getHandItemDisplayName(matchedItem), handLabel)
+      logFrozenArrowValidation(skill, 'availability', true, string.format('%s equipado na %s.', requiredWeaponLabel, handLabel), equippedWeapon)
+      return true, string.format('%s equipado na %s.', requiredWeaponLabel, handLabel)
     end
 
     printSkillsPanel('[SkillsPanel] availability result: Arma incorreta')
-    return false, string.format('Requer %s equipada.', skill.requiredItemName or 'a arma correta')
+    local unavailableReason = string.format('Requer %s equipado.', requiredWeaponLabel)
+    logFrozenArrowValidation(skill, 'availability', false, unavailableReason, equippedWeapon)
+    return false, unavailableReason
   end
 
   if equippedWeapon and equippedWeapon.hasAnyHandItem then
@@ -1847,6 +2128,11 @@ local function selectSkill(spell, widget, source)
     printSkillsPanel(string.format('[SkillsPanel] selected: %s', spell.name))
   end
 
+  if spell and isFrozenArrowSkill(spell) then
+    local available, detail = isSkillAvailableByWeapon(spell, getEquippedWeaponContext())
+    logFrozenArrowValidation(spell, 'selection', available, detail, getEquippedWeaponContext())
+  end
+
   local okUpdate, updateError = pcall(updateDetailPanel, spell)
   if not okUpdate then
     g_logger.error('[SkillsPanel] failed to update detail panel: ' .. tostring(updateError))
@@ -2422,6 +2708,11 @@ function show()
   setCategoryFilterButtons()
   panelState.forceSelectFirstVisible = true
   skillsPanelWindow:show()
+  if panelState.selectedSkill and isFrozenArrowSkill(panelState.selectedSkill) then
+    local equippedWeapon = getEquippedWeaponContext()
+    local available, detail = isSkillAvailableByWeapon(panelState.selectedSkill, equippedWeapon)
+    logFrozenArrowValidation(panelState.selectedSkill, 'panel-open', available, detail, equippedWeapon)
+  end
   skillsPanelWindow:raise()
   skillsPanelWindow:focus()
   if ui.detailScrollBar then
@@ -2459,8 +2750,13 @@ function onFixButtonClick()
     return
   end
 
-  displayInfoBox(
-    'Fixar na barra',
-    'Sistema de barra de skills ainda nao implementado.'
-  )
+  if not modules.game_custom_skillbar or not modules.game_custom_skillbar.openSkillChooserForSkill then
+    displayInfoBox(
+      'Fixar na barra',
+      'A Custom Skill Bar nao esta disponivel no momento.'
+    )
+    return
+  end
+
+  modules.game_custom_skillbar.openSkillChooserForSkill(panelState.selectedSkill)
 end

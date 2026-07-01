@@ -9,6 +9,8 @@ local POSITION_RETRY_DELAY = 30
 local TARGET_SKILL_NAME = 'Fire Tornado'
 local SETTINGS_PREFIX = 'custom_skillbar_'
 local GLOBAL_SETTINGS_KEY = 'custom_skillbar_global'
+local DEBUG_FROZEN_ARROW_VALIDATION = false
+local FROZEN_ARROW_WORDS = 'flecha congelante'
 local PLACEHOLDER_ICON = {
   source = '/images/game/spells/cooldowns',
   clip = '40 0 20 20'
@@ -51,6 +53,55 @@ local CHOICE_STATUS_STYLES = {
   }
 }
 
+local KNOWN_BOW_SERVER_IDS = {
+  [3350] = true,
+  [2456] = true,
+  [7438] = true,
+  [8854] = true,
+  [8855] = true,
+  [8856] = true,
+  [8857] = true,
+  [8858] = true,
+  [10295] = true,
+  [13873] = true,
+  [15643] = true,
+  [18454] = true,
+  [21696] = true,
+  [22416] = true,
+  [22417] = true,
+  [22418] = true,
+  [23798] = true,
+  [25522] = true,
+  [25885] = true,
+  [25895] = true,
+  [25906] = true,
+  [25915] = true,
+  [26251] = true,
+  [26253] = true,
+  [26254] = true,
+  [26285] = true,
+  [26286] = true,
+  [26288] = true,
+  [26306] = true,
+  [26307] = true,
+  [26308] = true,
+  [26758] = true,
+  [26765] = true,
+  [27199] = true,
+  [27230] = true,
+  [27395] = true,
+  [27471] = true,
+  [27472] = true,
+  [27646] = true,
+  [27661] = true,
+  [27662] = true,
+  [27735] = true,
+  [27741] = true,
+  [27747] = true,
+  [28116] = true,
+  [28131] = true
+}
+
 for index = 1, 9 do
   local value = tostring(index)
   table.insert(HOTKEY_OPTIONS, { text = value, value = value })
@@ -86,6 +137,7 @@ local lastMouseDispatch = {
 local slotWidgets = {}
 local slotSettings = {}
 local hotkeyCallbacks = {}
+local slotCooldowns = {}
 
 local choiceWidgets = {}
 local choiceState = {
@@ -99,6 +151,17 @@ local skillCatalogByName = {}
 local skillIconLookup = nil
 local saveSettings = nil
 local inventorySlotKeys = {}
+local lastFrozenArrowDebugSignature = nil
+local normalizeToken
+local updateSlotWidget
+local getItemClientId
+local getItemServerId
+local getItemDisplayName
+local getEquippedWeaponContext
+local getEquippedWeaponEntries
+local getAllEquippedInventoryEntries
+local equippedItemMatchesSkillRequirement
+local getSkillRequiredWeaponLabel
 
 local function logInfo(message)
   print(string.format('%s %s', MODULE_TAG, message))
@@ -124,7 +187,133 @@ local function normalizeText(value)
   return value
 end
 
-local function normalizeToken(value)
+local function isFrozenArrowSkill(skill)
+  return skill and normalizeText(skill.words or '') == FROZEN_ARROW_WORDS
+end
+
+local function hasEquippedVisibleBow2456()
+  local panel = rawget(_G, 'inventoryPanel')
+  if not panel then
+    return false
+  end
+
+  for slot = InventorySlotOther, InventorySlotAmmo do
+    local itemWidget = panel:getChildById('slot' .. slot)
+    if itemWidget and itemWidget.getItem then
+      local okItem, item = pcall(function()
+        return itemWidget:getItem()
+      end)
+
+      if okItem and item then
+        local clientId = getItemClientId(item)
+        local serverId = getItemServerId(item)
+        if clientId == 2456 or serverId == 2456 then
+          return true
+        end
+      end
+    end
+  end
+
+  return false
+end
+
+local function detectWeaponTypeFromItem(item)
+  if not item then
+    return 'none'
+  end
+
+  local itemServerId = getItemServerId(item)
+  local itemClientId = getItemClientId(item)
+  local itemName = normalizeToken(getItemDisplayName(item))
+
+  if (itemServerId and KNOWN_BOW_SERVER_IDS[itemServerId]) or (itemClientId and KNOWN_BOW_SERVER_IDS[itemClientId]) then
+    return 'bow'
+  end
+
+  if itemName:find('crossbow', 1, true) then
+    return 'crossbow'
+  end
+
+  if itemName:find('bow', 1, true) then
+    return 'bow'
+  end
+
+  return 'unknown'
+end
+
+local function buildFrozenArrowEntryDebug(entry, skill)
+  local item = entry and entry.item or nil
+  local result = item and equippedItemMatchesSkillRequirement(item, skill) or false
+  local reason = 'slot vazio'
+
+  if item then
+    if result then
+      reason = 'item atende ao requisito por tipo/nome/id'
+    else
+      reason = 'item equipado nao corresponde ao requisito da skill'
+    end
+  end
+
+  return string.format(
+    'requiredWeapon=%s slot=%s itemId=%s serverId=%s itemName=%s weaponType=%s result=%s reason=%s',
+    tostring(skill and skill.requiredWeaponType or '-'),
+    tostring(entry and entry.handLabel or '-'),
+    tostring(item and getItemClientId(item) or '-'),
+    tostring(item and getItemServerId(item) or '-'),
+    tostring(item and getItemDisplayName(item) or '-'),
+    detectWeaponTypeFromItem(item),
+    result and 'available' or 'unavailable',
+    reason
+  )
+end
+
+local function logFrozenArrowValidation(skill, contextLabel, availability, reason)
+  if not DEBUG_FROZEN_ARROW_VALIDATION or not isFrozenArrowSkill(skill) then
+    return
+  end
+
+  local context = getEquippedWeaponContext()
+  local entries = getEquippedWeaponEntries(context)
+  local player = g_game.getLocalPlayer()
+  if player then
+    for _, entry in ipairs(getAllEquippedInventoryEntries(player)) do
+      local alreadyListed = false
+      for _, handEntry in ipairs(entries) do
+        if handEntry.item == entry.item then
+          alreadyListed = true
+          break
+        end
+      end
+
+      if not alreadyListed then
+        table.insert(entries, entry)
+      end
+    end
+  end
+
+  logInfo(string.format(
+    '[FrozenArrow][SkillBar][%s] requiredWeapon=%s availability=%s reason=%s',
+    tostring(contextLabel or 'validation'),
+    tostring(skill.requiredWeaponType or '-'),
+    availability and 'available' or 'unavailable',
+    tostring(reason or '-')
+  ))
+
+  if #entries == 0 then
+    logInfo(string.format(
+      '[FrozenArrow][SkillBar][%s] requiredWeapon=%s slot=- itemId=- serverId=- itemName=- weaponType=none result=unavailable reason=nenhum slot de arma encontrado',
+      tostring(contextLabel or 'validation'),
+      tostring(skill.requiredWeaponType or '-')
+    ))
+    return
+  end
+
+  for _, entry in ipairs(entries) do
+    logInfo(string.format('[FrozenArrow][SkillBar][%s] %s', tostring(contextLabel or 'validation'), buildFrozenArrowEntryDebug(entry, skill)))
+  end
+end
+
+normalizeToken = function(value)
   return normalizeText(value)
 end
 
@@ -218,7 +407,7 @@ local function getRawSpellInfoByWords(words)
   return nil
 end
 
-local function getItemClientId(item)
+getItemClientId = function(item)
   if not item or not item.getId then
     return nil
   end
@@ -234,7 +423,7 @@ local function getItemClientId(item)
   return tonumber(itemId) or itemId
 end
 
-local function getItemServerId(item)
+getItemServerId = function(item)
   if not item or not item.getServerId then
     return nil
   end
@@ -261,21 +450,45 @@ end
 
 local function getInventoryItemFromSlot(player, slot)
   if not player or slot == nil then
+    player = nil
+  end
+
+  local item = nil
+  if player then
+    local ok, resolvedItem = pcall(function()
+      return player:getInventoryItem(slot)
+    end)
+
+    if ok and resolvedItem then
+      item = resolvedItem
+    end
+  end
+
+  if item then
+    return item
+  end
+
+  local panel = rawget(_G, 'inventoryPanel')
+  if not panel then
     return nil
   end
 
-  local ok, item = pcall(function()
-    return player:getInventoryItem(slot)
+  local itemWidget = panel:getChildById('slot' .. slot)
+  if not itemWidget or not itemWidget.getItem then
+    return nil
+  end
+
+  local okWidgetItem, widgetItem = pcall(function()
+    return itemWidget:getItem()
   end)
-
-  if not ok then
-    return nil
+  if okWidgetItem and widgetItem then
+    return widgetItem
   end
 
-  return item
+  return nil
 end
 
-local function getItemDisplayName(item)
+getItemDisplayName = function(item)
   if not item then
     return 'Nenhuma'
   end
@@ -290,10 +503,23 @@ local function getItemDisplayName(item)
     end
   end
 
+  if item.getTooltip then
+    local okTooltip, tooltip = pcall(function()
+      return item:getTooltip()
+    end)
+
+    if okTooltip and type(tooltip) == 'string' and tooltip:len() > 0 then
+      local firstLine = tooltip:match('([^\r\n]+)')
+      if firstLine and firstLine:len() > 0 then
+        return firstLine
+      end
+    end
+  end
+
   return tostring(item)
 end
 
-local function getEquippedWeaponContext()
+getEquippedWeaponContext = function()
   local player = g_game.getLocalPlayer()
   if not player then
     return {
@@ -310,7 +536,7 @@ local function getEquippedWeaponContext()
   }
 end
 
-local function getEquippedWeaponEntries(context)
+getEquippedWeaponEntries = function(context)
   if not context then
     return {}
   end
@@ -322,6 +548,22 @@ local function getEquippedWeaponEntries(context)
 
   if context.otherItem and context.otherItem ~= context.rightItem and context.otherItem ~= context.leftItem then
     table.insert(entries, { item = context.otherItem, handLabel = 'slot alternativo de arma' })
+  end
+
+  return entries
+end
+
+getAllEquippedInventoryEntries = function(player)
+  local entries = {}
+  if not player then
+    return entries
+  end
+
+  for slot = InventorySlotOther, InventorySlotAmmo do
+    local item = getInventoryItemFromSlot(player, slot)
+    if item then
+      table.insert(entries, { item = item, handLabel = 'slot ' .. tostring(slot) })
+    end
   end
 
   return entries
@@ -359,6 +601,50 @@ local function getSkillRequiredClientItemIds(skill)
   return {}
 end
 
+local function getSkillRequiredWeaponType(skill)
+  if not skill then
+    return ''
+  end
+
+  return normalizeToken(skill.requiredWeaponType or '')
+end
+
+getSkillRequiredWeaponLabel = function(skill)
+  local requiredItemName = tostring(skill and skill.requiredItemName or ''):trim()
+  if requiredItemName ~= '' then
+    return requiredItemName
+  end
+
+  local requiredWeaponType = getSkillRequiredWeaponType(skill)
+  if requiredWeaponType ~= '' then
+    return humanizeText(requiredWeaponType)
+  end
+
+  return ''
+end
+
+local function itemMatchesRequiredWeaponType(item, requiredWeaponType)
+  if not item or not requiredWeaponType or requiredWeaponType == '' then
+    return false
+  end
+
+  local itemServerId = getItemServerId(item)
+  local itemClientId = getItemClientId(item)
+  local itemName = normalizeToken(getItemDisplayName(item))
+  if requiredWeaponType == 'bow' then
+    if (itemServerId and KNOWN_BOW_SERVER_IDS[itemServerId]) or (itemClientId and KNOWN_BOW_SERVER_IDS[itemClientId]) then
+      return true
+    end
+    return itemName:find('bow', 1, true) ~= nil and itemName:find('crossbow', 1, true) == nil
+  end
+
+  if requiredWeaponType == 'crossbow' then
+    return itemName:find('crossbow', 1, true) ~= nil
+  end
+
+  return itemName:find(requiredWeaponType, 1, true) ~= nil
+end
+
 local function skillRequiresEquippedWeapon(skill)
   if not skill then
     return false
@@ -369,10 +655,11 @@ local function skillRequiresEquippedWeapon(skill)
     or (skill.requiredItemIds and #skill.requiredItemIds > 0)
     or skill.requiredClientItemId ~= nil
     or (skill.requiredClientItemIds and #skill.requiredClientItemIds > 0)
+    or getSkillRequiredWeaponType(skill) ~= ''
     or (type(skill.requiredItemName) == 'string' and skill.requiredItemName:len() > 0)
 end
 
-local function equippedItemMatchesSkillRequirement(item, skill)
+equippedItemMatchesSkillRequirement = function(item, skill)
   if not item or not skill then
     return false
   end
@@ -400,6 +687,11 @@ local function equippedItemMatchesSkillRequirement(item, skill)
     end
   end
 
+  local requiredWeaponType = getSkillRequiredWeaponType(skill)
+  if requiredWeaponType ~= '' and itemMatchesRequiredWeaponType(item, requiredWeaponType) then
+    return true
+  end
+
   return false
 end
 
@@ -411,16 +703,31 @@ local function getSkillAvailability(skill)
   local context = getEquippedWeaponContext()
   for _, entry in ipairs(getEquippedWeaponEntries(context)) do
     if entry.item and equippedItemMatchesSkillRequirement(entry.item, skill) then
-      return true, string.format('%s equipada na %s.', getItemDisplayName(entry.item), entry.handLabel)
+      local availableReason = string.format('%s equipada na %s.', getItemDisplayName(entry.item), entry.handLabel)
+      logFrozenArrowValidation(skill, 'availability', true, availableReason)
+      return true, availableReason
     end
   end
 
-  local requiredItemName = tostring(skill.requiredItemName or ''):trim()
-  if requiredItemName ~= '' then
-    return false, string.format('Requer %s equipada.', requiredItemName)
+  local player = g_game.getLocalPlayer()
+  for _, entry in ipairs(getAllEquippedInventoryEntries(player)) do
+    if entry.item and equippedItemMatchesSkillRequirement(entry.item, skill) then
+      local availableReason = string.format('%s equipada no %s.', getItemDisplayName(entry.item), entry.handLabel)
+      logFrozenArrowValidation(skill, 'availability', true, availableReason)
+      return true, availableReason
+    end
   end
 
-  return false, 'Requer a arma correta equipada.'
+  local requiredWeaponLabel = getSkillRequiredWeaponLabel(skill)
+  if requiredWeaponLabel ~= '' then
+    local unavailableReason = string.format('Requer %s equipado.', requiredWeaponLabel)
+    logFrozenArrowValidation(skill, 'availability', false, unavailableReason)
+    return false, unavailableReason
+  end
+
+  local fallbackReason = 'Requer a arma correta equipada.'
+  logFrozenArrowValidation(skill, 'availability', false, fallbackReason)
+  return false, fallbackReason
 end
 
 local function getSkillStatusLabel(skill)
@@ -468,6 +775,145 @@ local function cloneTable(source)
     end
   end
   return clone
+end
+
+local function getSlotCooldownState(slotIndex)
+  if type(slotIndex) ~= 'number' then
+    return nil
+  end
+
+  local state = slotCooldowns[slotIndex]
+  if not state then
+    state = {
+      active = false,
+      duration = 0,
+      startTime = 0,
+      endTime = 0,
+      event = nil
+    }
+    slotCooldowns[slotIndex] = state
+  end
+
+  return state
+end
+
+local function clearSlotCooldownEvent(slotIndex)
+  local state = slotCooldowns[slotIndex]
+  if state and state.event then
+    removeEvent(state.event)
+    state.event = nil
+  end
+end
+
+local function stopSlotCooldown(slotIndex)
+  local state = getSlotCooldownState(slotIndex)
+  if not state then
+    return
+  end
+
+  clearSlotCooldownEvent(slotIndex)
+  state.active = false
+  state.duration = 0
+  state.startTime = 0
+  state.endTime = 0
+end
+
+local function getSlotCooldownRemaining(slotIndex)
+  local state = slotCooldowns[slotIndex]
+  if not state or not state.active then
+    return 0
+  end
+
+  local remaining = state.endTime - g_clock.millis()
+  if remaining <= 0 then
+    stopSlotCooldown(slotIndex)
+    return 0
+  end
+
+  return remaining
+end
+
+local function isSlotCooldownActive(slotIndex)
+  return getSlotCooldownRemaining(slotIndex) > 0
+end
+
+local function formatCooldownSeconds(remainingMillis)
+  if remainingMillis <= 0 then
+    return ''
+  end
+
+  local remainingSeconds = math.ceil(remainingMillis / 1000)
+  return tostring(remainingSeconds)
+end
+
+local function scheduleSlotCooldownUpdate(slotIndex)
+  local state = slotCooldowns[slotIndex]
+  if not state or not state.active then
+    return
+  end
+
+  clearSlotCooldownEvent(slotIndex)
+  state.event = scheduleEvent(function()
+    local remaining = getSlotCooldownRemaining(slotIndex)
+    if remaining <= 0 then
+      updateSlotWidget(slotIndex)
+      return
+    end
+
+    updateSlotWidget(slotIndex)
+    scheduleSlotCooldownUpdate(slotIndex)
+  end, 100)
+end
+
+local function startSlotCooldown(slotIndex, durationMillis)
+  durationMillis = math.max(0, tonumber(durationMillis) or 0)
+  if durationMillis <= 0 then
+    stopSlotCooldown(slotIndex)
+    updateSlotWidget(slotIndex)
+    return
+  end
+
+  local state = getSlotCooldownState(slotIndex)
+  local now = g_clock.millis()
+  state.active = true
+  state.duration = durationMillis
+  state.startTime = now
+  state.endTime = now + durationMillis
+  updateSlotWidget(slotIndex)
+  scheduleSlotCooldownUpdate(slotIndex)
+end
+
+local function getSlotCooldownDuration(slotData)
+  if type(slotData) ~= 'table' then
+    return 0
+  end
+
+  local spellInfo = getRawSpellInfo(slotData.name) or getRawSpellInfoByWords(slotData.words)
+  if spellInfo and tonumber(spellInfo.exhaustion) and tonumber(spellInfo.exhaustion) > 0 then
+    return tonumber(spellInfo.exhaustion)
+  end
+
+  return 0
+end
+
+local function findSlotsBySpellId(spellId)
+  local matchingSlots = {}
+  spellId = tonumber(spellId)
+  if not spellId then
+    return matchingSlots
+  end
+
+  for slotIndex = 1, SLOT_COUNT do
+    local slotData = slotSettings[slotIndex]
+    if slotData then
+      local spellInfo = getRawSpellInfo(slotData.name) or getRawSpellInfoByWords(slotData.words)
+      if spellInfo and tonumber(spellInfo.id) == spellId then
+        table.insert(matchingSlots, slotIndex)
+      end
+    end
+  end
+
+  return matchingSlots
 end
 
 local function getRootWidget()
@@ -773,39 +1219,50 @@ local function ensureSkillCatalog()
   skillCatalog = {}
   skillCatalogByName = {}
 
-  local fallbackSkill = buildFallbackSkill()
-  local resolvedIcon, resolvedFrom, spellInfo = buildResolvedSkillIcon(TARGET_SKILL_NAME, fallbackSkill.words)
-  fallbackSkill.icon = resolvedIcon
-  fallbackSkill.iconResolvedFrom = resolvedFrom
-  local skill = nil
+  if SpellInfo and SpellInfo.Default then
+    for skillName, spellInfo in pairs(SpellInfo.Default) do
+      if type(spellInfo.words) == 'string' and spellInfo.words:len() > 0 then
+        local resolvedIcon, resolvedFrom = buildResolvedSkillIcon(skillName, spellInfo.words)
+        local skill = {
+          name = skillName,
+          words = spellInfo.words,
+          icon = cloneTable(resolvedIcon),
+          iconResolvedFrom = resolvedFrom,
+          needWeapon = spellInfo.needWeapon == true,
+          requiredItemId = spellInfo.requiredItemId,
+          requiredItemIds = cloneTable(spellInfo.requiredItemIds),
+          requiredClientItemId = spellInfo.requiredClientItemId,
+          requiredClientItemIds = cloneTable(spellInfo.requiredClientItemIds),
+          requiredItemName = spellInfo.requiredItemName or '',
+          requiredWeaponType = spellInfo.requiredWeaponType or '',
+          status = 'Liberada',
+          description = spellInfo.description or '',
+          type = getSkillTypeLabel(spellInfo.type or 'Instant'),
+          group = getSkillGroupLabel(spellInfo.group),
+          level = tonumber(spellInfo.level) or 0,
+          mana = tonumber(spellInfo.mana) or spellInfo.mana or 0
+        }
 
-  if spellInfo and type(spellInfo.words) == 'string' and spellInfo.words:len() > 0 then
-    skill = {
-      name = TARGET_SKILL_NAME,
-      words = spellInfo.words,
-      icon = cloneTable(resolvedIcon),
-      iconResolvedFrom = resolvedFrom,
-      needWeapon = spellInfo.needWeapon == true,
-      requiredItemId = spellInfo.requiredItemId,
-      requiredItemIds = cloneTable(spellInfo.requiredItemIds),
-      requiredClientItemId = spellInfo.requiredClientItemId,
-      requiredClientItemIds = cloneTable(spellInfo.requiredClientItemIds),
-      requiredItemName = spellInfo.requiredItemName or fallbackSkill.requiredItemName,
-      status = 'Liberada',
-      description = spellInfo.description or fallbackSkill.description,
-      type = getSkillTypeLabel(spellInfo.type or fallbackSkill.type),
-      group = getSkillGroupLabel(spellInfo.group),
-      level = tonumber(spellInfo.level) or fallbackSkill.level or 0,
-      mana = tonumber(spellInfo.mana) or fallbackSkill.mana or 0
-    }
-    if not skill.group or skill.group:len() == 0 or skill.group == '-' then
-      skill.group = fallbackSkill.group
+        if (not skill.group or skill.group:len() == 0 or skill.group == '-') and spellInfo.needTarget then
+          skill.group = 'Ataque'
+        end
+
+        table.insert(skillCatalog, skill)
+      end
     end
-  else
-    skill = fallbackSkill
   end
 
-  table.insert(skillCatalog, skill)
+  if #skillCatalog == 0 then
+    local fallbackSkill = buildFallbackSkill()
+    local resolvedIcon, resolvedFrom = buildResolvedSkillIcon(TARGET_SKILL_NAME, fallbackSkill.words)
+    fallbackSkill.icon = resolvedIcon
+    fallbackSkill.iconResolvedFrom = resolvedFrom
+    table.insert(skillCatalog, fallbackSkill)
+  end
+
+  table.sort(skillCatalog, function(a, b)
+    return normalizeText(a.name) < normalizeText(b.name)
+  end)
 
   for _, skill in ipairs(skillCatalog) do
     skillCatalogByName[normalizeText(skill.name)] = skill
@@ -852,6 +1309,7 @@ local function buildStoredSlotData(skill, hotkey)
     requiredClientItemId = skill.requiredClientItemId,
     requiredClientItemIds = cloneTable(skill.requiredClientItemIds),
     requiredItemName = skill.requiredItemName or '',
+    requiredWeaponType = skill.requiredWeaponType or '',
     description = skill.description or '',
     type = skill.type or 'Spell',
     group = skill.group or ''
@@ -876,6 +1334,7 @@ local function serializeSlotData(slotData)
     requiredClientItemId = slotData.requiredClientItemId,
     requiredClientItemIds = cloneTable(slotData.requiredClientItemIds),
     requiredItemName = slotData.requiredItemName or '',
+    requiredWeaponType = slotData.requiredWeaponType or '',
     description = slotData.description or '',
     type = slotData.type or 'Spell',
     group = slotData.group or ''
@@ -910,6 +1369,7 @@ local function normalizeStoredSlotData(slotData, slotIndex)
     requiredClientItemId = slotData.requiredClientItemId,
     requiredClientItemIds = cloneTable(slotData.requiredClientItemIds),
     requiredItemName = slotData.requiredItemName or '',
+    requiredWeaponType = slotData.requiredWeaponType or '',
     description = slotData.description or '',
     type = slotData.type or 'Spell',
     group = slotData.group or ''
@@ -926,6 +1386,9 @@ local function normalizeStoredSlotData(slotData, slotIndex)
   if normalizedSlotData.requiredItemName == '' and spellInfo and spellInfo.requiredItemName then
     normalizedSlotData.requiredItemName = spellInfo.requiredItemName
   end
+  if normalizedSlotData.requiredWeaponType == '' and spellInfo and spellInfo.requiredWeaponType then
+    normalizedSlotData.requiredWeaponType = spellInfo.requiredWeaponType
+  end
 
   return normalizedSlotData
 end
@@ -939,7 +1402,10 @@ end
 
 local function buildSlotTooltip(slotData)
   local hotkeyText = hasConfiguredHotkey(slotData) and sanitizeHotkey(slotData.hotkey) or '-'
-  local requiredItemText = slotData.requiredItemName ~= '' and slotData.requiredItemName or '-'
+  local requiredItemText = getSkillRequiredWeaponLabel(slotData)
+  if requiredItemText == '' then
+    requiredItemText = '-'
+  end
   local available, availabilityDetail = getSkillAvailability(slotData)
   local statusText = available and 'Liberada' or 'Indisponivel'
 
@@ -970,7 +1436,7 @@ local function getSlotPrimaryLabel(slotIndex, slotData)
   return ''
 end
 
-local function updateSlotWidget(slotIndex)
+updateSlotWidget = function(slotIndex)
   local slotWidget = slotWidgets[slotIndex]
   if not slotWidget then
     return
@@ -979,6 +1445,8 @@ local function updateSlotWidget(slotIndex)
   local slotData = slotSettings[slotIndex]
   local slotLabel = getSlotPrimaryLabel(slotIndex, slotData)
   local hotkeyBadgeText = getSlotHotkeyBadgeText(slotIndex, slotData)
+  local cooldownRemaining = getSlotCooldownRemaining(slotIndex)
+  local cooldownActive = cooldownRemaining > 0
 
   if slotWidget.slotNumberLabel then
     slotWidget.slotNumberLabel:setText(slotLabel)
@@ -992,7 +1460,11 @@ local function updateSlotWidget(slotIndex)
   if slotData then
     slotWidget:setTooltip(buildSlotTooltip(slotData))
     local available = getSkillAvailability(slotData)
-    slotWidget:setBackgroundColor(available and '#1a1f25' or '#14181c')
+    if cooldownActive then
+      slotWidget:setBackgroundColor(available and '#11161b' or '#101317')
+    else
+      slotWidget:setBackgroundColor(available and '#1a1f25' or '#14181c')
+    end
     slotWidget:setBorderColor(available and '#627080' or '#313740')
     if slotWidget.iconWidget and available then
       applySkillIconToWidget(slotWidget.iconWidget, slotData.icon, slotData.name, slotData.iconResolvedFrom, 'slot')
@@ -1008,6 +1480,17 @@ local function updateSlotWidget(slotIndex)
       slotWidget.iconWidget:hide()
     end
   end
+
+  if slotWidget.cooldownLabel then
+    if cooldownActive then
+      slotWidget.cooldownLabel:setText(formatCooldownSeconds(cooldownRemaining))
+      slotWidget.cooldownLabel:show()
+      slotWidget.cooldownLabel:raise()
+    else
+      slotWidget.cooldownLabel:hide()
+    end
+  end
+
 end
 
 local function refreshSlotWidgets()
@@ -1202,6 +1685,10 @@ local function doCastSlot(slotIndex, source, hotkey)
     return false
   end
 
+  if isSlotCooldownActive(slotIndex) then
+    return false
+  end
+
   local available, availabilityDetail = getSkillAvailability(slotData)
   if not available then
     if modules.game_textmessage and modules.game_textmessage.displayFailureMessage then
@@ -1211,6 +1698,10 @@ local function doCastSlot(slotIndex, source, hotkey)
   end
 
   g_game.talk(slotData.words)
+  local cooldownDuration = getSlotCooldownDuration(slotData)
+  if cooldownDuration > 0 then
+    startSlotCooldown(slotIndex, cooldownDuration)
+  end
   logInfo(string.format('cast slot %s: %s', getSlotDisplayLabel(slotIndex), slotData.words))
   return true
 end
@@ -1478,7 +1969,7 @@ local function updateChoiceDetailPanel(skill)
   local words = skill and skill.words or '-'
   local typeText = skill and tostring(skill.type or '') or ''
   local groupText = skill and tostring(skill.group or '') or ''
-  local requiredItemText = skill and tostring(skill.requiredItemName or '') or ''
+  local requiredItemText = skill and getSkillRequiredWeaponLabel(skill) or ''
   local descriptionText = skill and tostring(skill.description or '') or ''
 
   if words == '' then
@@ -1527,6 +2018,11 @@ local function updateChoiceDetailPanel(skill)
     choiceWidgets.detailDescriptionValue:setText(descriptionText)
   end
 
+  if skill and isFrozenArrowSkill(skill) then
+    local available, detail = getSkillAvailability(skill)
+    logFrozenArrowValidation(skill, 'selection', available, detail)
+  end
+
   applyChoiceStatusStyle(choiceWidgets.detailStatusLabel, skill and getSkillStatusLabel(skill) or 'Indisponivel')
 end
 
@@ -1569,10 +2065,11 @@ local function createChoiceEntry(parent, skill)
   entry:setChecked(false)
   entry.nameLabel:setText(skill.name)
   entry.wordsLabel:setText(skill.words)
-  entry.metaLabel:setText(string.format('Arma: %s', skill.requiredItemName ~= '' and skill.requiredItemName or '-'))
+  local requiredWeaponLabel = getSkillRequiredWeaponLabel(skill)
+  entry.metaLabel:setText(string.format('Arma: %s', requiredWeaponLabel ~= '' and requiredWeaponLabel or '-'))
   applyChoiceStatusStyle(entry.statusLabel, getSkillStatusLabel(skill))
   applySkillIconToWidget(entry.icon, skill.icon, skill.name, skill.iconResolvedFrom, 'chooser-card')
-  entry:setTooltip(string.format('%s\n%s\nArma: %s', skill.name, skill.words, skill.requiredItemName ~= '' and skill.requiredItemName or '-'))
+  entry:setTooltip(string.format('%s\n%s\nArma: %s', skill.name, skill.words, requiredWeaponLabel ~= '' and requiredWeaponLabel or '-'))
 
   entry.onMousePress = function(widget, mousePos, mouseButton)
     return mouseButton == MouseLeftButton
@@ -1608,9 +2105,7 @@ local function refreshChoiceEntries()
 
   local filteredSkills = {}
   for _, skill in ipairs(filterSkills(choiceState.searchText)) do
-    if getSkillAvailability(skill) then
-      table.insert(filteredSkills, skill)
-    end
+    table.insert(filteredSkills, skill)
   end
   choiceWidgets.skillList:destroyChildren()
 
@@ -1777,7 +2272,7 @@ function onChoiceSearchTextChange(widget)
   refreshChoiceEntries()
 end
 
-local function buildChoiceWindow(slotIndex, currentSlotData)
+local function buildChoiceWindow(slotIndex, currentSlotData, preferredSkillName)
   choiceWidgets = {}
 
   choiceWindow = g_ui.createWidget('CustomSkillChoiceWindow', getRootWidget())
@@ -1815,8 +2310,12 @@ local function buildChoiceWindow(slotIndex, currentSlotData)
   if currentSlotData and currentSlotData.name and currentSlotData.name:len() > 0 then
     selectedSkill = findSkillByName(currentSlotData.name)
   end
+  if not selectedSkill and preferredSkillName and preferredSkillName:len() > 0 then
+    selectedSkill = findSkillByName(preferredSkillName)
+  end
   if not selectedSkill then
-    selectedSkill = findSkillByName(TARGET_SKILL_NAME) or buildFallbackSkill()
+    ensureSkillCatalog()
+    selectedSkill = skillCatalog[1] or buildFallbackSkill()
   end
 
   choiceState.selectedSkillName = selectedSkill and selectedSkill.name or nil
@@ -1826,7 +2325,7 @@ local function buildChoiceWindow(slotIndex, currentSlotData)
   return choiceWindow
 end
 
-local function openChoiceWindow(slotIndex)
+local function openChoiceWindow(slotIndex, preferredSkillName)
   closeChoiceWindow()
 
   choiceState.slotIndex = slotIndex
@@ -1836,7 +2335,7 @@ local function openChoiceWindow(slotIndex)
   logInfo(string.format('openSkillChooser called slot %s', getSlotDisplayLabel(slotIndex)))
 
   local okCreate, createdWindow = pcall(function()
-    return buildChoiceWindow(slotIndex, currentSlotData)
+    return buildChoiceWindow(slotIndex, currentSlotData, preferredSkillName)
   end)
   if not okCreate or not createdWindow then
     local errorMessage = tostring(createdWindow)
@@ -1868,17 +2367,49 @@ function openSkillChooser(slotIndex)
   end
 end
 
+local function findFirstEmptySlotIndex()
+  for slotIndex = 1, SLOT_COUNT do
+    if not slotSettings[slotIndex] then
+      return slotIndex
+    end
+  end
+
+  return 1
+end
+
+function openSkillChooserForSkill(skillOrName, preferredSlotIndex)
+  local skillName = nil
+  if type(skillOrName) == 'table' then
+    skillName = skillOrName.name
+  elseif type(skillOrName) == 'string' then
+    skillName = skillOrName
+  end
+
+  local slotIndex = tonumber(preferredSlotIndex) or findFirstEmptySlotIndex()
+  local ok, err = pcall(function()
+    openChoiceWindow(slotIndex, skillName)
+  end)
+  if not ok then
+    logError('openSkillChooserForSkill ERROR: ' .. tostring(err))
+    showChooserMessage('Erro ao abrir Escolher Skill: ' .. tostring(err))
+  end
+end
+
 local function createSlotButton(slotIndex, parentWidget)
   local slotWidget = g_ui.createWidget('CustomSkillBarSlot', parentWidget or slotsPanelWidget or customSkillBar)
   slotWidget.slotIndex = slotIndex
   slotWidget.iconWidget = slotWidget:getChildById('icon')
   slotWidget.slotNumberLabel = slotWidget:getChildById('slotNumber')
   slotWidget.hotkeyLabelWidget = slotWidget:getChildById('hotkeyLabel')
+  slotWidget.cooldownLabel = slotWidget:getChildById('cooldownLabel')
   if slotWidget.slotNumberLabel then
     slotWidget.slotNumberLabel:setText(getSlotDisplayLabel(slotIndex))
   end
   if slotWidget.iconWidget then
     slotWidget.iconWidget:hide()
+  end
+  if slotWidget.cooldownLabel then
+    slotWidget.cooldownLabel:hide()
   end
   slotWidget:setPhantom(false)
   slotWidget:setFocusable(false)
@@ -1960,9 +2491,23 @@ end
 
 local function offline()
   inventorySlotKeys = {}
+  for slotIndex = 1, SLOT_COUNT do
+    stopSlotCooldown(slotIndex)
+  end
   saveSettings()
   unbindAllHotkeys()
   hideBar()
+end
+
+local function onSpellCooldown(iconId, duration)
+  local matchingSlots = findSlotsBySpellId(iconId)
+  if #matchingSlots == 0 then
+    return
+  end
+
+  for _, slotIndex in ipairs(matchingSlots) do
+    startSlotCooldown(slotIndex, duration)
+  end
 end
 
 local function onInventoryChange(localPlayer, slot, item, oldItem)
@@ -1990,7 +2535,8 @@ function init()
 
   connect(g_game, {
     onGameStart = online,
-    onGameEnd = offline
+    onGameEnd = offline,
+    onSpellCooldown = onSpellCooldown
   })
   connect(LocalPlayer, {
     onInventoryChange = onInventoryChange
@@ -2033,7 +2579,8 @@ end
 function terminate()
   disconnect(g_game, {
     onGameStart = online,
-    onGameEnd = offline
+    onGameEnd = offline,
+    onSpellCooldown = onSpellCooldown
   })
   disconnect(LocalPlayer, {
     onInventoryChange = onInventoryChange
@@ -2046,6 +2593,10 @@ function terminate()
   if positionEvent then
     removeEvent(positionEvent)
     positionEvent = nil
+  end
+
+  for slotIndex = 1, SLOT_COUNT do
+    stopSlotCooldown(slotIndex)
   end
 
   closeChoiceWindow()
